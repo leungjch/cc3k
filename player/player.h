@@ -6,6 +6,5 @@ class Player : public Character {
   public:
     Player();
     Player(int hp, int atk, int def);
-
 };
 #endif

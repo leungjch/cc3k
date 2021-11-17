@@ -25,13 +25,11 @@ int main(int argc, char *argv[])
 
     while (cin >> cmd)
     {
+        // Player movement
         if (cmd == "no" || cmd == "so" || cmd == "ea" || cmd == "we" || cmd == "ne" || cmd == "se" || cmd == "sw")
         {
             game.movePlayer(cmd);
         }
-
-
-
 
         // u direction: uses the potion indicated by the direction (e.g. no, so, ea).
         else if (cmd == "u")
@@ -46,7 +44,7 @@ int main(int argc, char *argv[])
 
         }
 
-        // Specify race
+        // Specify starting race
         else if (cmd == "s")
         {
 
@@ -87,7 +85,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-        // Render the display
+        // Render the display after every command
         game.display();
     }
 }

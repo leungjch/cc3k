@@ -10,8 +10,10 @@ CC3K::CC3K() {}
 
 void CC3K::init()
 {
+    // Get the map and read it into a floor
     theFloor.readMap("map.txt");
 
+    // Generate the player and entities
     generatePlayer();
 }
 
@@ -19,6 +21,7 @@ void CC3K::generatePlayer()
 {
     thePlayer = make_shared<Drow>();
 
+    // TODO: Random generation
     thePlayer->setX(10);
     thePlayer->setY(10);
 }
@@ -73,7 +76,8 @@ void CC3K::display()
     // Place the player's position
     theDisplay[thePlayer->getY()][thePlayer->getX()] = thePlayer->getSymbol();
 
-    // Loop through entities and display with each entity's position
+    // Loop through entities and overwrite display with each entity's position
+    // ...
 
     // Print out the display
     for (int i = 0; i < theDisplay.size(); i++)

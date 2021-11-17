@@ -14,7 +14,6 @@ class Floor {
     static const int WIDTH = 80;
     static const int HEIGHT = 25;
 
-
     public:
         void readMap(std::string filename);
 
