@@ -7,7 +7,5 @@ class Player : public Character {
     Player();
     Player(int hp, int atk, int def);
 
-    // virtual void move(std::string dir);
-
 };
 #endif

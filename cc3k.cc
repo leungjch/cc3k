@@ -32,27 +32,32 @@ void CC3K::movePlayer(string dir)
 
     else if (dir == "so")
     {
-        thePlayer->setY(thePlayer->getY()+1);
+        thePlayer->move(0,1);
     }
 
     else if (dir == "ea")
     {
+        thePlayer->move(1,0);
     }
 
     else if (dir == "we")
     {
+        thePlayer->move(-1,0);
     }
 
     else if (dir == "ne")
     {
+        thePlayer->move(1,-1);
     }
 
     else if (dir == "se")
     {
+        thePlayer->move(1,1);
     }
 
     else if (dir == "sw")
     {
+        thePlayer->move(-1,1);
     }
 }
 

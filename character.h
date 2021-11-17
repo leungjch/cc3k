@@ -12,5 +12,6 @@ class Character : public Entity {
         // virtual void move(int x, int y);
         Character();
         Character(int hp, int atk, int def, char symbol);
+        void move(int dx, int dy);
 };
 #endif
