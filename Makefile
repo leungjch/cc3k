@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-std=c++14 -g -MMD 
-OBJECTS=main.o
+OBJECTS=main.o cc3k.o floor.o utils/color.o cell.o entity.o character.o player/player.o player/drow.o
 DEPENDS=${OBJECTS:.o=.d}
 EXEC=cc3k
 
