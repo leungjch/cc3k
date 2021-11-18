@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "floor.h"
+#include "cell.h"
 #include "utils/color.h"
 
 
@@ -19,7 +20,8 @@ void Floor::readMap(string filename) {
 
         vector<Cell> row;
         for (int i = 0; i < line.length(); i++) {
-            row.emplace_back(line[i]);
+            int chamberNum = chamberAt(rowNum, i);
+            row.emplace_back(line[i], chamberNum);
         }
         environment.push_back(row);
         rowNum += 1;
@@ -43,8 +45,21 @@ vector<vector<char>> Floor::getEnvironmentChar() {
     return charEnvironment;
 }
 
+Cell Floor::cellAt(int x, int y) {
+    return environment[y][x];
+}
+
+// Return the chamber number at a given tile
+// Non-tiles (Walls, passages, doors, and empty cells) have no chamber number (-1)
+// Chambers are numbered from top left to bottom right
 int Floor::chamberAt(int x, int y) {
-    return 0;
+    // Chamber 1
+    if ((x >= 3 && x <= 28) && (y >= 3 && y <= 6))
+    {
+        return 1;
+    }
+    // Else not a chamber
+    return -1;
 }
 
 int Floor::getHeight() {

@@ -1,5 +1,7 @@
 #include "cc3k.h"
 #include "player/drow.h"
+#include "cell.h"
+#include "utils/color.h"
 #include <iostream>
 #include <string>
 #include <memory>
@@ -23,45 +25,75 @@ void CC3K::generatePlayer()
 
     // TODO: Random generation
     thePlayer->setX(10);
-    thePlayer->setY(10);
+    thePlayer->setY(5);
+
 }
 
 void CC3K::movePlayer(string dir)
 {
+    // Get the current player coordinates
+
+    int dY = 0;
+    int dX = 0;
     if (dir == "no")
     {
-        thePlayer->setY(thePlayer->getY()-1);
+        dY = -1;
     }
 
     else if (dir == "so")
     {
-        thePlayer->move(0,1);
+        dY = 1;
     }
 
     else if (dir == "ea")
     {
-        thePlayer->move(1,0);
+        dX = 1;
     }
 
     else if (dir == "we")
     {
-        thePlayer->move(-1,0);
+        dX = -1;
     }
 
     else if (dir == "ne")
     {
-        thePlayer->move(1,-1);
+        dY = -1; 
+        dX = 1;
     }
 
     else if (dir == "se")
     {
-        thePlayer->move(1,1);
+        dY = 1;
+        dX = 1;
     }
 
     else if (dir == "sw")
     {
-        thePlayer->move(-1,1);
+        dY = 1;
+        dX = -1;
     }
+
+    // Compute the new position
+    int newY = thePlayer->getY() + dY;
+    int newX = thePlayer->getX() + dX;
+
+    // Check if the new position is a tile
+    // (i.e. don't move into a wall or empty space)
+    if (theFloor.cellAt(newX, newY).getChar() != Cell::TILE &&
+        theFloor.cellAt(newX, newY).getChar() != Cell::DOOR &&
+        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE
+    )
+    {
+        cout << Color::RED << "You cannot move there." << Color::RESET << endl;
+        return;
+    }
+
+    // Else the new position is valid, move player there
+    thePlayer->setX(newX);
+    thePlayer->setY(newY);
+
+    // Check collision against all entities
+
 }
 
 void CC3K::display()

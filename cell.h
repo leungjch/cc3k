@@ -5,6 +5,14 @@ class Cell {
     char ch;
     int chamberNum;
 
+
+
+    public:
+        Cell();
+        Cell(char c, int chamberNum);
+        char getChar();
+        int getChamberNum();
+
     // Constants for cell types
     static const char WALL_HORIZONTAL = '|';
     static const char WALL_VERTICAL = '-';
@@ -12,12 +20,6 @@ class Cell {
     static const char PASSAGE = '#';
     static const char DOOR = '+';
     static const char NOTHING = ' ';
-
-    public:
-        Cell();
-        Cell(char c);
-        char getChar();
-        int getChamberNum();
 
 
 };
