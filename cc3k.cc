@@ -37,19 +37,15 @@ void CC3K::generatePlayer()
         int randX = theFloor.getRandomX();
         int randY = theFloor.getRandomY();
         int chamberNum = theFloor.chamberAt(randX, randY);
-        cout << "CHAMBERNUM IS" << chamberNum << endl;
         // Check the chamber
         if (chamberNum == targetChamberNum)
         {
-            cout << "CHAMBERNUM SSS" << chamberNum << endl;
             thePlayer->setX(randX);
             thePlayer->setY(randY);
             break;
         }
 
     }
-    
-    cout << "DONE ";
 
 }
 
