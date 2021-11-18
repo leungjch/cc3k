@@ -13,6 +13,10 @@ using namespace std;
 
 // Read the map from a filename and create the environment (2D vector of Cells)
 void Floor::readMap(string filename) {
+
+    // Reset the environment (this is necessary if we reset the level)
+    environment.clear();
+
     string fileStr;
     std::ifstream infile(filename);
 
@@ -59,14 +63,14 @@ int Floor::chamberAt(int x, int y) {
     }
     // Chamber 2
 	if (((x >= 39 && x <= 61) && (y >= 3 && y <= 6)) ||
-	   ((x >= 61 && x <= 75) && (y >= 7 && y <= 13)) ||
+	   ((x >= 61 && x <= 75) && (y >= 7 && y <= 12)) ||
 	   ((x >= 62 && x <= 69) && (y == 5)) 			 ||
 	   ((x >= 62 && x <= 72) && (y == 6)))
     {
 		return 2;
     }
     // Chamber 3
-    else if ((x >= 38 && x <= 50) && (y >= 10 && y <=12))
+    else if ((x >= 38 && x <= 49) && (y >= 10 && y <=12))
     {
         return 3;
     }

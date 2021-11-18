@@ -10,6 +10,7 @@ class Entity{
     void setX(int newX);
     void setY(int newY);
     char getSymbol();
+    Entity(int x, int y, char sym);
     Entity(char sym);
     Entity();
 };

@@ -17,5 +17,6 @@ void Entity::setY(int newY) {
 char Entity::getSymbol() {
     return symbol;
 }
+Entity::Entity(int x, int y, char sym) : x{x}, y{y}, symbol{sym} {}
 Entity::Entity(char sym) : symbol{sym} {}
 Entity::Entity() : symbol{' '} {}
