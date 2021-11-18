@@ -11,13 +11,17 @@ class Floor {
     std::vector<std::vector<Cell>> environment;
 
     // Hardcoded board sizes
-    static const int WIDTH = 80;
+    static const int WIDTH = 79;
     static const int HEIGHT = 25;
+    static const int NUM_CHAMBERS = 5;
 
     public:
         void readMap(std::string filename);
 
         int chamberAt(int x, int y);
+        int getRandomChamberNum();
+        int getRandomX();
+        int getRandomY();
 
         Cell cellAt(int x, int y);
 

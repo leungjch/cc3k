@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <cstdlib>
 #include "utils/color.h"
 #include "cc3k.h"
 
@@ -9,6 +10,14 @@ using namespace std;
 
 int main(int argc, char *argv[]) 
 {
+
+    // Set seed
+    // Deterministic seed for testing
+    // srand(42);
+
+    // Set random seed (for actual demo)
+    srand(time(nullptr));
+
     // Work with STL containers for command line arguments
     vector<string> args(argv, argv+argc);
 

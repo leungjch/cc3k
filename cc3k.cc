@@ -24,14 +24,38 @@ void CC3K::generatePlayer()
     thePlayer = make_shared<Drow>();
 
     // TODO: Random generation
+    
     thePlayer->setX(10);
-    thePlayer->setY(5);
+    thePlayer->setY(10);
+
+
+    // Generate a random chamber number
+    int targetChamberNum = theFloor.getRandomChamberNum();
+    while (true)
+    {
+        // Get random coordinates
+        int randX = theFloor.getRandomX();
+        int randY = theFloor.getRandomY();
+        int chamberNum = theFloor.chamberAt(randX, randY);
+        cout << "CHAMBERNUM IS" << chamberNum << endl;
+        // Check the chamber
+        if (chamberNum == targetChamberNum)
+        {
+            cout << "CHAMBERNUM SSS" << chamberNum << endl;
+            thePlayer->setX(randX);
+            thePlayer->setY(randY);
+            break;
+        }
+
+    }
+    
+    cout << "DONE ";
 
 }
 
 void CC3K::movePlayer(string dir)
 {
-    // Get the current player coordinates
+
 
     int dY = 0;
     int dX = 0;
@@ -57,7 +81,7 @@ void CC3K::movePlayer(string dir)
 
     else if (dir == "ne")
     {
-        dY = -1; 
+        dY = -1;
         dX = 1;
     }
 
@@ -81,8 +105,7 @@ void CC3K::movePlayer(string dir)
     // (i.e. don't move into a wall or empty space)
     if (theFloor.cellAt(newX, newY).getChar() != Cell::TILE &&
         theFloor.cellAt(newX, newY).getChar() != Cell::DOOR &&
-        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE
-    )
+        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE)
     {
         cout << Color::RED << "You cannot move there." << Color::RESET << endl;
         return;
@@ -93,7 +116,6 @@ void CC3K::movePlayer(string dir)
     thePlayer->setY(newY);
 
     // Check collision against all entities
-
 }
 
 void CC3K::display()
@@ -103,6 +125,7 @@ void CC3K::display()
      *   Loop through all entities and overwrite the display with each entity's position
      *   Print out the new display
      */
+
     theDisplay = theFloor.getEnvironmentChar();
 
     // Place the player's position

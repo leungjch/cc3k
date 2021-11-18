@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <iostream>
+#include <cstdlib>
 
 #include "floor.h"
 #include "cell.h"
@@ -26,8 +27,6 @@ void Floor::readMap(string filename) {
         environment.push_back(row);
         rowNum += 1;
     }
-
-    // Read the 
 
 }
 
@@ -58,8 +57,46 @@ int Floor::chamberAt(int x, int y) {
     {
         return 1;
     }
+    // Chamber 2
+	if (((x >= 39 && x <= 61) && (y >= 3 && y <= 6)) ||
+	   ((x >= 61 && x <= 75) && (y >= 7 && y <= 13)) ||
+	   ((x >= 62 && x <= 69) && (y == 5)) 			 ||
+	   ((x >= 62 && x <= 72) && (y == 6)))
+    {
+		return 2;
+    }
+    // Chamber 3
+    else if ((x >= 38 && x <= 50) && (y >= 10 && y <=12))
+    {
+        return 3;
+    }
+    else if ((x >= 4 && x <= 25) && (y >= 15 && y <=22)) 
+    {
+        return 4;
+    }
+    else if (
+            (x >= 65 && x <= 75) && (y >= 16 && y <= 18)||
+            (x >= 37 && x <= 75) && (y >= 19 && y <= 21) )
+    {
+        return 5;
+    }
     // Else not a chamber
     return -1;
+}
+
+int Floor::getRandomChamberNum()
+{
+    // Generate a number between range [1, NUM_CHAMBERS]
+    return rand() % NUM_CHAMBERS + 1;
+}
+
+int Floor::getRandomX()
+{
+    return rand() % WIDTH;
+}
+int Floor::getRandomY()
+{
+    return rand() % HEIGHT;
 }
 
 int Floor::getHeight() {
