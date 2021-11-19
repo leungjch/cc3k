@@ -13,8 +13,7 @@ class CC3K {
     Stairway theStairway;
 
     std::shared_ptr<Player> thePlayer;
-
-    
+    int playerGold;
 
     // Entities are on top of the environment
     std::vector<std::vector<Entity>> theEntities;

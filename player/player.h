@@ -5,6 +5,6 @@
 class Player : public Character {
   public:
     Player();
-    Player(int hp, int atk, int def);
+    Player(int hp, int atk, int def, std::string race);
 };
 #endif

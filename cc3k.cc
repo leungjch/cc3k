@@ -8,21 +8,26 @@
 
 using namespace std;
 
-CC3K::CC3K() : levelNum{1} {}
+CC3K::CC3K() : levelNum{1}, playerGold{0} {}
 
 void CC3K::init()
 {
     /*
-        We require that generation happens in the following order: player character location, stairway location, potions, gold,
-        enemies. This is to allow us to more easily evaluate that your random generation is correctly implemented.
-        Note that multiple objects (enemies, gold, and potions) cannot occupy the same cell on the game board. That is, no two
-        objects can ever occupy the same space. The one exception to this is the case of gold. Typically, when a player character
-        walks over gold, it is picked up. The exception to this is if the gold is associated with a still alive dragon; in this case, the
-        player simply walks over the gold, without picking it.
-        When the PC attempts to move on to a stairway, the next level is instead generated and displayed, with the PC spawning
-        in a random position on the new level.
-        Items and enemies should only ever spawn on a floor tile and never in a doorway, passage, or the stairs leading down to
-        the next floor.
+        20 enemies are spawned per floor (this number does not include dragons). Every
+        chamber is equally likely to spawn any particular monster (similarly for floor
+        tiles). We require that generation happens in the following order: player
+        character location, stairway location, potions, gold, enemies. This is to allow
+        us to more easily evaluate that your random generation is correctly implemented.
+        Note that multiple objects (enemies, gold, and potions) cannot occupy the same
+        cell on the game board. That is, no two objects can ever occupy the same space.
+        The one exception to this is the case of gold. Typically, when a player
+        character walks over gold, it is picked up. The exception to this is if the gold
+        is associated with a still alive dragon; in this case, the player simply walks
+        over the gold, without picking it. When the PC attempts to move on to a
+        stairway, the next level is instead generated and displayed, with the PC
+        spawning in a random position on the new level. Items and enemies should only
+        ever spawn on a floor tile and never in a doorway, passage, or the stairs
+        leading down to the next floor.
     */
 
     // Get the map and read it into a floor
@@ -65,6 +70,7 @@ void CC3K::generatePlayer(int targetChamberNum)
         }
 
     }
+    cout << Color::GREEN << "Player character has spawned. " << Color::RESET << endl;
 
 }
 
@@ -157,6 +163,8 @@ void CC3K::movePlayer(string dir)
         // Increase level number
         levelNum += 1;
 
+        cout << Color::BOLDYELLOW << "Now entering level " << levelNum << Color::RESET << endl;
+
         return;
     }
 
@@ -175,6 +183,7 @@ void CC3K::display()
      *   Print out the new display
      */
 
+
     theDisplay = theFloor.getEnvironmentChar();
 
     // Place the player's position
@@ -183,9 +192,9 @@ void CC3K::display()
     // Draw the staircase
     theDisplay[theStairway.getY()][theStairway.getX()] = theStairway.getSymbol();
 
-
     // Loop through entities and overwrite display with each entity's position
     // ...
+
 
     // Print out the display
     for (int i = 0; i < theDisplay.size(); i++)
@@ -196,4 +205,23 @@ void CC3K::display()
         }
         cout << endl;
     }
+
+    // Print out race
+    cout << "Race: " << thePlayer->getName();
+
+    // Print out player gold
+    cout << " Gold: " << playerGold << endl;
+
+    // Print out HP
+    cout << "HP: " << thePlayer->getHP() << endl;
+
+    // Print out Atk
+    cout << "Atk: " << thePlayer->getAtk() << endl;
+
+    // Print out Def
+    cout << "Def: " << thePlayer->getDef() << endl;
+
+    // Print out action (for any actions) that occur
+    cout << "Action: " << endl;
+
 }
