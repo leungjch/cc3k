@@ -33,14 +33,13 @@ void CC3K::init()
 
     // Get the map and read it into a floor
     theFloor.readMap("map.txt");
-
-    int playerChamberNum = theFloor.getRandomChamberNum();
+    
 
     // Generate the player and entities
-    generatePlayer(playerChamberNum);
+    generatePlayer();
 
     // Generate stairway
-    generateStairway(playerChamberNum);
+    generateStairway();
 
     // Generate potions
     generatePotions();
@@ -84,9 +83,12 @@ bool CC3K::isOccupied(int x, int y)
 }
 
 // Generate a player in a random position in a chamber
-void CC3K::generatePlayer(int targetChamberNum)
+void CC3K::generatePlayer()
 {
     thePlayer = make_shared<Drow>();
+
+    // Select a random chamber number
+    int targetChamberNum = theFloor.getRandomChamberNum();
 
     while (true)
     {
@@ -108,11 +110,16 @@ void CC3K::generatePlayer(int targetChamberNum)
 
 }
 
-void CC3K::generateStairway(int playerChamberNum)
+void CC3K::generateStairway()
 {
     // Assumption: only the player has been generated at this point
     // Thus we only need to check collision with player
     theStairway = make_shared<Stairway>();
+
+    int playerChamberNum = theFloor.chamberAt(thePlayer->getX(), thePlayer->getY());
+
+    // Generate a random chamber number (to ensure each chamber has equal probability)
+    int targetChamberNum = theFloor.getRandomChamberNum();
     while (true)
     {
         // Get random coordinates and a random chamber number
@@ -121,7 +128,7 @@ void CC3K::generateStairway(int playerChamberNum)
         int chamberNum = theFloor.chamberAt(randX, randY);
 
         // Check that chamber is not same as the chamber that player spawned in
-        if (chamberNum != -1 && chamberNum != playerChamberNum)
+        if (chamberNum == targetChamberNum && chamberNum != playerChamberNum)
         {
             theStairway->setX(randX);
             theStairway->setY(randY);
@@ -137,14 +144,18 @@ void CC3K::generatePotions()
     {
         bool isGenerating = true;
         auto newPotion = make_shared<Potion>();
+
+        // Generate a random chamber number (to ensure each chamber has equal probability)
+        int targetChamberNum = theFloor.getRandomChamberNum();
+
         while (isGenerating)
         {
-            // Get random coordinates and a random chamber number
+            // Get random coordinates and its associated chamber
             int randX = theFloor.getRandomX();
             int randY = theFloor.getRandomY();
             int chamberNum = theFloor.chamberAt(randX, randY);
 
-            if (chamberNum != -1 && !isOccupied(randX, randY))
+            if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
             {
                 newPotion->setX(randX);
                 newPotion->setY(randY);

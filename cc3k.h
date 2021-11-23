@@ -29,8 +29,8 @@ class CC3K {
     std::vector<std::vector<char>> theDisplay;
 
     bool isOccupied(int x, int y);
-    void generatePlayer(int targetChamberNum);
-    void generateStairway(int playerChamberNum);
+    void generatePlayer();
+    void generateStairway();
     void generatePotions();
 
 
