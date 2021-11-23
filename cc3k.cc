@@ -1,5 +1,6 @@
 #include "cc3k.h"
 #include "player/drow.h"
+#include "stairway.h"
 #include "cell.h"
 #include "utils/color.h"
 #include <iostream>
@@ -42,11 +43,44 @@ void CC3K::init()
     generateStairway(playerChamberNum);
 
     // Generate potions
+    generatePotions();
 
     // Generate gold
 
     // Generate enemies
 
+}
+
+// Returns true if an entity is occupying a cell
+bool CC3K::isOccupied(int x, int y) 
+{
+    // Check the player coordinates
+    if (thePlayer->getX() == x && thePlayer->getY() == y)
+    {
+        return true;
+    }
+
+    // Check the staircase coordinates
+    if (theStairway->getX() == x && theStairway->getY() == y)
+    {
+        return true;
+    }
+
+    // Check all potions
+    for (auto potion : thePotions) 
+    {
+        if (potion->getX() == x && potion->getY() == y) 
+        {
+            return true;
+        }
+    }
+
+    // TODO: Check gold coordinates
+
+    // TODO: Check all enemy coordinates
+
+    // Else no entity occupies this space, so return false
+    return false;
 }
 
 // Generate a player in a random position in a chamber
@@ -78,7 +112,7 @@ void CC3K::generateStairway(int playerChamberNum)
 {
     // Assumption: only the player has been generated at this point
     // Thus we only need to check collision with player
-
+    theStairway = make_shared<Stairway>();
     while (true)
     {
         // Get random coordinates and a random chamber number
@@ -89,11 +123,37 @@ void CC3K::generateStairway(int playerChamberNum)
         // Check that chamber is not same as the chamber that player spawned in
         if (chamberNum != -1 && chamberNum != playerChamberNum)
         {
-            theStairway.setX(randX);
-            theStairway.setY(randY);
+            theStairway->setX(randX);
+            theStairway->setY(randY);
             break;
         }
     }
+}
+
+void CC3K::generatePotions() 
+{
+    thePotions.clear();
+    for (int i = 0; i < NUM_POTIONS; i++)
+    {
+        bool isGenerating = true;
+        auto newPotion = make_shared<Potion>();
+        while (isGenerating)
+        {
+            // Get random coordinates and a random chamber number
+            int randX = theFloor.getRandomX();
+            int randY = theFloor.getRandomY();
+            int chamberNum = theFloor.chamberAt(randX, randY);
+
+            if (chamberNum != -1 && !isOccupied(randX, randY))
+            {
+                newPotion->setX(randX);
+                newPotion->setY(randY);
+                thePotions.push_back(newPotion);
+                isGenerating = false;
+            }
+        }
+    }
+
 }
 
 void CC3K::movePlayer(string dir)
@@ -156,7 +216,7 @@ void CC3K::movePlayer(string dir)
 
     // Check if the new position is a stairway
     // In this case, go to next level
-    if (newX == theStairway.getX() && newY == theStairway.getY())
+    if (newX == theStairway->getX() && newY == theStairway->getY())
     {
         // Respawn everything
         init();
@@ -190,11 +250,17 @@ void CC3K::display()
     theDisplay[thePlayer->getY()][thePlayer->getX()] = thePlayer->getSymbol();
 
     // Draw the staircase
-    theDisplay[theStairway.getY()][theStairway.getX()] = theStairway.getSymbol();
+    theDisplay[theStairway->getY()][theStairway->getX()] = theStairway->getSymbol();
 
-    // Loop through entities and overwrite display with each entity's position
-    // ...
+    // Draw the potions
+    for (auto potion : thePotions)
+    {
+        theDisplay[potion->getY()][potion->getX()] = potion->getSymbol();
+    }
 
+    // TODO: Draw the gold piles
+
+    // TODO: Draw enemies
 
     // Print out the display
     for (int i = 0; i < theDisplay.size(); i++)
