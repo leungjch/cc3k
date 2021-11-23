@@ -17,6 +17,7 @@ class CC3K {
 
     std::vector<std::shared_ptr<Potion>> thePotions;
 
+    // Amount of gold that the player has collected
     int playerGold;
 
     // Number of potions spawned on each floor
@@ -25,19 +26,23 @@ class CC3K {
     // Number of gold piles spawned on each floor
     static const int NUM_GOLD = 10;
 
-    // A 2D char vector for displaying
+    // Number of enemies spawned on each floor
+    static const int NUM_ENEMIES = 20;
+
+    // A 2D char vector for displaying the board
     std::vector<std::vector<char>> theDisplay;
 
     bool isOccupied(int x, int y);
+    
     void generatePlayer();
     void generateStairway();
     void generatePotions();
-
 
     public:
         void init();
         void display();
         void movePlayer(std::string dir);
+        void usePotion(std::string dir);
         CC3K();
 };
 #endif
