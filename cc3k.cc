@@ -5,6 +5,8 @@
 #include "utils/color.h"
 #include <iostream>
 #include <string>
+#include <iterator>
+#include <algorithm>
 #include <memory>
 
 using namespace std;
@@ -33,7 +35,7 @@ void CC3K::init()
 
     // Get the map and read it into a floor
     theFloor.readMap("map.txt");
-    
+
 
     // Generate the player and entities
     generatePlayer();
@@ -44,9 +46,59 @@ void CC3K::init()
     // Generate potions
     generatePotions();
 
+
     // Generate gold
 
     // Generate enemies
+
+}
+
+// Helper function to compute new position after moving one unit in the specified direction
+pair<int, int> getPosAtDirection(int x, int y, string dir)
+{
+    int dX = 0;
+    int dY = 0;
+    if (dir == "no")
+    {
+        dY = -1;
+    }
+
+    else if (dir == "so")
+    {
+        dY = 1;
+    }
+
+    else if (dir == "ea")
+    {
+        dX = 1;
+    }
+
+    else if (dir == "we")
+    {
+        dX = -1;
+    }
+
+    else if (dir == "ne")
+    {
+        dY = -1;
+        dX = 1;
+    }
+
+    else if (dir == "se")
+    {
+        dY = 1;
+        dX = 1;
+    }
+
+    else if (dir == "sw")
+    {
+        dY = 1;
+        dX = -1;
+    }
+    else {
+        cerr << "Invalid direction" << endl;
+    }
+    return make_pair(x+dX, y+dY);
 
 }
 
@@ -119,7 +171,12 @@ void CC3K::generateStairway()
     int playerChamberNum = theFloor.chamberAt(thePlayer->getX(), thePlayer->getY());
 
     // Generate a random chamber number (to ensure each chamber has equal probability)
-    int targetChamberNum = theFloor.getRandomChamberNum();
+    // Ensure it is NOT EQUAL to player chamber
+    int targetChamberNum = theFloor.getRandomChamberNum();;
+    while (targetChamberNum == playerChamberNum)
+    {
+        targetChamberNum = theFloor.getRandomChamberNum();
+    }
     while (true)
     {
         // Get random coordinates and a random chamber number
@@ -164,56 +221,14 @@ void CC3K::generatePotions()
             }
         }
     }
-
 }
 
 void CC3K::movePlayer(string dir)
 {
-
-
-    int dY = 0;
-    int dX = 0;
-    if (dir == "no")
-    {
-        dY = -1;
-    }
-
-    else if (dir == "so")
-    {
-        dY = 1;
-    }
-
-    else if (dir == "ea")
-    {
-        dX = 1;
-    }
-
-    else if (dir == "we")
-    {
-        dX = -1;
-    }
-
-    else if (dir == "ne")
-    {
-        dY = -1;
-        dX = 1;
-    }
-
-    else if (dir == "se")
-    {
-        dY = 1;
-        dX = 1;
-    }
-
-    else if (dir == "sw")
-    {
-        dY = 1;
-        dX = -1;
-    }
-
+    pair<int,int> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
     // Compute the new position
-    int newY = thePlayer->getY() + dY;
-    int newX = thePlayer->getX() + dX;
+    int newX = newPos.first;
+    int newY = newPos.second;
 
     // Check if the new position is a tile
     // (i.e. don't move into a wall or empty space)
@@ -244,6 +259,41 @@ void CC3K::movePlayer(string dir)
     thePlayer->setY(newY);
 
     // Check collision against all entities
+}
+
+// Use a potion in the direction specified (from the player)
+void CC3K::usePotion(string dir) 
+{
+    // Get the coordinates to check
+    pair<int, int> checkPotionPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+
+    // Check if there exists a potion in the specified direction
+    int found = -1;
+    for (int i = 0; i < thePotions.size(); i++) {
+        cout << thePotions[i]->getX() << "  | " <<  thePotions[i]->getY() << endl;
+        if (thePotions[i]->getX() == checkPotionPos.first && thePotions[i]->getY() == checkPotionPos.second)
+        {
+            found = i;
+            break;
+        }
+    }
+
+    // If we did not find a potion at that location
+    if (found == -1) 
+    {
+        cout << Color::RED << "There is no potion in that direction." << Color::RESET;
+        return;
+    }
+    // Potion is found, apply the potion and erase it from the potion vector
+    else 
+    {
+        // Apply the effect to the player
+
+        // Erase the potion
+        thePotions.erase(thePotions.begin()+found);
+
+        
+    }
 }
 
 void CC3K::display()
