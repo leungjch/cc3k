@@ -270,7 +270,6 @@ void CC3K::usePotion(string dir)
     // Check if there exists a potion in the specified direction
     int found = -1;
     for (int i = 0; i < thePotions.size(); i++) {
-        cout << thePotions[i]->getX() << "  | " <<  thePotions[i]->getY() << endl;
         if (thePotions[i]->getX() == checkPotionPos.first && thePotions[i]->getY() == checkPotionPos.second)
         {
             found = i;
