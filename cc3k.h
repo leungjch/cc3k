@@ -17,6 +17,9 @@ class CC3K {
 
     std::vector<std::shared_ptr<Potion>> thePotions;
 
+    // Starting race (value is specified via Player::RaceTypes enum)
+    int startingRace;
+
     // Amount of gold that the player has collected
     int playerGold;
 
@@ -44,5 +47,6 @@ class CC3K {
         void movePlayer(std::string dir);
         void usePotion(std::string dir);
         CC3K();
+        void setStartingRace(int newRace);
 };
 #endif

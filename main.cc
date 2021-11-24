@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <sstream>
 #include "utils/color.h"
+#include "player/player.h"
 #include "cc3k.h"
 
 using namespace std;
@@ -84,18 +85,28 @@ int main(int argc, char *argv[])
             // Specify starting race
             else if (cmd == "s")
             {
+                game.setStartingRace(Player::RaceTypes::SHADE);
+                cout << Color::CYAN << "You will play as a Shade in the next life." << Color::RESET << endl;
             }
             else if (cmd == "d")
             {
+                game.setStartingRace(Player::RaceTypes::DROW);
+                cout << Color::CYAN << "You will play as a Drow in the next life." << Color::RESET << endl;
             }
             else if (cmd == "v")
             {
+                game.setStartingRace(Player::RaceTypes::VAMPIRE);
+                cout << Color::CYAN << "You will play as a Vampire in the next life." << Color::RESET << endl;
             }
             else if (cmd == "g")
             {
+                game.setStartingRace(Player::RaceTypes::GOBLIN);
+                cout << Color::CYAN << "You will play as a Goblin in the next life." << Color::RESET << endl;
             }
             else if (cmd == "t")
             {
+                game.setStartingRace(Player::RaceTypes::TROLL);
+                cout << Color::CYAN << "You will play as a Troll in the next life." << Color::RESET << endl;
             }
 
             // f: stops enemies from moving until this key is pressed again.
@@ -106,6 +117,7 @@ int main(int argc, char *argv[])
             // r: restarts the game. All stats, inventory, and gold are reset. A new race should be selected.
             else if (cmd == "r")
             {
+                game.init();
             }
 
             // q: allows the player to admit defeat and exit the game.
