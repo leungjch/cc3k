@@ -2,5 +2,30 @@
 #include "../item.h"
 #include <string>
 using namespace std;
+// Create a dummy potion
+Potion::Potion() : 
+            Item{"", 'P'}, deltaHp{0}, deltaAtk{0}, deltaDef{0}, isPermanent{false}, description{""} {}
 
-Potion::Potion(string name, int deltaHp, int deltaAtk, int deltaDef, bool isPermanent) : Item{name, 'P'}, deltaHp{deltaHp}, deltaAtk{deltaAtk}, deltaDef{deltaDef}, isPermanent{isPermanent} {}
+Potion::Potion(string name, int deltaHp, int deltaAtk, int deltaDef, bool isPermanent, string description) : 
+            Item{name, 'P'}, deltaHp{deltaHp}, deltaAtk{deltaAtk}, deltaDef{deltaDef}, isPermanent{isPermanent}, description{description} {}
+
+int Potion::getDeltaHp() {
+    return deltaHp;
+}
+
+
+int Potion::getDeltaAtk() {
+    return deltaAtk;
+}
+
+int Potion::getDeltaDef() {
+    return deltaDef;
+}
+
+bool Potion::getPermanent() {
+    return isPermanent;
+}
+
+string Potion::getDescription() {
+    return description;
+}

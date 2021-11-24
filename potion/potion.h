@@ -8,8 +8,18 @@ class Potion : public Item {
     int deltaAtk;
     int deltaDef;
     bool isPermanent;
+    std::string description;
     public:
-    Potion(std::string name, int deltaHp, int deltaAtk, int deltaDef, bool isPermanent);
+    Potion();
+    Potion(std::string name, int deltaHp, int deltaAtk, int deltaDef, bool isPermanent, std::string description);
+    int getDeltaHp();
+    int getDeltaAtk();
+    int getDeltaDef();
+    bool getPermanent();
+    std::string getDescription();
+
+    static const int NUM_POTION_TYPES = 6;
+
 };
 
 #endif
