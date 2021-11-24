@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
             else if (cmd == "q")
             {
                 cout << "Exiting." << endl;
-                break;
+                return 0;
             }
 
             // Render the display after every command

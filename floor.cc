@@ -75,7 +75,7 @@ int Floor::chamberAt(int x, int y) {
         return 3;
     }
     // Chamber 4
-    else if ((x >= 4 && x <= 25) && (y >= 15 && y <=21)) 
+    else if ((x >= 4 && x <= 24) && (y >= 15 && y <=21)) 
     {
         return 4;
     }

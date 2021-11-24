@@ -1,9 +1,17 @@
 #include "cc3k.h"
 #include "player/drow.h"
 #include "potion/restoreHealth.h"
+#include "potion/poisonHealth.h"
+#include "potion/boostAtk.h"
+#include "potion/woundAtk.h"
+#include "potion/boostDef.h"
+#include "potion/woundDef.h"
+
+#include "potion/potion.h"
 #include "stairway.h"
 #include "cell.h"
 #include "utils/color.h"
+
 
 #include <iostream>
 #include <string>
@@ -202,7 +210,50 @@ void CC3K::generatePotions()
     for (int i = 0; i < NUM_POTIONS; i++)
     {
         bool isGenerating = true;
-        auto newPotion = make_shared<RestoreHealth>();
+
+        // Generate a random potion type
+        int potionType = rand() % Potion::NUM_POTION_TYPES + 1;
+
+        auto newPotion = make_shared<Potion>();
+
+        switch (potionType)
+        {
+            case 1:
+            {
+                newPotion = make_shared<RestoreHealth>();
+                break;
+            }
+            case 2:
+            {
+                newPotion = make_shared<PoisonHealth>();
+                break;
+
+            }
+            case 3:
+            {
+                newPotion = make_shared<BoostAtk>();
+                break;
+
+            }
+            case 4:
+            {
+                newPotion = make_shared<WoundAtk>();
+                break;
+            }
+            case 5:
+            {
+                newPotion = make_shared<BoostDef>();
+                break;
+            }
+            case 6:
+            {
+                newPotion = make_shared<WoundDef>();
+                break;
+
+            }
+
+        }
+
 
         // Generate a random chamber number (to ensure each chamber has equal probability)
         int targetChamberNum = theFloor.getRandomChamberNum();
@@ -290,14 +341,13 @@ void CC3K::usePotion(string dir)
     else 
     {
         // Apply the effect to the player
-
-
-
+        thePlayer->applyPotion(thePotions[found]);
+        
+        // Output message
         // E.g. "You used a Potion of Restore Health"
-        cout << Color::BOLDMAGENTA << "You used a " << thePotions[found]->getName() << "." << Color::RESET << endl;
+        cout << Color::BOLDMAGENTA << "You used a " << thePotions[found]->getName() << ". " << thePotions[found]->getDescription() << Color::RESET << endl;
 
-
-        // Erase the potion
+        // Erase the potion from the vector
         thePotions.erase(thePotions.begin()+found);
     }
 }

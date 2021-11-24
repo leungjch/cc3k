@@ -6,7 +6,7 @@
 #include "entity.h"
 
 class Character : public Entity {
-    private:
+    protected:
         int hp;
         int atk;
         int def;
