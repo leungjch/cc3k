@@ -22,7 +22,7 @@ void Player::applyPotion(shared_ptr<Potion> potion) {
 
     // Max HP for all races is the starting HP, except for vampires that have no maximum.
     // Cap the health to startingHp if it exceeds it
-    if (getName() != "vampire") {
+    if (getName() != "Vampire") {
         hp = min(startingHp, hp);
     }
 }

@@ -46,7 +46,6 @@ void CC3K::init()
     // Get the map and read it into a floor
     theFloor.readMap("map.txt");
 
-
     // Generate the player and entities
     generatePlayer();
 
@@ -283,18 +282,7 @@ void CC3K::movePlayer(string dir)
     int newX = newPos.first;
     int newY = newPos.second;
 
-    // Check if the new position is a tile
-    // (i.e. don't move into a wall or empty space)
-    if (isOccupied(newX, newY) || 
-        (theFloor.cellAt(newX, newY).getChar() != Cell::TILE &&
-        theFloor.cellAt(newX, newY).getChar() != Cell::DOOR &&
-        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE))
-    {
-        cout << Color::RED << "You cannot move there." << Color::RESET << endl;
-        return;
-    }
-
-    // Check if the new position is a stairway
+    // Check if the new position is a stairway FIRST
     // In this case, go to next level
     if (newX == theStairway->getX() && newY == theStairway->getY())
     {
@@ -307,6 +295,19 @@ void CC3K::movePlayer(string dir)
 
         return;
     }
+    // Else, not a stairway, we can use isOccupied() properly
+    // Check if the new position is a tile
+    // (i.e. don't move into a wall or empty space)
+    if (isOccupied(newX, newY) || 
+        (theFloor.cellAt(newX, newY).getChar() != Cell::TILE &&
+        theFloor.cellAt(newX, newY).getChar() != Cell::DOOR &&
+        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE))
+    {
+        cout << Color::RED << "You cannot move there." << Color::RESET << endl;
+        return;
+    }
+
+
 
     // Else the new position is valid, move player there
     thePlayer->setX(newX);
