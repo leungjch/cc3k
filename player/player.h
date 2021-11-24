@@ -18,5 +18,14 @@ class Player : public Character {
     Player(int hp, int atk, int def, std::string race);
     void applyPotion(std::shared_ptr<Potion> potion);
     std::string getRace();
+
+    enum RaceTypes {
+      SHADE = 1,
+      DROW, 
+      VAMPIRE,
+      TROLL,
+      GOBLIN
+    };
+
 };
 #endif

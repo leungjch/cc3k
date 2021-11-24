@@ -1,5 +1,11 @@
 #include "cc3k.h"
+#include "player/player.h"
 #include "player/drow.h"
+#include "player/shade.h"
+#include "player/goblin.h"
+#include "player/troll.h"
+#include "player/vampire.h"
+
 #include "potion/restoreHealth.h"
 #include "potion/poisonHealth.h"
 #include "potion/boostAtk.h"
@@ -21,7 +27,7 @@
 
 using namespace std;
 
-CC3K::CC3K() : levelNum{1}, playerGold{0} {}
+CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE} {}
 
 void CC3K::init()
 {
@@ -146,7 +152,35 @@ bool CC3K::isOccupied(int x, int y)
 // Generate a player in a random position in a chamber
 void CC3K::generatePlayer()
 {
-    thePlayer = make_shared<Drow>();
+
+    switch (startingRace) 
+    {
+        case (Player::RaceTypes::SHADE):
+        {
+            thePlayer = make_shared<Shade>();
+            break;
+        }
+        case (Player::RaceTypes::DROW):
+        {
+            thePlayer = make_shared<Drow>();
+            break;
+        }
+        case (Player::RaceTypes::VAMPIRE):
+        {
+            thePlayer = make_shared<Vampire>();
+            break;
+        }
+        case (Player::RaceTypes::GOBLIN):
+        {
+            thePlayer = make_shared<Goblin>();
+            break;
+        }
+        case (Player::RaceTypes::TROLL):
+        {
+            thePlayer = make_shared<Troll>();
+            break;
+        }
+    }
 
     // Select a random chamber number
     int targetChamberNum = theFloor.getRandomChamberNum();
@@ -408,4 +442,9 @@ void CC3K::display()
     // Print out action (for any actions) that occur
     cout << "Action: " << endl;
 
+}
+
+void CC3K::setStartingRace(int newRace)
+{
+    startingRace = newRace;
 }
