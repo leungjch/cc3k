@@ -7,11 +7,14 @@
 #include "utils/color.h"
 #include "player/player.h"
 #include "cc3k.h"
+#include "sigil-linux-gcc/include/sl.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+    slWindow(400, 400, "Simple SIGIL Example", false);
+
 
     // Set seed
     // Deterministic seed for testing
