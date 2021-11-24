@@ -1,8 +1,10 @@
 #include "cc3k.h"
 #include "player/drow.h"
+#include "potion/restoreHealth.h"
 #include "stairway.h"
 #include "cell.h"
 #include "utils/color.h"
+
 #include <iostream>
 #include <string>
 #include <iterator>
@@ -200,7 +202,7 @@ void CC3K::generatePotions()
     for (int i = 0; i < NUM_POTIONS; i++)
     {
         bool isGenerating = true;
-        auto newPotion = make_shared<Potion>();
+        auto newPotion = make_shared<RestoreHealth>();
 
         // Generate a random chamber number (to ensure each chamber has equal probability)
         int targetChamberNum = theFloor.getRandomChamberNum();
@@ -232,9 +234,10 @@ void CC3K::movePlayer(string dir)
 
     // Check if the new position is a tile
     // (i.e. don't move into a wall or empty space)
-    if (theFloor.cellAt(newX, newY).getChar() != Cell::TILE &&
+    if (isOccupied(newX, newY) || 
+        (theFloor.cellAt(newX, newY).getChar() != Cell::TILE &&
         theFloor.cellAt(newX, newY).getChar() != Cell::DOOR &&
-        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE)
+        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE))
     {
         cout << Color::RED << "You cannot move there." << Color::RESET << endl;
         return;
@@ -280,7 +283,7 @@ void CC3K::usePotion(string dir)
     // If we did not find a potion at that location
     if (found == -1) 
     {
-        cout << Color::RED << "There is no potion in that direction." << Color::RESET;
+        cout << Color::RED << "There is no potion in that direction." << Color::RESET << endl;
         return;
     }
     // Potion is found, apply the potion and erase it from the potion vector
@@ -288,10 +291,14 @@ void CC3K::usePotion(string dir)
     {
         // Apply the effect to the player
 
+
+
+        // E.g. "You used a Potion of Restore Health"
+        cout << Color::BOLDMAGENTA << "You used a " << thePotions[found]->getName() << "." << Color::RESET << endl;
+
+
         // Erase the potion
         thePotions.erase(thePotions.begin()+found);
-
-        
     }
 }
 

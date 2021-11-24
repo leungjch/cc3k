@@ -41,7 +41,28 @@ int main(int argc, char *argv[])
             // Player movement
             if (cmd == "no" || cmd == "so" || cmd == "ea" || cmd == "we" || cmd == "ne" || cmd == "se" || cmd == "sw")
             {
-                game.movePlayer(cmd);
+                if (iss.eof())
+                {
+                    game.movePlayer(cmd);
+                }
+                // BONUS FEATURE: specify a number to repeatedly move
+                else
+                {
+                    string numRepeat;
+                    iss >> numRepeat;
+                    try
+                    {
+                        for (int i = 0; i < stoi(numRepeat); i++)
+                        {
+                            game.movePlayer(cmd);
+                        }
+                    }
+                    // Exception handling (if numRepeat cannot cast to an int)
+                    catch (const std::invalid_argument &e)
+                    {
+                        game.movePlayer(cmd);
+                    }
+                }
             }
 
             // u direction: uses the potion indicated by the direction (e.g. no, so, ea).

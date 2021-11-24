@@ -2,4 +2,8 @@
 #include "entity.h"
 #include <string>
 using namespace std; 
-Item::Item(std::string name, char symbol) : Entity{symbol}, name{name} {}
+Item::Item(string name, char symbol) : Entity{symbol}, name{name} {}
+
+string Item::getName() {
+    return name;
+}

@@ -9,6 +9,7 @@ class Item : public Entity {
     public:
     Item(std::string name, char symbol);
     void activate();
+    std::string getName();
 
 };
 
