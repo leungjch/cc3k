@@ -13,6 +13,14 @@ class Xwindow {
 
  public:
   XImage *theImg;
+  XImage *floorImg;
+  XImage *pcImg;
+  XImage *potionImg;
+  XImage *passageImg;
+  XImage *stairwayImg;
+  XImage *wallImg;
+  XImage *doorImg;
+
 
   Xwindow(int width=500, int height=500);  // Constructor; displays the window.
   ~Xwindow();                              // Destructor; destroys the window.

@@ -14,7 +14,7 @@ class GraphicalObserver : public Observer
     std::shared_ptr<CC3K> subject;
     int width;
     int height;
-    const int SCALE = 10;
+    const int SCALE = 16;
     std::shared_ptr<Xwindow> theWindow;
 public:
     GraphicalObserver(std::shared_ptr<CC3K> subject, int width, int height);

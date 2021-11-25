@@ -44,34 +44,44 @@ void GraphicalObserver::notify()
     {
       char val = subject->getState(j, i);
       unsigned long col = Xwindow::White;
-      if (val == '.')
+
+      if (val == Cell::WALL_HORIZONTAL || val == Cell::WALL_VERTICAL)
       {
-        col = Xwindow::Green;
-      }
-      else if (isLower(val))
-      {
-        col = Xwindow::Red;
+        theWindow->drawImage(theWindow->wallImg, j*SCALE, i*SCALE);
+
       }
       else if (val == '@')
       {
-        col = Xwindow::Blue;
+        theWindow->drawImage(theWindow->pcImg, j*SCALE, i*SCALE);
+
       }
-      else if (val == '#') 
+      else if (val == Cell::PASSAGE) 
       {
         col = Xwindow::Green;
+        theWindow->drawImage(theWindow->passageImg, j*SCALE, i*SCALE);
       }
+      else if (val == Cell::TILE)
+      {
+        theWindow->drawImage(theWindow->floorImg, j*SCALE, i*SCALE);
+      }
+      else if (val == Cell::DOOR) 
+      {
+        col = Xwindow::Green;
+        theWindow->drawImage(theWindow->doorImg, j*SCALE, i*SCALE);
+      }
+      else if (val == 'P') 
+      {
+        theWindow->drawImage(theWindow->potionImg, j*SCALE, i*SCALE);
+      }
+      else if (val == '\\')
+      {
+        theWindow->drawImage(theWindow->stairwayImg, j*SCALE, i*SCALE);
+      }
+
       else if (val == ' ')
       {
-        col = Xwindow::White;
-      }
-      else
-      {
         col = Xwindow::Black;
-      }
-      // Render the square
-      theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
-      if (col == Xwindow::Black) {
-        theWindow->drawImage(theWindow->theImg, j*SCALE, i*SCALE);
+        theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
 
       }
     }
