@@ -7,9 +7,12 @@
 #include <vector>
 #include <string>
 #include <memory>
-class CC3K {
+#include "display/observer.h"
+#include "display/subject.h"
+class CC3K : public Subject {
     int levelNum;
-    Floor theFloor;
+    std::shared_ptr<Floor> theFloor;
+    std::vector<std::shared_ptr<Observer>> observers;
 
     std::shared_ptr<Stairway> theStairway;
 
@@ -44,9 +47,12 @@ class CC3K {
     public:
         void init();
         void display();
+        void render();
         void movePlayer(std::string dir);
         void usePotion(std::string dir);
         CC3K();
         void setStartingRace(int newRace);
+        char getState(int x, int y) override;
+        std::string getGameStatus();
 };
 #endif
