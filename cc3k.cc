@@ -20,7 +20,6 @@
 #include "cell.h"
 #include "utils/color.h"
 
-
 #include <iostream>
 #include <string>
 #include <iterator>
@@ -63,11 +62,9 @@ void CC3K::init()
     // Generate potions
     generatePotions();
 
-
     // Generate gold
 
     // Generate enemies
-
 }
 
 // Helper function to compute new position after moving one unit in the specified direction
@@ -112,15 +109,15 @@ pair<int, int> getPosAtDirection(int x, int y, string dir)
         dY = 1;
         dX = -1;
     }
-    else {
+    else
+    {
         cerr << "Invalid direction" << endl;
     }
-    return make_pair(x+dX, y+dY);
-
+    return make_pair(x + dX, y + dY);
 }
 
 // Returns true if an entity is occupying a cell
-bool CC3K::isOccupied(int x, int y) 
+bool CC3K::isOccupied(int x, int y)
 {
     // Check the player coordinates
     if (thePlayer->getX() == x && thePlayer->getY() == y)
@@ -135,9 +132,9 @@ bool CC3K::isOccupied(int x, int y)
     }
 
     // Check all potions
-    for (auto potion : thePotions) 
+    for (auto potion : thePotions)
     {
-        if (potion->getX() == x && potion->getY() == y) 
+        if (potion->getX() == x && potion->getY() == y)
         {
             return true;
         }
@@ -155,33 +152,33 @@ bool CC3K::isOccupied(int x, int y)
 void CC3K::generatePlayer()
 {
 
-    switch (startingRace) 
+    switch (startingRace)
     {
-        case (Player::RaceTypes::SHADE):
-        {
-            thePlayer = make_shared<Shade>();
-            break;
-        }
-        case (Player::RaceTypes::DROW):
-        {
-            thePlayer = make_shared<Drow>();
-            break;
-        }
-        case (Player::RaceTypes::VAMPIRE):
-        {
-            thePlayer = make_shared<Vampire>();
-            break;
-        }
-        case (Player::RaceTypes::GOBLIN):
-        {
-            thePlayer = make_shared<Goblin>();
-            break;
-        }
-        case (Player::RaceTypes::TROLL):
-        {
-            thePlayer = make_shared<Troll>();
-            break;
-        }
+    case (Player::RaceTypes::SHADE):
+    {
+        thePlayer = make_shared<Shade>();
+        break;
+    }
+    case (Player::RaceTypes::DROW):
+    {
+        thePlayer = make_shared<Drow>();
+        break;
+    }
+    case (Player::RaceTypes::VAMPIRE):
+    {
+        thePlayer = make_shared<Vampire>();
+        break;
+    }
+    case (Player::RaceTypes::GOBLIN):
+    {
+        thePlayer = make_shared<Goblin>();
+        break;
+    }
+    case (Player::RaceTypes::TROLL):
+    {
+        thePlayer = make_shared<Troll>();
+        break;
+    }
     }
 
     // Select a random chamber number
@@ -201,10 +198,8 @@ void CC3K::generatePlayer()
             thePlayer->setY(randY);
             break;
         }
-
     }
     cout << Color::GREEN << "Player character has spawned. " << Color::RESET << endl;
-
 }
 
 void CC3K::generateStairway()
@@ -217,7 +212,8 @@ void CC3K::generateStairway()
 
     // Generate a random chamber number (to ensure each chamber has equal probability)
     // Ensure it is NOT EQUAL to player chamber
-    int targetChamberNum = theFloor->getRandomChamberNum();;
+    int targetChamberNum = theFloor->getRandomChamberNum();
+    ;
     while (targetChamberNum == playerChamberNum)
     {
         targetChamberNum = theFloor->getRandomChamberNum();
@@ -239,7 +235,7 @@ void CC3K::generateStairway()
     }
 }
 
-void CC3K::generatePotions() 
+void CC3K::generatePotions()
 {
     thePotions.clear();
     for (int i = 0; i < NUM_POTIONS; i++)
@@ -253,42 +249,37 @@ void CC3K::generatePotions()
 
         switch (potionType)
         {
-            case 1:
-            {
-                newPotion = make_shared<RestoreHealth>();
-                break;
-            }
-            case 2:
-            {
-                newPotion = make_shared<PoisonHealth>();
-                break;
-
-            }
-            case 3:
-            {
-                newPotion = make_shared<BoostAtk>();
-                break;
-
-            }
-            case 4:
-            {
-                newPotion = make_shared<WoundAtk>();
-                break;
-            }
-            case 5:
-            {
-                newPotion = make_shared<BoostDef>();
-                break;
-            }
-            case 6:
-            {
-                newPotion = make_shared<WoundDef>();
-                break;
-
-            }
-
+        case 1:
+        {
+            newPotion = make_shared<RestoreHealth>();
+            break;
         }
-
+        case 2:
+        {
+            newPotion = make_shared<PoisonHealth>();
+            break;
+        }
+        case 3:
+        {
+            newPotion = make_shared<BoostAtk>();
+            break;
+        }
+        case 4:
+        {
+            newPotion = make_shared<WoundAtk>();
+            break;
+        }
+        case 5:
+        {
+            newPotion = make_shared<BoostDef>();
+            break;
+        }
+        case 6:
+        {
+            newPotion = make_shared<WoundDef>();
+            break;
+        }
+        }
 
         // Generate a random chamber number (to ensure each chamber has equal probability)
         int targetChamberNum = theFloor->getRandomChamberNum();
@@ -313,7 +304,7 @@ void CC3K::generatePotions()
 
 void CC3K::movePlayer(string dir)
 {
-    pair<int,int> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<int, int> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
     // Compute the new position
     int newX = newPos.first;
     int newY = newPos.second;
@@ -334,16 +325,14 @@ void CC3K::movePlayer(string dir)
     // Else, not a stairway, we can use isOccupied() properly
     // Check if the new position is a tile
     // (i.e. don't move into a wall or empty space)
-    if (isOccupied(newX, newY) || 
+    if (isOccupied(newX, newY) ||
         (theFloor->cellAt(newX, newY).getChar() != Cell::TILE &&
-        theFloor->cellAt(newX, newY).getChar() != Cell::DOOR &&
-        theFloor->cellAt(newX, newY).getChar() != Cell::PASSAGE))
+         theFloor->cellAt(newX, newY).getChar() != Cell::DOOR &&
+         theFloor->cellAt(newX, newY).getChar() != Cell::PASSAGE))
     {
         cout << Color::RED << "You cannot move there." << Color::RESET << endl;
         return;
     }
-
-
 
     // Else the new position is valid, move player there
     thePlayer->setX(newX);
@@ -353,14 +342,15 @@ void CC3K::movePlayer(string dir)
 }
 
 // Use a potion in the direction specified (from the player)
-void CC3K::usePotion(string dir) 
+void CC3K::usePotion(string dir)
 {
     // Get the coordinates to check
     pair<int, int> checkPotionPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
 
     // Check if there exists a potion in the specified direction
     int found = -1;
-    for (int i = 0; i < thePotions.size(); i++) {
+    for (int i = 0; i < thePotions.size(); i++)
+    {
         if (thePotions[i]->getX() == checkPotionPos.first && thePotions[i]->getY() == checkPotionPos.second)
         {
             found = i;
@@ -369,86 +359,32 @@ void CC3K::usePotion(string dir)
     }
 
     // If we did not find a potion at that location
-    if (found == -1) 
+    if (found == -1)
     {
         cout << Color::RED << "There is no potion in that direction." << Color::RESET << endl;
         return;
     }
     // Potion is found, apply the potion and erase it from the potion vector
-    else 
+    else
     {
         // Apply the effect to the player
         thePlayer->applyPotion(thePotions[found]);
-        
+
         // Output message
         // E.g. "You used a Potion of Restore Health"
         cout << Color::BOLDMAGENTA << "You used a " << thePotions[found]->getName() << ". " << thePotions[found]->getDescription() << Color::RESET << endl;
 
         // Erase the potion from the vector
-        thePotions.erase(thePotions.begin()+found);
+        thePotions.erase(thePotions.begin() + found);
     }
 }
-void CC3K::render() {
+void CC3K::render()
+{
     notifyObservers();
 }
 
-void CC3K::display()
+string CC3K::getGameStatus()
 {
-    /* Rendering algorithm:
-     *   Copy over the environment to the display (which will overwrite the old display)
-     *   Loop through all entities and overwrite the display with each entity's position
-     *   Print out the new display
-     */
-
-
-    theDisplay = theFloor->getEnvironmentChar();
-
-    // Place the player's position
-    theDisplay[thePlayer->getY()][thePlayer->getX()] = thePlayer->getSymbol();
-
-    // Draw the staircase
-    theDisplay[theStairway->getY()][theStairway->getX()] = theStairway->getSymbol();
-
-    // Draw the potions
-    for (auto potion : thePotions)
-    {
-        theDisplay[potion->getY()][potion->getX()] = potion->getSymbol();
-    }
-
-    // TODO: Draw the gold piles
-
-    // TODO: Draw enemies
-
-    // Print out the display
-    for (int i = 0; i < theDisplay.size(); i++)
-    {
-        for (int j = 0; j < theDisplay[0].size(); j++)
-        {
-            cout << theDisplay[i][j];
-        }
-        cout << endl;
-    }
-
-    // Print out race
-    cout << "Race: " << thePlayer->getName();
-
-    // Print out player gold
-    cout << " Gold: " << playerGold << endl;
-
-    // Print out HP
-    cout << "HP: " << thePlayer->getHP() << endl;
-
-    // Print out Atk
-    cout << "Atk: " << thePlayer->getAtk() << endl;
-
-    // Print out Def
-    cout << "Def: " << thePlayer->getDef() << endl;
-
-    // Print out action (for any actions) that occur
-    cout << "Action: " << endl;
-}
-
-string CC3K::getGameStatus() {
     string ret = "";
     ret += "Race: " + thePlayer->getName() + " ";
 
@@ -459,19 +395,18 @@ string CC3K::getGameStatus() {
     ret += "HP: " + to_string(thePlayer->getHP()) + "\n";
 
     // Print out Atk
-    ret += "Atk: " + to_string(thePlayer->getAtk()) +"\n";
+    ret += "Atk: " + to_string(thePlayer->getAtk()) + "\n";
 
     // Print out Def
-    ret += "Def: " + to_string(thePlayer->getDef()) +"\n";
+    ret += "Def: " + to_string(thePlayer->getDef()) + "\n";
 
     // Print out action (for any actions) that occur
     ret += "Action:";
 
     return ret;
-
 }
 
-char CC3K::getState(int x, int y) 
+char CC3K::getState(int x, int y)
 {
     // Check the player coordinates
     if (thePlayer->getX() == x && thePlayer->getY() == y)
@@ -486,9 +421,9 @@ char CC3K::getState(int x, int y)
     }
 
     // Check all potions
-    for (auto potion : thePotions) 
+    for (auto potion : thePotions)
     {
-        if (potion->getX() == x && potion->getY() == y) 
+        if (potion->getX() == x && potion->getY() == y)
         {
             return potion->getSymbol();
         }
@@ -498,12 +433,66 @@ char CC3K::getState(int x, int y)
     // TODO: Check enemies
 
     // Else, return the floor element
-    return theFloor->cellAt(x,y).getChar();
-    
-
+    return theFloor->cellAt(x, y).getChar();
 }
 
 void CC3K::setStartingRace(int newRace)
 {
     startingRace = newRace;
+}
+
+void CC3K::display()
+{
+    // DEPRECATED (use TextObserver and GraphicalObserver)
+    // /* Rendering algorithm:
+    //  *   Copy over the environment to the display (which will overwrite the old display)
+    //  *   Loop through all entities and overwrite the display with each entity's position
+    //  *   Print out the new display
+    //  */
+
+    // theDisplay = theFloor->getEnvironmentChar();
+
+    // // Place the player's position
+    // theDisplay[thePlayer->getY()][thePlayer->getX()] = thePlayer->getSymbol();
+
+    // // Draw the staircase
+    // theDisplay[theStairway->getY()][theStairway->getX()] = theStairway->getSymbol();
+
+    // // Draw the potions
+    // for (auto potion : thePotions)
+    // {
+    //     theDisplay[potion->getY()][potion->getX()] = potion->getSymbol();
+    // }
+
+    // // TODO: Draw the gold piles
+
+    // // TODO: Draw enemies
+
+    // // Print out the display
+    // for (int i = 0; i < theDisplay.size(); i++)
+    // {
+    //     for (int j = 0; j < theDisplay[0].size(); j++)
+    //     {
+    //         cout << theDisplay[i][j];
+    //     }
+    //     cout << endl;
+    // }
+
+    // // Print out race
+    // cout << "Race: " << thePlayer->getName();
+
+    // // Print out player gold
+    // cout << " Gold: " << playerGold << endl;
+
+    // // Print out HP
+    // cout << "HP: " << thePlayer->getHP() << endl;
+
+    // // Print out Atk
+    // cout << "Atk: " << thePlayer->getAtk() << endl;
+
+    // // Print out Def
+    // cout << "Def: " << thePlayer->getDef() << endl;
+
+    // // Print out action (for any actions) that occur
+    // cout << "Action: " << endl;
 }

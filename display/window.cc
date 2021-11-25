@@ -56,12 +56,35 @@ Xwindow::Xwindow(int width, int height) {
 
   XSynchronize(d,True);
 
-  XImage *img;
-  if (XpmReadFileToImage (d, "walls.xpm", &img, NULL, NULL)) {
+  if (XpmReadFileToImage (d, "art/wall.xpm", &wallImg, NULL, NULL)) {
       printf ("Error reading file\n");
       exit (1);
   }
-  theImg = img;
+  if (XpmReadFileToImage (d, "art/passageway.xpm", &passageImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/pc.xpm", &pcImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/potion.xpm", &potionImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/stairway.xpm", &stairwayImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/floor.xpm", &floorImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/door.xpm", &doorImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+
 
   usleep(100);
 }
