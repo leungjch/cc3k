@@ -15,6 +15,8 @@
 
 #include "potion/potion.h"
 #include "stairway.h"
+#include "floor.h"
+
 #include "cell.h"
 #include "utils/color.h"
 
@@ -27,7 +29,7 @@
 
 using namespace std;
 
-CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE} {}
+CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, theFloor{make_shared<Floor>()} {}
 
 void CC3K::init()
 {
@@ -50,7 +52,7 @@ void CC3K::init()
     */
 
     // Get the map and read it into a floor
-    theFloor.readMap("map.txt");
+    theFloor->readMap("map.txt");
 
     // Generate the player and entities
     generatePlayer();
@@ -183,14 +185,14 @@ void CC3K::generatePlayer()
     }
 
     // Select a random chamber number
-    int targetChamberNum = theFloor.getRandomChamberNum();
+    int targetChamberNum = theFloor->getRandomChamberNum();
 
     while (true)
     {
         // Get random coordinates
-        int randX = theFloor.getRandomX();
-        int randY = theFloor.getRandomY();
-        int chamberNum = theFloor.chamberAt(randX, randY);
+        int randX = theFloor->getRandomX();
+        int randY = theFloor->getRandomY();
+        int chamberNum = theFloor->chamberAt(randX, randY);
 
         // Check the chamber
         if (chamberNum == targetChamberNum)
@@ -211,21 +213,21 @@ void CC3K::generateStairway()
     // Thus we only need to check collision with player
     theStairway = make_shared<Stairway>();
 
-    int playerChamberNum = theFloor.chamberAt(thePlayer->getX(), thePlayer->getY());
+    int playerChamberNum = theFloor->chamberAt(thePlayer->getX(), thePlayer->getY());
 
     // Generate a random chamber number (to ensure each chamber has equal probability)
     // Ensure it is NOT EQUAL to player chamber
-    int targetChamberNum = theFloor.getRandomChamberNum();;
+    int targetChamberNum = theFloor->getRandomChamberNum();;
     while (targetChamberNum == playerChamberNum)
     {
-        targetChamberNum = theFloor.getRandomChamberNum();
+        targetChamberNum = theFloor->getRandomChamberNum();
     }
     while (true)
     {
         // Get random coordinates and a random chamber number
-        int randX = theFloor.getRandomX();
-        int randY = theFloor.getRandomY();
-        int chamberNum = theFloor.chamberAt(randX, randY);
+        int randX = theFloor->getRandomX();
+        int randY = theFloor->getRandomY();
+        int chamberNum = theFloor->chamberAt(randX, randY);
 
         // Check that chamber is not same as the chamber that player spawned in
         if (chamberNum == targetChamberNum && chamberNum != playerChamberNum)
@@ -289,14 +291,14 @@ void CC3K::generatePotions()
 
 
         // Generate a random chamber number (to ensure each chamber has equal probability)
-        int targetChamberNum = theFloor.getRandomChamberNum();
+        int targetChamberNum = theFloor->getRandomChamberNum();
 
         while (isGenerating)
         {
             // Get random coordinates and its associated chamber
-            int randX = theFloor.getRandomX();
-            int randY = theFloor.getRandomY();
-            int chamberNum = theFloor.chamberAt(randX, randY);
+            int randX = theFloor->getRandomX();
+            int randY = theFloor->getRandomY();
+            int chamberNum = theFloor->chamberAt(randX, randY);
 
             if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
             {
@@ -333,9 +335,9 @@ void CC3K::movePlayer(string dir)
     // Check if the new position is a tile
     // (i.e. don't move into a wall or empty space)
     if (isOccupied(newX, newY) || 
-        (theFloor.cellAt(newX, newY).getChar() != Cell::TILE &&
-        theFloor.cellAt(newX, newY).getChar() != Cell::DOOR &&
-        theFloor.cellAt(newX, newY).getChar() != Cell::PASSAGE))
+        (theFloor->cellAt(newX, newY).getChar() != Cell::TILE &&
+        theFloor->cellAt(newX, newY).getChar() != Cell::DOOR &&
+        theFloor->cellAt(newX, newY).getChar() != Cell::PASSAGE))
     {
         cout << Color::RED << "You cannot move there." << Color::RESET << endl;
         return;
@@ -386,6 +388,9 @@ void CC3K::usePotion(string dir)
         thePotions.erase(thePotions.begin()+found);
     }
 }
+void CC3K::render() {
+    notifyObservers();
+}
 
 void CC3K::display()
 {
@@ -396,7 +401,7 @@ void CC3K::display()
      */
 
 
-    theDisplay = theFloor.getEnvironmentChar();
+    theDisplay = theFloor->getEnvironmentChar();
 
     // Place the player's position
     theDisplay[thePlayer->getY()][thePlayer->getX()] = thePlayer->getSymbol();
@@ -441,6 +446,60 @@ void CC3K::display()
 
     // Print out action (for any actions) that occur
     cout << "Action: " << endl;
+}
+
+string CC3K::getGameStatus() {
+    string ret = "";
+    ret += "Race: " + thePlayer->getName() + " ";
+
+    // Print out player gold
+    ret += "Gold: " + to_string(playerGold) + "\n";
+
+    // Print out HP
+    ret += "HP: " + to_string(thePlayer->getHP()) + "\n";
+
+    // Print out Atk
+    ret += "Atk: " + to_string(thePlayer->getAtk()) +"\n";
+
+    // Print out Def
+    ret += "Def: " + to_string(thePlayer->getDef()) +"\n";
+
+    // Print out action (for any actions) that occur
+    ret += "Action:";
+
+    return ret;
+
+}
+
+char CC3K::getState(int x, int y) 
+{
+    // Check the player coordinates
+    if (thePlayer->getX() == x && thePlayer->getY() == y)
+    {
+        return thePlayer->getSymbol();
+    }
+
+    // Check the staircase coordinates
+    if (theStairway->getX() == x && theStairway->getY() == y)
+    {
+        return theStairway->getSymbol();
+    }
+
+    // Check all potions
+    for (auto potion : thePotions) 
+    {
+        if (potion->getX() == x && potion->getY() == y) 
+        {
+            return potion->getSymbol();
+        }
+    }
+
+    // TODO: Check gold
+    // TODO: Check enemies
+
+    // Else, return the floor element
+    return theFloor->cellAt(x,y).getChar();
+    
 
 }
 
