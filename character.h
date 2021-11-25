@@ -19,6 +19,9 @@ class Character : public Entity {
         int getHP();
         int getAtk();
         int getDef();
+        void setHP(int newHp);
+        void setAtk(int newAtk);
+        void setDef(int newDef);
         std::string getName();
 };
 #endif

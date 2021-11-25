@@ -6,6 +6,6 @@ WoundDef::WoundDef() : Potion{
     0, 
     0, 
     -5, 
-    true,
+    false,
     "You lose 5 Def on this level."}
 {}

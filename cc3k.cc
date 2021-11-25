@@ -30,7 +30,17 @@ using namespace std;
 
 CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, theFloor{make_shared<Floor>()} {}
 
-void CC3K::init()
+void CC3K::newGame()
+{
+    levelNum = 1;
+    // Generate the player
+    generatePlayer();
+
+    // Generate the level
+    newLevel();
+}
+
+void CC3K::newLevel()
 {
     /*
         20 enemies are spawned per floor (this number does not include dragons). Every
@@ -53,8 +63,14 @@ void CC3K::init()
     // Get the map and read it into a floor
     theFloor->readMap("map.txt");
 
-    // Generate the player and entities
-    generatePlayer();
+    // If we're not on the first level, the player may have some permanent potions
+    // So we should apply them and discard the effects of the temporary potions
+    thePlayer->applyPermanentPotions();
+
+
+    // Place the player at a random chamber
+    placePlayer();
+
 
     // Generate stairway
     generateStairway();
@@ -65,6 +81,31 @@ void CC3K::init()
     // Generate gold
 
     // Generate enemies
+
+}
+
+void CC3K::placePlayer()
+{
+    // Select a random chamber number
+    int targetChamberNum = theFloor->getRandomChamberNum();
+
+    while (true)
+    {
+        // Get random coordinates
+        int randX = theFloor->getRandomX();
+        int randY = theFloor->getRandomY();
+        int chamberNum = theFloor->chamberAt(randX, randY);
+
+        // Check the chamber
+        if (chamberNum == targetChamberNum)
+        {
+            thePlayer->setX(randX);
+            thePlayer->setY(randY);
+            break;
+        }
+    }
+    cout << Color::GREEN << "Player character has spawned. " << Color::RESET << endl;
+
 }
 
 // Helper function to compute new position after moving one unit in the specified direction
@@ -181,25 +222,6 @@ void CC3K::generatePlayer()
     }
     }
 
-    // Select a random chamber number
-    int targetChamberNum = theFloor->getRandomChamberNum();
-
-    while (true)
-    {
-        // Get random coordinates
-        int randX = theFloor->getRandomX();
-        int randY = theFloor->getRandomY();
-        int chamberNum = theFloor->chamberAt(randX, randY);
-
-        // Check the chamber
-        if (chamberNum == targetChamberNum)
-        {
-            thePlayer->setX(randX);
-            thePlayer->setY(randY);
-            break;
-        }
-    }
-    cout << Color::GREEN << "Player character has spawned. " << Color::RESET << endl;
 }
 
 void CC3K::generateStairway()
@@ -314,7 +336,7 @@ void CC3K::movePlayer(string dir)
     if (newX == theStairway->getX() && newY == theStairway->getY())
     {
         // Respawn everything
-        init();
+        newLevel();
         // Increase level number
         levelNum += 1;
 
@@ -443,7 +465,7 @@ void CC3K::setStartingRace(int newRace)
 
 void CC3K::display()
 {
-    // DEPRECATED (use TextObserver and GraphicalObserver)
+    // DEPRECATED (use TextObserver and GraphicalObserver and CC3K->render())
     // /* Rendering algorithm:
     //  *   Copy over the environment to the display (which will overwrite the old display)
     //  *   Loop through all entities and overwrite the display with each entity's position

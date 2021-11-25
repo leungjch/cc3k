@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     game->attach(textObserver);
     game->attach(graphicalObserver);
-    game->init();
+    game->newGame();
 
     string cmdLine;
 
@@ -127,12 +127,13 @@ int main(int argc, char *argv[])
             // f: stops enemies from moving until this key is pressed again.
             else if (cmd == "f")
             {
+
             }
 
             // r: restarts the game-> All stats, inventory, and gold are reset. A new race should be selected.
             else if (cmd == "r")
             {
-                game->init();
+                game->newLevel();
             }
 
             // q: allows the player to admit defeat and exit the game->

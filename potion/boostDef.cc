@@ -6,6 +6,6 @@ BoostDef::BoostDef() : Potion{
     0, 
     0, 
     5, 
-    true,
+    false,
     "You gain 5 Def on this level."}
 {}

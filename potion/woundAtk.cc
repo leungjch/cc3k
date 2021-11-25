@@ -6,6 +6,6 @@ WoundAtk::WoundAtk() : Potion{
     0, 
     -5, 
     0, 
-    true,
+    false,
     "You lose 5 Atk on this level."}
 {}
