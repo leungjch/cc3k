@@ -13,5 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install libxpm-dev
+      run: sudo apt install libxpm-dev
     - name: make
       run: make
