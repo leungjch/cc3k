@@ -41,11 +41,13 @@ class CC3K : public Subject {
     bool isOccupied(int x, int y);
     
     void generatePlayer();
+    void placePlayer();
     void generateStairway();
     void generatePotions();
 
     public:
-        void init();
+        void newGame();
+        void newLevel();
         void display();
         void render();
         void movePlayer(std::string dir);

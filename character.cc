@@ -34,3 +34,17 @@ int Character::getDef() {
 string Character::getName() {
     return name;
 }
+
+void Character::setHP(int newHP)
+{
+    hp = newHP;
+}
+
+void Character::setDef(int newDef)
+{
+    def = newDef;
+}
+void Character::setAtk(int newAtk)
+{
+    atk = newAtk;
+}

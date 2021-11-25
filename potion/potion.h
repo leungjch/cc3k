@@ -20,6 +20,15 @@ class Potion : public Item {
 
     static const int NUM_POTION_TYPES = 6;
 
+    enum PotionTypes {
+        RestoreHealth = 1,
+        PoisonHealth,
+        BoostAtk,
+        WoundAtk,
+        BoostDef,
+        WoundDef
+    };
+
 };
 
 #endif
