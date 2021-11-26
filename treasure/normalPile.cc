@@ -1,2 +1,2 @@
 #include "normalPile.h"
-NormalPile::NormalPile() : Gold{"Medium gold", 2} {}
+NormalPile::NormalPile() : Gold{"Medium Gold Pile", 2} {}

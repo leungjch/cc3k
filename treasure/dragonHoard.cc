@@ -1,2 +1,2 @@
 #include "dragonHoard.h"
-DragonHoard::DragonHoard() : Gold{"Dragon hoard", 6} {}
+DragonHoard::DragonHoard() : Gold{"Dragon Hoard", 6} {}

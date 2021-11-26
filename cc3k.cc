@@ -447,6 +447,13 @@ void CC3K::movePlayer(string dir)
         // Add the gold to player
         playerGold += theGold[foundGold]->getValue();
 
+        // Add the message
+        messages.emplace_back("PC picks up a " + 
+            theGold[foundGold]->getName() + " worth " + 
+            to_string(theGold[foundGold]->getValue()) + " gold.", 
+            Color::GREEN);
+
+
         // Remove the gold from the map
         theGold.erase(theGold.begin()+foundGold);
 
@@ -498,7 +505,7 @@ void CC3K::usePotion(string dir)
     // If we did not find a potion at that location
     if (found == -1)
     {
-        messages.emplace_back("There is no potion in that direction.", Color::RESET);
+        messages.emplace_back("There is no potion in that direction.", Color::RED);
         return;
     }
     // Potion is found, apply the potion and erase it from the potion vector

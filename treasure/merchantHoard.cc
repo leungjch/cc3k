@@ -1,2 +1,2 @@
 #include "merchantHoard.h"
-MerchantHoard::MerchantHoard() : Gold{"Merchant hoard", 4} {}
+MerchantHoard::MerchantHoard() : Gold{"Merchant Hoard", 4} {}
