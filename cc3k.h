@@ -65,7 +65,7 @@ class CC3K : public Subject {
         CC3K();
         ~CC3K();
         void setStartingRace(int newRace);
-        char getState(int x, int y) override;
+        std::pair<char,std::string> getState(int x, int y) override;
         std::string getGameStatus();
         std::vector<Message> getMessages();
 };
