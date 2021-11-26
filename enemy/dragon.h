@@ -5,6 +5,6 @@
 class Dragon : public Enemy {
     public:
     Dragon();
-    void attack(std::shared_ptr<Character> defender) override;
+    int attack(std::shared_ptr<Character> defender) override;
 };
 #endif

@@ -1,10 +1,10 @@
-#ifndef HUMAN_H
-#define HUMAN_H
+#ifndef ELF_H
+#define ELF_H
 #include "enemy.h"
 #include <memory>
-class Human : public Enemy {
+class Elf : public Enemy {
     public:
-    Human();
+    Elf();
     int attack(std::shared_ptr<Character> defender) override;
 };
 #endif

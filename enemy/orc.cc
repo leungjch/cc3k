@@ -6,11 +6,6 @@ using namespace std;
 
 Orc::Orc() : Enemy{180, 30, 25, true, 'O', "Orc"} {}
 
-// void Orc::move(int dx, int dy) {
-//     // Default movement
-//     Enemy::move(0,0);
-// }
-
 int Orc::attack(std::shared_ptr<Character> defender) {
     int dmg = 0;
     // Check that the defender is in range
@@ -22,4 +17,5 @@ int Orc::attack(std::shared_ptr<Character> defender) {
     // Decrement the health
     defender->setHP(defender->getHP()-dmg);
     return dmg;
+
 }

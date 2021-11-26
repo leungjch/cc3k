@@ -15,6 +15,7 @@ using namespace std;
 void Floor::readMap(string filename) {
 
     // Reset the environment (this is necessary if we reset the level)
+    
     environment.clear();
 
     string fileStr;

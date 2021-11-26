@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
             // f: stops enemies from moving until this key is pressed again.
             else if (cmd == "f")
             {
-
+                game->toggleStopEnemies();
             }
 
             // r: restarts the game-> All stats, inventory, and gold are reset. A new race should be selected.

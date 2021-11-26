@@ -5,14 +5,13 @@
 using namespace std;
 
 Enemy::Enemy(int startingHp, int startingAtk, int startingDef, bool hostile, char symbol, std::string name) :
-    Character{startingHp, startingAtk, startingDef, symbol, name, Color::RED}, hostile{hostile} {}
+    Character{startingHp, startingAtk, startingDef, symbol, name, Color::RED}, hostile{hostile}, speed{1} {}
 
 int Enemy::attack(shared_ptr<Character> defender) { return 0;}
 
 bool Enemy::inRange(shared_ptr<Character> defender) {
     return (abs(defender->getX() - getX()) <= 1 &&
         abs(defender->getY() - getY()) <= 1);
-
 }
 
 // void Enemy::move(int dx, int dy) {

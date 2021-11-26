@@ -4,7 +4,8 @@
 #include <memory>
 class Merchant : public Enemy {
     public:
-    Merchant();
-    void attack(std::shared_ptr<Character> defender) override;
+    Merchant(bool isHostile);
+    
+    int attack(std::shared_ptr<Character> defender) override;
 };
 #endif
