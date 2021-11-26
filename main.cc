@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         {
 
             // Player movement
-            if (cmd == "no" || cmd == "so" || cmd == "ea" || cmd == "we" || cmd == "ne" || cmd == "se" || cmd == "sw")
+            if (cmd == "no" || cmd == "so" || cmd == "ea" || cmd == "we" || cmd == "ne" || cmd == "nw" || cmd == "se" || cmd == "sw")
             {
                 if (iss.eof())
                 {
@@ -101,27 +101,22 @@ int main(int argc, char *argv[])
             else if (cmd == "s")
             {
                 game->setStartingRace(Player::RaceTypes::SHADE);
-                cout << Color::CYAN << "You will play as a Shade in the next life." << Color::RESET << endl;
             }
             else if (cmd == "d")
             {
                 game->setStartingRace(Player::RaceTypes::DROW);
-                cout << Color::CYAN << "You will play as a Drow in the next life." << Color::RESET << endl;
             }
             else if (cmd == "v")
             {
                 game->setStartingRace(Player::RaceTypes::VAMPIRE);
-                cout << Color::CYAN << "You will play as a Vampire in the next life." << Color::RESET << endl;
             }
             else if (cmd == "g")
             {
                 game->setStartingRace(Player::RaceTypes::GOBLIN);
-                cout << Color::CYAN << "You will play as a Goblin in the next life." << Color::RESET << endl;
             }
             else if (cmd == "t")
             {
                 game->setStartingRace(Player::RaceTypes::TROLL);
-                cout << Color::CYAN << "You will play as a Troll in the next life." << Color::RESET << endl;
             }
 
             // f: stops enemies from moving until this key is pressed again.

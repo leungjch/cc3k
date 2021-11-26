@@ -111,57 +111,74 @@ void CC3K::placePlayer()
             break;
         }
     }
-    cout << Color::GREEN << "Player character has spawned. " << Color::RESET << endl;
+    messages.emplace_back("Player character has spawned. ", Color::GREEN);
 
 }
 
 // Helper function to compute new position after moving one unit in the specified direction
-pair<int, int> getPosAtDirection(int x, int y, string dir)
+pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
 {
     int dX = 0;
     int dY = 0;
+    string direction;
     if (dir == "no")
     {
         dY = -1;
+        direction = "North";
     }
 
     else if (dir == "so")
     {
         dY = 1;
+        direction = "South";
     }
 
     else if (dir == "ea")
     {
         dX = 1;
+        direction = "East";
     }
 
     else if (dir == "we")
     {
         dX = -1;
+        direction = "West";
     }
 
     else if (dir == "ne")
     {
         dY = -1;
         dX = 1;
+        direction = "Northeast";
+
+    }
+    else if (dir == "nw")
+    {
+        dY = -1;
+        dX = -1;
+        direction = "Northwest";
     }
 
     else if (dir == "se")
     {
         dY = 1;
         dX = 1;
+        direction = "Southeast";
+
     }
 
     else if (dir == "sw")
     {
         dY = 1;
         dX = -1;
+        direction = "Southwest";
+
     }
     else
     {
         cerr << "Invalid direction" << endl;
     }
-    return make_pair(x + dX, y + dY);
+    return make_pair(make_pair(x + dX, y + dY), direction);
 }
 
 // Returns true if an entity is occupying a cell
@@ -391,10 +408,11 @@ void CC3K::generateGold()
 
 void CC3K::movePlayer(string dir)
 {
-    pair<int, int> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<pair<int, int>,string> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
     // Compute the new position
-    int newX = newPos.first;
-    int newY = newPos.second;
+
+    int newX = newPos.first.first;
+    int newY = newPos.first.second;
 
     // Check if the new position is a stairway FIRST
     // In this case, go to next level
@@ -405,7 +423,7 @@ void CC3K::movePlayer(string dir)
         // Increase level number
         levelNum += 1;
 
-        cout << Color::BOLDYELLOW << "Now entering level " << levelNum << Color::RESET << endl;
+        messages.emplace_back("Now entering level " + to_string(levelNum), Color::BOLDYELLOW);
 
         return;
     }
@@ -435,6 +453,7 @@ void CC3K::movePlayer(string dir)
         // Move the player over the gold
         thePlayer->setX(newX);
         thePlayer->setY(newY);
+
         return;
     }
     
@@ -446,22 +465,24 @@ void CC3K::movePlayer(string dir)
          theFloor->cellAt(newX, newY).getChar() != Cell::DOOR &&
          theFloor->cellAt(newX, newY).getChar() != Cell::PASSAGE))
     {
-        cout << Color::RED << "You cannot move there." << Color::RESET << endl;
+        messages.emplace_back("You cannot move there.", Color::RED);
         return;
     }
 
     // Else the new position is valid, move player there
     thePlayer->setX(newX);
     thePlayer->setY(newY);
+    messages.emplace_back("PC moves " + newPos.second + ".", Color::BOLDMAGENTA);
 
-    // Check collision against all entities
+
 }
 
 // Use a potion in the direction specified (from the player)
 void CC3K::usePotion(string dir)
 {
     // Get the coordinates to check
-    pair<int, int> checkPotionPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<pair<int, int>,string> checkPotion = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<int,int> checkPotionPos = checkPotion.first;
 
     // Check if there exists a potion in the specified direction
     int found = -1;
@@ -477,7 +498,7 @@ void CC3K::usePotion(string dir)
     // If we did not find a potion at that location
     if (found == -1)
     {
-        cout << Color::RED << "There is no potion in that direction." << Color::RESET << endl;
+        messages.emplace_back("There is no potion in that direction.", Color::RESET);
         return;
     }
     // Potion is found, apply the potion and erase it from the potion vector
@@ -488,7 +509,9 @@ void CC3K::usePotion(string dir)
 
         // Output message
         // E.g. "You used a Potion of Restore Health"
-        cout << Color::BOLDMAGENTA << "You used a " << thePotions[found]->getName() << ". " << thePotions[found]->getDescription() << Color::RESET << endl;
+        messages.emplace_back("You used a " + thePotions[found]->getName() + ". " + thePotions[found]->getDescription(),
+                            Color::BOLDMAGENTA);
+
 
         // Erase the potion from the vector
         thePotions.erase(thePotions.begin() + found);
@@ -497,6 +520,8 @@ void CC3K::usePotion(string dir)
 void CC3K::render()
 {
     notifyObservers();
+    // Clear the messages
+    messages.clear();
 }
 
 string CC3K::getGameStatus()
@@ -563,6 +588,11 @@ char CC3K::getState(int x, int y)
 void CC3K::setStartingRace(int newRace)
 {
     startingRace = newRace;
+    messages.emplace_back("Switched race.", Color::BOLDCYAN);
+}
+
+vector<Message> CC3K::getMessages() {
+    return messages;
 }
 
 void CC3K::display()
