@@ -99,7 +99,7 @@ void CC3K::newLevel()
     generatePotions();
 
     // Generate gold
-    // generateGold();
+    generateGold();
 
     // Generate enemies
 
@@ -437,7 +437,7 @@ void CC3K::movePlayer(string dir)
         // Increase level number
         levelNum += 1;
 
-        messages.emplace_back("Now entering level " + to_string(levelNum), Color::BOLDYELLOW);
+        messages.emplace_back("Now entering level " + to_string(levelNum) + "!", Color::BOLDYELLOW);
 
         return;
     }

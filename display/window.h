@@ -22,6 +22,7 @@ class Xwindow {
   XImage* wallImg;
   XImage* doorImg;
   XImage* goldImg;
+  XImage* spaceImg;
 
 
   Xwindow(int width=500, int height=500);  // Constructor; displays the window.
