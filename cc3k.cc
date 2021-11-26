@@ -738,7 +738,15 @@ void CC3K::moveAndAttackEnemies()
         {
             // Attack the pc if it is in range
             int dmg = enemy->attack(thePlayer);
-            messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
+            if (dmg == 0)
+            {
+                messages.emplace_back(enemy->getName() + " tried to attack PC but missed.", Color::RED);
+
+            }
+            else 
+            {
+                messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
+            }
         }
     }
 
@@ -764,15 +772,19 @@ void CC3K::playerAttack(string cmd)
             int dmg = thePlayer->attack(theEnemies[i]);
             haveHit = true;
 
+            if (dmg == 0)
+            {
+                    messages.emplace_back("PC attacked but missed.", Color::MAGENTA);
+            }
             // If the enemy's HP drops below 0, it is dead
-            if (theEnemies[i]->getHP() <= 0)
+            else if (theEnemies[i]->getHP() <= 0)
             {
                 if (theEnemies[i]->getName() == "Merchant")
                 {
                     // All merchants are hostile now
                     isHostileMerchants = true;
                     messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
-                    messages.emplace_back("You have drawn the ire of all merchants. They will be hostile to you from now on.", Color::MAGENTA);
+                    messages.emplace_back("You have drawn the ire of all merchants. They will be hostile to you from now on!", Color::MAGENTA);
                 }
                 else
                 {
@@ -793,7 +805,7 @@ void CC3K::playerAttack(string cmd)
     }
     if (!haveHit)
     {
-        messages.emplace_back("There is nothing to attack there.", Color::RED);
+        messages.emplace_back("There is nothing to attack there.", Color::BOLDMAGENTA);
     }
 
     moveAndAttackEnemies();
