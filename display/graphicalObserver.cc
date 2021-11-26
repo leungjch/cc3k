@@ -52,6 +52,8 @@ void GraphicalObserver::notify()
       }
       else if (val == '@')
       {
+        // Draw the floor
+
         theWindow->drawImage(theWindow->pcImg, j*SCALE, i*SCALE);
 
       }
@@ -72,6 +74,10 @@ void GraphicalObserver::notify()
       else if (val == 'P') 
       {
         theWindow->drawImage(theWindow->potionImg, j*SCALE, i*SCALE);
+      }
+      else if (val == 'G') 
+      {
+        theWindow->drawImage(theWindow->goldImg, j*SCALE, i*SCALE);
       }
       else if (val == '\\')
       {
