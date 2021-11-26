@@ -11,13 +11,14 @@ class CC3K;
 
 class GraphicalObserver : public Observer
 {
-    std::shared_ptr<CC3K> subject;
+    // We do not use a smart pointer here because Observer does not own CC3K
+    CC3K* subject;
     int width;
     int height;
     const int SCALE = 16;
     std::shared_ptr<Xwindow> theWindow;
 public:
-    GraphicalObserver(std::shared_ptr<CC3K> subject, int width, int height);
+    GraphicalObserver(CC3K* subject, int width, int height);
     void notify() override;
     ~GraphicalObserver();
 };

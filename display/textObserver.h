@@ -10,13 +10,14 @@ class CC3K;
 
 class TextObserver : public Observer
 {
-    std::shared_ptr<CC3K> subject;
+    // We do not use a smart pointer here because Observer does not own CC3K
+    CC3K* subject;
     int width;
     int height;
     std::ostream &out = std::cout;
 
 public:
-    TextObserver(std::shared_ptr<CC3K> subject, int width, int height);
+    TextObserver(CC3K *subject, int width, int height);
     void notify() override;
     ~TextObserver();
 };

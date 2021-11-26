@@ -10,10 +10,11 @@
 #include <memory>
 #include "display/observer.h"
 #include "display/subject.h"
+#include "utils/message.h"
 class CC3K : public Subject {
     int levelNum;
     std::shared_ptr<Floor> theFloor;
-    std::vector<std::shared_ptr<Observer>> observers;
+    std::vector<Observer*> observers;
 
     std::shared_ptr<Stairway> theStairway;
 
@@ -24,6 +25,9 @@ class CC3K : public Subject {
 
     // Vector of all gold piles on floor
     std::vector<std::shared_ptr<Gold>> theGold;
+
+    // The message displayed after the player makes an action
+    std::vector<Message> messages;
 
     // Starting race (value is specified via Player::RaceTypes enum)
     int startingRace;
@@ -59,8 +63,10 @@ class CC3K : public Subject {
         void movePlayer(std::string dir);
         void usePotion(std::string dir);
         CC3K();
+        ~CC3K();
         void setStartingRace(int newRace);
         char getState(int x, int y) override;
         std::string getGameStatus();
+        std::vector<Message> getMessages();
 };
 #endif

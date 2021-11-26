@@ -6,7 +6,7 @@
 
 using namespace std;
 
-GraphicalObserver::GraphicalObserver(shared_ptr<CC3K> subject, int width, int height)
+GraphicalObserver::GraphicalObserver(CC3K* subject, int width, int height)
     : subject{subject}, width{width}, height{height}
 {
   // Launch a new XWindow
@@ -15,7 +15,7 @@ GraphicalObserver::GraphicalObserver(shared_ptr<CC3K> subject, int width, int he
 
 GraphicalObserver::~GraphicalObserver()
 {
-    
+
 }
 
 // Returns true if the char ch is an upper case char
