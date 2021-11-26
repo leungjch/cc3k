@@ -34,11 +34,11 @@ int main(int argc, char *argv[])
     auto game = make_shared<CC3K>();
 
     // Text display
-    auto textObserver = make_shared<TextObserver>(game, 79, 25);
-    auto graphicalObserver = make_shared<GraphicalObserver>(game, 79, 25);
+    auto textObserver = make_shared<TextObserver>(game.get(), 79, 25);
+    auto graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
 
-    game->attach(textObserver);
-    game->attach(graphicalObserver);
+    game->attach(textObserver.get());
+    game->attach(graphicalObserver.get());
     game->newGame();
 
     string cmdLine;

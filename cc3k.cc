@@ -34,7 +34,21 @@
 
 using namespace std;
 
-CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, theFloor{make_shared<Floor>()} {}
+CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, 
+    theFloor{make_shared<Floor>()} 
+    {}
+
+CC3K::~CC3K()
+{
+    for (int i = 0; i < observers.size(); i++)
+    {
+        detach(observers[i]);
+    }
+    observers.clear();
+
+}
+
+
 
 void CC3K::newGame()
 {
@@ -85,7 +99,7 @@ void CC3K::newLevel()
     generatePotions();
 
     // Generate gold
-    generateGold();
+    // generateGold();
 
     // Generate enemies
 

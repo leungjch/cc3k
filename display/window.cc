@@ -94,6 +94,16 @@ Xwindow::Xwindow(int width, int height) {
 
 Xwindow::~Xwindow() {
   XFreeGC(d, gc);
+  // Destroy all the images read into memory
+  XDestroyImage(pcImg);
+  XDestroyImage(floorImg);
+  XDestroyImage(potionImg);
+  XDestroyImage(passageImg);
+  XDestroyImage(stairwayImg);
+  XDestroyImage(wallImg);
+  XDestroyImage(doorImg);
+  XDestroyImage(goldImg);
+
   XCloseDisplay(d);
 }
 

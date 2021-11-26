@@ -8,8 +8,9 @@
 
 using namespace std;
 
-TextObserver::TextObserver(shared_ptr<CC3K> subject, int width, int height) : subject{subject}, width{width}, height{height}
+TextObserver::TextObserver(CC3K* subject, int width, int height) : subject{subject}, width{width}, height{height}
 {
+
 }
 
 TextObserver::~TextObserver()

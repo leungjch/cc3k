@@ -2,6 +2,7 @@
 #define __WINDOW_H__
 #include <X11/Xlib.h>
 #include <iostream>
+#include <memory>
 #include <string>
 
 class Xwindow {
@@ -12,15 +13,15 @@ class Xwindow {
   unsigned long colours[10];
 
  public:
-  XImage *theImg;
-  XImage *floorImg;
-  XImage *pcImg;
-  XImage *potionImg;
-  XImage *passageImg;
-  XImage *stairwayImg;
-  XImage *wallImg;
-  XImage *doorImg;
-  XImage *goldImg;
+  XImage* theImg;
+  XImage* floorImg;
+  XImage* pcImg;
+  XImage* potionImg;
+  XImage* passageImg;
+  XImage* stairwayImg;
+  XImage* wallImg;
+  XImage* doorImg;
+  XImage* goldImg;
 
 
   Xwindow(int width=500, int height=500);  // Constructor; displays the window.

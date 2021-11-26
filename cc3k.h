@@ -14,7 +14,7 @@
 class CC3K : public Subject {
     int levelNum;
     std::shared_ptr<Floor> theFloor;
-    std::vector<std::shared_ptr<Observer>> observers;
+    std::vector<Observer*> observers;
 
     std::shared_ptr<Stairway> theStairway;
 
@@ -63,6 +63,7 @@ class CC3K : public Subject {
         void movePlayer(std::string dir);
         void usePotion(std::string dir);
         CC3K();
+        ~CC3K();
         void setStartingRace(int newRace);
         char getState(int x, int y) override;
         std::string getGameStatus();

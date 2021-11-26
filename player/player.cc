@@ -38,7 +38,7 @@ void Player::applyPermanentPotions()
     setDef(startingDef);
     for (int i = 0; i < potionsConsumed.size(); i++)
     {
-        // If it's a temporary potion, delete it
+        // If it's a temporary potion, remove it
         if (!potionsConsumed[i]->getPermanent())
         {
             potionsConsumed[i] = potionsConsumed.back();
