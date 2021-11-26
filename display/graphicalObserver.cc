@@ -86,8 +86,10 @@ void GraphicalObserver::notify()
 
       else if (val == ' ')
       {
-        col = Xwindow::Black;
-        theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
+        theWindow->drawImage(theWindow->spaceImg, j*SCALE, i*SCALE);
+
+        // col = Xwindow::Black;
+        // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
       }
     }
   }

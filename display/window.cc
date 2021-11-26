@@ -88,6 +88,10 @@ Xwindow::Xwindow(int width, int height) {
       printf ("Error reading file\n");
       exit (1);
   }
+  if (XpmReadFileToImage (d, "art/space.xpm", &spaceImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
 
   usleep(100);
 }
@@ -103,6 +107,7 @@ Xwindow::~Xwindow() {
   XDestroyImage(wallImg);
   XDestroyImage(doorImg);
   XDestroyImage(goldImg);
+  XDestroyImage(spaceImg);
 
   XCloseDisplay(d);
 }
