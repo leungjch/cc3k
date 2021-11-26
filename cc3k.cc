@@ -19,6 +19,9 @@
 #include "treasure/dragonHoard.h"
 #include "treasure/merchantHoard.h"
 
+#include "enemy/orc.h"
+#include "enemy/enemy.h"
+
 #include "potion/potion.h"
 #include "stairway.h"
 #include "floor.h"
@@ -34,9 +37,10 @@
 
 using namespace std;
 
-CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, 
-    theFloor{make_shared<Floor>()} 
-    {}
+CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE},
+               theFloor{make_shared<Floor>()}
+{
+}
 
 CC3K::~CC3K()
 {
@@ -45,10 +49,7 @@ CC3K::~CC3K()
         detach(observers[i]);
     }
     observers.clear();
-
 }
-
-
 
 void CC3K::newGame()
 {
@@ -87,10 +88,8 @@ void CC3K::newLevel()
     // So we should apply them and discard the effects of the temporary potions
     thePlayer->applyPermanentPotions();
 
-
     // Place the player at a random chamber
     placePlayer();
-
 
     // Generate stairway
     generateStairway();
@@ -102,16 +101,16 @@ void CC3K::newLevel()
     generateGold();
 
     // Generate enemies
-
+    generateEnemies();
 }
 
 void CC3K::placePlayer()
 {
     // Select a random chamber number
-    int targetChamberNum = theFloor->getRandomChamberNum();
 
     while (true)
     {
+        int targetChamberNum = theFloor->getRandomChamberNum();
         // Get random coordinates
         int randX = theFloor->getRandomX();
         int randY = theFloor->getRandomY();
@@ -125,8 +124,6 @@ void CC3K::placePlayer()
             break;
         }
     }
-    messages.emplace_back("Player character has spawned. ", Color::GREEN);
-
 }
 
 // Helper function to compute new position after moving one unit in the specified direction
@@ -164,7 +161,6 @@ pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
         dY = -1;
         dX = 1;
         direction = "Northeast";
-
     }
     else if (dir == "nw")
     {
@@ -178,7 +174,6 @@ pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
         dY = 1;
         dX = 1;
         direction = "Southeast";
-
     }
 
     else if (dir == "sw")
@@ -186,7 +181,6 @@ pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
         dY = 1;
         dX = -1;
         direction = "Southwest";
-
     }
     else
     {
@@ -237,6 +231,7 @@ bool CC3K::isOccupied(int x, int y)
 // Generate a player in a random position in a chamber
 void CC3K::generatePlayer()
 {
+    messages.emplace_back("Player character has spawned. ", Color::GREEN);
 
     switch (startingRace)
     {
@@ -266,7 +261,6 @@ void CC3K::generatePlayer()
         break;
     }
     }
-
 }
 
 void CC3K::generateStairway()
@@ -277,16 +271,17 @@ void CC3K::generateStairway()
 
     int playerChamberNum = theFloor->chamberAt(thePlayer->getX(), thePlayer->getY());
 
-    // Generate a random chamber number (to ensure each chamber has equal probability)
-    // Ensure it is NOT EQUAL to player chamber
-    int targetChamberNum = theFloor->getRandomChamberNum();
-    ;
-    while (targetChamberNum == playerChamberNum)
-    {
-        targetChamberNum = theFloor->getRandomChamberNum();
-    }
     while (true)
     {
+        // Generate a random chamber number (to ensure each chamber has equal probability)
+        // Ensure it is NOT EQUAL to player chamber
+        int targetChamberNum = theFloor->getRandomChamberNum();
+
+        while (targetChamberNum == playerChamberNum)
+        {
+            targetChamberNum = theFloor->getRandomChamberNum();
+        }
+
         // Get random coordinates and a random chamber number
         int randX = theFloor->getRandomX();
         int randY = theFloor->getRandomY();
@@ -348,11 +343,11 @@ void CC3K::generatePotions()
         }
         }
 
-        // Generate a random chamber number (to ensure each chamber has equal probability)
-        int targetChamberNum = theFloor->getRandomChamberNum();
-
         while (isGenerating)
         {
+            // Generate a random chamber number (to ensure each chamber has equal probability)
+            int targetChamberNum = theFloor->getRandomChamberNum();
+
             // Get random coordinates and its associated chamber
             int randX = theFloor->getRandomX();
             int randY = theFloor->getRandomY();
@@ -394,16 +389,17 @@ void CC3K::generateGold()
         {
             newGold = make_shared<DragonHoard>();
         }
-        // 1/4 probability small 
-        else {
+        // 1/4 probability small
+        else
+        {
             newGold = make_shared<SmallPile>();
         }
 
-        // Generate a random chamber number (to ensure each chamber has equal probability)
-        int targetChamberNum = theFloor->getRandomChamberNum();
-
         while (isGenerating)
         {
+            // Generate a random chamber number (to ensure each chamber has equal probability)
+            int targetChamberNum = theFloor->getRandomChamberNum();
+
             // Get random coordinates and its associated chamber
             int randX = theFloor->getRandomX();
             int randY = theFloor->getRandomY();
@@ -420,9 +416,62 @@ void CC3K::generateGold()
     }
 }
 
+void CC3K::checkPlayerDead()
+{
+    if (thePlayer->getHP() <= 0)
+    {
+        messages.emplace_back("You died!", Color::RED);
+    }
+}
+
+void CC3K::generateEnemies()
+{
+    theEnemies.clear();
+
+    for (int i = 0; i < NUM_GOLD; i++)
+    {
+        bool isGenerating = true;
+
+        // Generate a number from 1-18
+        // For the desired probability distribution
+        int enemyType = rand() % 18 + 1;
+
+        auto newEnemy = make_shared<Enemy>(0, 0, 0, false, 'E', "");
+
+        // 5/8 probability normal
+        if (enemyType <= 18)
+        {
+            newEnemy = make_shared<Orc>();
+        }
+        else
+        {
+            newEnemy = make_shared<Orc>();
+        }
+
+        while (isGenerating)
+        {
+            // Generate a random chamber number (to ensure each chamber has equal probability)
+            int targetChamberNum = theFloor->getRandomChamberNum();
+
+            // Get random coordinates and its associated chamber
+            int randX = theFloor->getRandomX();
+            int randY = theFloor->getRandomY();
+            int chamberNum = theFloor->chamberAt(randX, randY);
+
+            if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
+            {
+                newEnemy->setX(randX);
+                newEnemy->setY(randY);
+                theEnemies.push_back(newEnemy);
+                isGenerating = false;
+            }
+        }
+    }
+}
+
 void CC3K::movePlayer(string dir)
 {
-    pair<pair<int, int>,string> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<pair<int, int>, string> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
     // Compute the new position
 
     int newX = newPos.first.first;
@@ -462,14 +511,13 @@ void CC3K::movePlayer(string dir)
         playerGold += theGold[foundGold]->getValue();
 
         // Add the message
-        messages.emplace_back("PC picks up a " + 
-            theGold[foundGold]->getName() + " worth " + 
-            to_string(theGold[foundGold]->getValue()) + " gold.", 
-            Color::GREEN);
-
+        messages.emplace_back("PC picks up a " +
+                                  theGold[foundGold]->getName() + " worth " +
+                                  to_string(theGold[foundGold]->getValue()) + " gold.",
+                              Color::GREEN);
 
         // Remove the gold from the map
-        theGold.erase(theGold.begin()+foundGold);
+        theGold.erase(theGold.begin() + foundGold);
 
         // Move the player over the gold
         thePlayer->setX(newX);
@@ -477,7 +525,7 @@ void CC3K::movePlayer(string dir)
 
         return;
     }
-    
+
     // Else, not a stairway or gold, we can use isOccupied() properly
     // Check if the new position is a tile
     // (i.e. don't move into a wall or empty space)
@@ -495,15 +543,16 @@ void CC3K::movePlayer(string dir)
     thePlayer->setY(newY);
     messages.emplace_back("PC moves " + newPos.second + ".", Color::BOLDMAGENTA);
 
-
+    // The enemies now move and attack the player if in range
+    moveAndAttackEnemies();
 }
 
 // Use a potion in the direction specified (from the player)
 void CC3K::usePotion(string dir)
 {
     // Get the coordinates to check
-    pair<pair<int, int>,string> checkPotion = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
-    pair<int,int> checkPotionPos = checkPotion.first;
+    pair<pair<int, int>, string> checkPotion = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<int, int> checkPotionPos = checkPotion.first;
 
     // Check if there exists a potion in the specified direction
     int found = -1;
@@ -531,8 +580,7 @@ void CC3K::usePotion(string dir)
         // Output message
         // E.g. "You used a Potion of Restore Health"
         messages.emplace_back("PC used a " + thePotions[found]->getName() + ". " + thePotions[found]->getDescription(),
-                            Color::BOLDMAGENTA);
-
+                              Color::BOLDMAGENTA);
 
         // Erase the potion from the vector
         thePotions.erase(thePotions.begin() + found);
@@ -568,7 +616,7 @@ string CC3K::getGameStatus()
     return ret;
 }
 
-pair<char,string> CC3K::getState(int x, int y)
+pair<char, string> CC3K::getState(int x, int y)
 {
     // Check the player coordinates
     if (thePlayer->getX() == x && thePlayer->getY() == y)
@@ -579,7 +627,7 @@ pair<char,string> CC3K::getState(int x, int y)
     // Check the staircase coordinates
     if (theStairway->getX() == x && theStairway->getY() == y)
     {
-        return make_pair(theStairway->getSymbol(),theStairway->getColor()) ;
+        return make_pair(theStairway->getSymbol(), theStairway->getColor());
     }
 
     // Check all potions
@@ -587,11 +635,10 @@ pair<char,string> CC3K::getState(int x, int y)
     {
         if (potion->getX() == x && potion->getY() == y)
         {
-            return make_pair(potion->getSymbol(),potion->getColor()) ;
+            return make_pair(potion->getSymbol(), potion->getColor());
         }
     }
 
-    // TODO: Check gold
     // Check all gold
     for (auto gold : theGold)
     {
@@ -600,11 +647,88 @@ pair<char,string> CC3K::getState(int x, int y)
             return make_pair(gold->getSymbol(), gold->getColor());
         }
     }
-    // TODO: Check enemies
-
+    // Check enemies
+    for (auto enemy : theEnemies)
+    {
+        if (enemy->getX() == x && enemy->getY() == y)
+        {
+            return make_pair(enemy->getSymbol(), enemy->getColor());
+        }
+    }
     // Else, return the floor element
     return make_pair(theFloor->cellAt(x, y).getChar(), Color::RESET);
+}
 
+// Move all the enemies and attack the player if they are in range
+void CC3K::moveAndAttackEnemies()
+{
+    for (auto enemy : theEnemies)
+    {
+        // Move the enemy
+        // Discard dx and dy
+        // Generate a random -1, 0, 1
+        int deltaX = rand() % 3 - 1;
+        int deltaY = rand() % 3 - 1;
+        int newX = enemy->getX() + deltaX;
+        int newY = enemy->getY() + deltaY;
+        if (!isOccupied(newX, newY) && theFloor->cellAt(newX, newY).getChar() == Cell::TILE)
+        {
+            enemy->move(deltaX, deltaY);
+        }
+
+        // Attack the player if they are in range
+        if (enemy->inRange(thePlayer))
+        {
+            // Attack the pc if it is in range
+            int dmg = enemy->attack(thePlayer);
+            messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
+        }
+    }
+    
+    // Check if the player has died from enemy attacks
+    checkPlayerDead();
+}
+
+void CC3K::playerAttack(string cmd)
+{
+    pair<pair<int, int>, string> pos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), cmd);
+    // The coordinates where the player is striking the possible enemy
+    int attackX = pos.first.first;
+    int attackY = pos.first.second;
+
+    // To keep track of if player hit an enemy
+    int haveHit = false;
+
+    for (int i = 0; i < theEnemies.size(); i++)
+    {
+        // Check if the player is in range of attacking the enemy
+        if (theEnemies[i]->inRange(thePlayer) && theEnemies[i]->getX() == attackX && theEnemies[i]->getY() == attackY)
+        {
+            int dmg = thePlayer->attack(theEnemies[i]);
+            haveHit = true;
+
+            // If the enemy's HP drops below 0, it is dead
+            if (theEnemies[i]->getHP() <= 0)
+            {
+                theEnemies[i] = theEnemies.back();
+                theEnemies.pop_back();
+                messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
+            }
+            else
+            {
+                messages.emplace_back("PC deals " + to_string(dmg) + " damage to " +
+                                          theEnemies[i]->getName() + " (" + to_string(theEnemies[i]->getHP()) +
+                                          " HP)" + ".",
+                                      Color::CYAN);
+            }
+        }
+    }
+    if (!haveHit)
+    {
+        messages.emplace_back("There is nothing to attack there.", Color::RED);
+    }
+
+    moveAndAttackEnemies();
 }
 
 void CC3K::setStartingRace(int newRace)
@@ -613,7 +737,8 @@ void CC3K::setStartingRace(int newRace)
     messages.emplace_back("Switched race.", Color::BOLDCYAN);
 }
 
-vector<Message> CC3K::getMessages() {
+vector<Message> CC3K::getMessages()
+{
     return messages;
 }
 

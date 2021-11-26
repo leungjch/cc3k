@@ -2,6 +2,7 @@
 #define CC3K_H
 #include "floor.h"
 #include "player/player.h"
+#include "enemy/enemy.h"
 #include "potion/potion.h"
 #include "stairway.h"
 #include "treasure/gold.h"
@@ -25,6 +26,9 @@ class CC3K : public Subject {
 
     // Vector of all gold piles on floor
     std::vector<std::shared_ptr<Gold>> theGold;
+
+    // Vector of all the enemies
+    std::vector<std::shared_ptr<Enemy>> theEnemies;
 
     // The message displayed after the player makes an action
     std::vector<Message> messages;
@@ -54,6 +58,9 @@ class CC3K : public Subject {
     void generateStairway();
     void generatePotions();
     void generateGold();
+    void generateEnemies();
+    void moveAndAttackEnemies();
+    void checkPlayerDead();
 
     public:
         void newGame();
@@ -62,6 +69,8 @@ class CC3K : public Subject {
         void render();
         void movePlayer(std::string dir);
         void usePotion(std::string dir);
+        void playerAttack(std::string dir);
+
         CC3K();
         ~CC3K();
         void setStartingRace(int newRace);
