@@ -47,7 +47,6 @@ void Player::applyPermanentPotions()
         // Otherwise apply the permanent potion effect
         else {
             applyPotion(potionsConsumed[i]);
-
         }
     }
 }

@@ -13,7 +13,6 @@ int Potion::getDeltaHp() {
     return deltaHp;
 }
 
-
 int Potion::getDeltaAtk() {
     return deltaAtk;
 }

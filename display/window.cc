@@ -84,7 +84,10 @@ Xwindow::Xwindow(int width, int height) {
       printf ("Error reading file\n");
       exit (1);
   }
-
+  if (XpmReadFileToImage (d, "art/gold.xpm", &goldImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
 
   usleep(100);
 }

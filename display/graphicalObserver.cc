@@ -52,6 +52,8 @@ void GraphicalObserver::notify()
       }
       else if (val == '@')
       {
+        // Draw the floor
+
         theWindow->drawImage(theWindow->pcImg, j*SCALE, i*SCALE);
 
       }
@@ -73,6 +75,10 @@ void GraphicalObserver::notify()
       {
         theWindow->drawImage(theWindow->potionImg, j*SCALE, i*SCALE);
       }
+      else if (val == 'G') 
+      {
+        theWindow->drawImage(theWindow->goldImg, j*SCALE, i*SCALE);
+      }
       else if (val == '\\')
       {
         theWindow->drawImage(theWindow->stairwayImg, j*SCALE, i*SCALE);
@@ -82,7 +88,6 @@ void GraphicalObserver::notify()
       {
         col = Xwindow::Black;
         theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
-
       }
     }
   }

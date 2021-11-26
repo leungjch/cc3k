@@ -4,6 +4,7 @@
 #include "player/player.h"
 #include "potion/potion.h"
 #include "stairway.h"
+#include "treasure/gold.h"
 #include <vector>
 #include <string>
 #include <memory>
@@ -18,7 +19,11 @@ class CC3K : public Subject {
 
     std::shared_ptr<Player> thePlayer;
 
+    // Vector of all potions on the floor
     std::vector<std::shared_ptr<Potion>> thePotions;
+
+    // Vector of all gold piles on floor
+    std::vector<std::shared_ptr<Gold>> theGold;
 
     // Starting race (value is specified via Player::RaceTypes enum)
     int startingRace;
@@ -44,6 +49,7 @@ class CC3K : public Subject {
     void placePlayer();
     void generateStairway();
     void generatePotions();
+    void generateGold();
 
     public:
         void newGame();

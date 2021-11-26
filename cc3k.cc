@@ -13,6 +13,12 @@
 #include "potion/boostDef.h"
 #include "potion/woundDef.h"
 
+#include "treasure/gold.h"
+#include "treasure/smallPile.h"
+#include "treasure/normalPile.h"
+#include "treasure/dragonHoard.h"
+#include "treasure/merchantHoard.h"
+
 #include "potion/potion.h"
 #include "stairway.h"
 #include "floor.h"
@@ -79,6 +85,7 @@ void CC3K::newLevel()
     generatePotions();
 
     // Generate gold
+    generateGold();
 
     // Generate enemies
 
@@ -181,7 +188,14 @@ bool CC3K::isOccupied(int x, int y)
         }
     }
 
-    // TODO: Check gold coordinates
+    // Check all gold
+    for (auto gold : theGold)
+    {
+        if (gold->getX() == x && gold->getY() == y)
+        {
+            return true;
+        }
+    }
 
     // TODO: Check all enemy coordinates
 
@@ -271,32 +285,32 @@ void CC3K::generatePotions()
 
         switch (potionType)
         {
-        case 1:
+        case Potion::PotionTypes::RESTOREHEALTH:
         {
             newPotion = make_shared<RestoreHealth>();
             break;
         }
-        case 2:
+        case Potion::PotionTypes::POISONHEALTH:
         {
             newPotion = make_shared<PoisonHealth>();
             break;
         }
-        case 3:
+        case Potion::PotionTypes::BOOSTATK:
         {
             newPotion = make_shared<BoostAtk>();
             break;
         }
-        case 4:
+        case Potion::PotionTypes::WOUNDATK:
         {
             newPotion = make_shared<WoundAtk>();
             break;
         }
-        case 5:
+        case Potion::PotionTypes::BOOSTDEF:
         {
             newPotion = make_shared<BoostDef>();
             break;
         }
-        case 6:
+        case Potion::PotionTypes::WOUNDDEF:
         {
             newPotion = make_shared<WoundDef>();
             break;
@@ -324,6 +338,57 @@ void CC3K::generatePotions()
     }
 }
 
+void CC3K::generateGold()
+{
+    theGold.clear();
+
+    for (int i = 0; i < NUM_GOLD; i++)
+    {
+        bool isGenerating = true;
+
+        // Generate a number from 1-8
+        // For the desired probability distribution
+        // 5/8 normal, 1/8 dragon, 1/4 small hoard
+        int goldType = rand() % 8 + 1;
+
+        auto newGold = make_shared<Gold>("", 0);
+
+        // 5/8 probability normal
+        if (goldType <= 5)
+        {
+            newGold = make_shared<NormalPile>();
+        }
+        // 1/8 probability dragon
+        else if (goldType <= 6)
+        {
+            newGold = make_shared<DragonHoard>();
+        }
+        // 1/4 probability small 
+        else {
+            newGold = make_shared<SmallPile>();
+        }
+
+        // Generate a random chamber number (to ensure each chamber has equal probability)
+        int targetChamberNum = theFloor->getRandomChamberNum();
+
+        while (isGenerating)
+        {
+            // Get random coordinates and its associated chamber
+            int randX = theFloor->getRandomX();
+            int randY = theFloor->getRandomY();
+            int chamberNum = theFloor->chamberAt(randX, randY);
+
+            if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
+            {
+                newGold->setX(randX);
+                newGold->setY(randY);
+                theGold.push_back(newGold);
+                isGenerating = false;
+            }
+        }
+    }
+}
+
 void CC3K::movePlayer(string dir)
 {
     pair<int, int> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
@@ -344,7 +409,36 @@ void CC3K::movePlayer(string dir)
 
         return;
     }
-    // Else, not a stairway, we can use isOccupied() properly
+
+    // Next, check if player moved onto gold
+    // Check if there exists a potion in the specified direction
+    int foundGold = -1;
+    for (int i = 0; i < theGold.size(); i++)
+    {
+        if (newX == theGold[i]->getX() && newY == theGold[i]->getY())
+        {
+            foundGold = i;
+            break;
+        }
+    }
+    // If the player is walking on gold
+    if (foundGold != -1)
+    {
+        // TODO: Check dragon hoard logic
+
+        // Add the gold to player
+        playerGold += theGold[foundGold]->getValue();
+
+        // Remove the gold from the map
+        theGold.erase(theGold.begin()+foundGold);
+
+        // Move the player over the gold
+        thePlayer->setX(newX);
+        thePlayer->setY(newY);
+        return;
+    }
+    
+    // Else, not a stairway or gold, we can use isOccupied() properly
     // Check if the new position is a tile
     // (i.e. don't move into a wall or empty space)
     if (isOccupied(newX, newY) ||
@@ -452,6 +546,14 @@ char CC3K::getState(int x, int y)
     }
 
     // TODO: Check gold
+    // Check all gold
+    for (auto gold : theGold)
+    {
+        if (gold->getX() == x && gold->getY() == y)
+        {
+            return gold->getSymbol();
+        }
+    }
     // TODO: Check enemies
 
     // Else, return the floor element
