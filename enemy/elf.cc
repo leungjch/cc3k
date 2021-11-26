@@ -1,12 +1,12 @@
-#include "dragon.h"
+#include "elf.h"
 #include "enemy.h"
 #include <iostream>
 #include <cmath>
 using namespace std;
 
-Dragon::Dragon() : Enemy{150, 20, 20, false, 'D', "Dragon"} {}
+Elf::Elf() : Enemy{140, 30, 10, true, 'E', "Elf"} {}
 
-int Dragon::attack(std::shared_ptr<Character> defender) {
+int Elf::attack(std::shared_ptr<Character> defender) {
     int dmg = 0;
     // Check that the defender is in range
     if (abs(defender->getX() - getX()) <= 1 &&

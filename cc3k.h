@@ -39,6 +39,13 @@ class CC3K : public Subject {
     // Amount of gold that the player has collected
     int playerGold;
 
+    // Stops enemies from moving until this key is set again;
+    bool stopEnemies;
+
+    // Check if the current game has hostile merchants
+    bool isHostileMerchants;
+
+
     // Number of potions spawned on each floor
     static const int NUM_POTIONS = 10;
 
@@ -70,6 +77,7 @@ class CC3K : public Subject {
         void movePlayer(std::string dir);
         void usePotion(std::string dir);
         void playerAttack(std::string dir);
+        void toggleStopEnemies();
 
         CC3K();
         ~CC3K();

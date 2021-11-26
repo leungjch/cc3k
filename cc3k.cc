@@ -6,6 +6,15 @@
 #include "player/troll.h"
 #include "player/vampire.h"
 
+#include "enemy/enemy.h"
+#include "enemy/orc.h"
+#include "enemy/human.h"
+#include "enemy/dragon.h"
+#include "enemy/dwarf.h"
+#include "enemy/halfling.h"
+#include "enemy/elf.h"
+#include "enemy/merchant.h"
+
 #include "potion/restoreHealth.h"
 #include "potion/poisonHealth.h"
 #include "potion/boostAtk.h"
@@ -19,8 +28,6 @@
 #include "treasure/dragonHoard.h"
 #include "treasure/merchantHoard.h"
 
-#include "enemy/orc.h"
-#include "enemy/enemy.h"
 
 #include "potion/potion.h"
 #include "stairway.h"
@@ -37,7 +44,7 @@
 
 using namespace std;
 
-CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE},
+CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false},
                theFloor{make_shared<Floor>()}
 {
 }
@@ -438,14 +445,35 @@ void CC3K::generateEnemies()
 
         auto newEnemy = make_shared<Enemy>(0, 0, 0, false, 'E', "");
 
-        // 5/8 probability normal
-        if (enemyType <= 18)
+        // Cumulative probability
+        // 2/9 human
+        if (enemyType <= 4)
+        {
+            newEnemy = make_shared<Human>();
+        }
+        // 
+        else if (enemyType <= 7)
+        {
+            newEnemy = make_shared<Dwarf>();
+        }
+        else if (enemyType <= 12)
+        {
+            newEnemy = make_shared<Halfling>();
+        }
+        else if (enemyType <= 14)
+        {
+            newEnemy = make_shared<Elf>();
+        }
+        else if (enemyType <= 16)
         {
             newEnemy = make_shared<Orc>();
         }
-        else
+        else if (enemyType <= 18)
         {
-            newEnemy = make_shared<Orc>();
+            newEnemy = make_shared<Merchant>(isHostileMerchants);
+        }
+        else {
+            cerr << "Error generating enemie" << endl;
         }
 
         while (isGenerating)
@@ -659,9 +687,25 @@ pair<char, string> CC3K::getState(int x, int y)
     return make_pair(theFloor->cellAt(x, y).getChar(), Color::RESET);
 }
 
+void CC3K::toggleStopEnemies()
+{
+    stopEnemies = !stopEnemies;
+    if (stopEnemies)
+    {
+        messages.emplace_back("Enemies are frozen now!", Color::BLUE);
+    }
+    else {
+        messages.emplace_back("Enemies are unfrozen now!", Color::BLUE);
+    }
+}
+
 // Move all the enemies and attack the player if they are in range
 void CC3K::moveAndAttackEnemies()
 {
+    if (stopEnemies)
+    {
+        return;
+    }
     for (auto enemy : theEnemies)
     {
         // Move the enemy
@@ -684,7 +728,7 @@ void CC3K::moveAndAttackEnemies()
             messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
         }
     }
-    
+
     // Check if the player has died from enemy attacks
     checkPlayerDead();
 }
