@@ -19,6 +19,8 @@ class Player : public Character {
     void applyPotion(std::shared_ptr<Potion> potion);
     void applyPermanentPotions();
     std::string getRace();
+    virtual int attack(std::shared_ptr<Character> defender);
+
 
     enum RaceTypes {
       SHADE = 1,

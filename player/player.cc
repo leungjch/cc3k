@@ -1,6 +1,7 @@
 #include "player.h"
 #include "../character.h"
 #include <string>
+#include <cmath>
 #include <vector>
 #include "../potion/potion.h"
 #include <memory>
@@ -45,8 +46,23 @@ void Player::applyPermanentPotions()
             potionsConsumed.pop_back();
         }
         // Otherwise apply the permanent potion effect
-        else {
+        else
+        {
             applyPotion(potionsConsumed[i]);
         }
     }
+}
+
+int Player::attack(std::shared_ptr<Character> defender)
+{
+    int dmg = 0;
+    // Check that the defender is in range
+    if (abs(defender->getX() - getX()) <= 1 &&
+        abs(defender->getY() - getY()) <= 1)
+    {
+        dmg = (int)(ceil((100.0 / (100.0 + defender->getDef())) * getAtk()));
+    }
+    // Decrement the health
+    defender->setHP(defender->getHP() - dmg);
+    return dmg;
 }

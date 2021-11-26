@@ -8,6 +8,8 @@ using namespace std;
 
 Character::Character() : hp{0}, atk{0}, def{0} {}
 Character::Character(int hp, int atk, int def, char symbol, string name) : Entity{symbol}, hp{hp}, atk{atk}, def{def}, name{name} {}
+Character::Character(int hp, int atk, int def, char symbol, std::string name, std::string color) : Entity{symbol, color}, hp{hp}, atk{atk}, def{def}, name{name} {}
+
 
 // Move the character by a
 // Left: dx = -1, dy = 0 
@@ -48,3 +50,4 @@ void Character::setAtk(int newAtk)
 {
     atk = newAtk;
 }
+int Character::attack(std::shared_ptr<Character> defender) {}

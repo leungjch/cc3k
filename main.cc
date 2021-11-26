@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
     // Set seed
     // Deterministic seed for testing
-    // srand(42);
+    srand(1);
 
     // Set random seed (for actual demo)
     srand(time(nullptr));
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
             {
                 string dir;
                 // Read the direction
-                // TODO: error checking
+                // TODO: check invalid dir
                 iss >> dir;
                 game->usePotion(dir);
             }
@@ -95,6 +95,12 @@ int main(int argc, char *argv[])
             // be one block north of the @).
             else if (cmd == "a")
             {
+                string dir;
+                // Read the direction
+                // TODO: check invalid dir
+                iss >> dir;
+                game->playerAttack(dir);
+
             }
 
             // Specify starting race
