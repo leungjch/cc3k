@@ -47,6 +47,7 @@ using namespace std;
 CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false},
                theFloor{make_shared<Floor>()}
 {
+
 }
 
 CC3K::~CC3K()
@@ -229,7 +230,14 @@ bool CC3K::isOccupied(int x, int y)
         }
     }
 
-    // TODO: Check all enemy coordinates
+    // Check all enemy coordinates
+    for (auto enemy : theEnemies)
+    {
+        if (enemy->getX() == x && enemy->getY() == y)
+        {
+            return true;
+        }
+    }
 
     // Else no entity occupies this space, so return false
     return false;
@@ -708,6 +716,11 @@ void CC3K::moveAndAttackEnemies()
     }
     for (auto enemy : theEnemies)
     {
+        // If merchant and not triggered hostile, skip (don't attack)
+        if (enemy->getName() == "Merchant" && !isHostileMerchants)
+        {
+            continue;
+        }
         // Move the enemy
         // Discard dx and dy
         // Generate a random -1, 0, 1
@@ -754,9 +767,20 @@ void CC3K::playerAttack(string cmd)
             // If the enemy's HP drops below 0, it is dead
             if (theEnemies[i]->getHP() <= 0)
             {
-                theEnemies[i] = theEnemies.back();
-                theEnemies.pop_back();
-                messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
+                if (theEnemies[i]->getName() == "Merchant")
+                {
+                    // All merchants are hostile now
+                    isHostileMerchants = true;
+                    messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
+                    messages.emplace_back("You have drawn the ire of all merchants. They will be hostile to you from now on.", Color::MAGENTA);
+                }
+                else
+                {
+                    theEnemies[i] = theEnemies.back();
+                    theEnemies.pop_back();
+                    messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
+                }
+
             }
             else
             {
