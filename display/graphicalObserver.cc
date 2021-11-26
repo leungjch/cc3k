@@ -88,7 +88,6 @@ void GraphicalObserver::notify()
       {
         col = Xwindow::Black;
         theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
-
       }
     }
   }
