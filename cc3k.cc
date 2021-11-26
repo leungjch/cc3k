@@ -41,6 +41,7 @@
 #include <iterator>
 #include <algorithm>
 #include <memory>
+#include <map>
 
 using namespace std;
 
@@ -714,12 +715,54 @@ void CC3K::moveAndAttackEnemies()
     {
         return;
     }
-    for (auto enemy : theEnemies)
+
+
+    // "starting at the leftmost enemy, move all enemies on that row and then move
+    // to the next row starting with the leftmost. Any particular enemy should only be moved once per player action (e.g. moving
+    // to a line that has not been processed does not grant an extra move)."
+
+    // This makes the implementation more complicated than simply looping through the vector of enemies
+
+    vector<shared_ptr<Enemy>> enemiesCopy = theEnemies;
+
+    // Create a hash map to mark the xy coordinates of the new enemy locations
+    std::map<std::pair<int, int>, bool>  checkXY;
+    for (int i = 0; i < theFloor->getHeight(); i++)
     {
-        // If merchant and not triggered hostile, skip (don't attack)
+        for (int j = 0; j < theFloor->getWidth(); j++)
+        {
+            // Skip non-chamber tiles since enemies cannot be there
+            if (theFloor->chamberAt(j, i) == -1)
+            {
+                continue;
+            }
+            
+            // Else search for an enemy
+            else
+            {
+                for (int k = 0; k < theEnemies.size(); k++)
+                {
+                    if (checkXY.count(make_pair(j,i)) == 0 && i == theEnemies[k]->getY() && j == theEnemies[k]->getX() )
+                    {
+                        moveAndAttackEnemy(theEnemies[k]);
+                        checkXY[make_pair(theEnemies[k]->getY(),theEnemies[k]->getX())] = true;
+                    }
+                }
+            }
+
+        }
+    }
+
+    // Check if the player has died from enemy attacks
+    checkPlayerDead();
+}
+
+void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy) 
+{
+            // If merchant and not triggered hostile, skip (don't attack)
         if (enemy->getName() == "Merchant" && !isHostileMerchants)
         {
-            continue;
+            return;
         }
         // Move the enemy
         // Discard dx and dy
@@ -748,10 +791,7 @@ void CC3K::moveAndAttackEnemies()
                 messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
             }
         }
-    }
 
-    // Check if the player has died from enemy attacks
-    checkPlayerDead();
 }
 
 void CC3K::playerAttack(string cmd)
