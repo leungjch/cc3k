@@ -7,5 +7,5 @@ WoundAtk::WoundAtk() : Potion{
     -5, 
     0, 
     false,
-    "You lose 5 Atk on this level."}
+    "PC gains 5 Atk on this level."}
 {}

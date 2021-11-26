@@ -530,7 +530,7 @@ void CC3K::usePotion(string dir)
 
         // Output message
         // E.g. "You used a Potion of Restore Health"
-        messages.emplace_back("You used a " + thePotions[found]->getName() + ". " + thePotions[found]->getDescription(),
+        messages.emplace_back("PC used a " + thePotions[found]->getName() + ". " + thePotions[found]->getDescription(),
                             Color::BOLDMAGENTA);
 
 
@@ -604,6 +604,7 @@ pair<char,string> CC3K::getState(int x, int y)
 
     // Else, return the floor element
     return make_pair(theFloor->cellAt(x, y).getChar(), Color::RESET);
+
 }
 
 void CC3K::setStartingRace(int newRace)
