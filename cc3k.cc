@@ -409,7 +409,36 @@ void CC3K::movePlayer(string dir)
 
         return;
     }
-    // Else, not a stairway, we can use isOccupied() properly
+
+    // Next, check if player moved onto gold
+    // Check if there exists a potion in the specified direction
+    int foundGold = -1;
+    for (int i = 0; i < theGold.size(); i++)
+    {
+        if (newX == theGold[i]->getX() && newY == theGold[i]->getY())
+        {
+            foundGold = i;
+            break;
+        }
+    }
+    // If the player is walking on gold
+    if (foundGold != -1)
+    {
+        // TODO: Check dragon hoard logic
+
+        // Add the gold to player
+        playerGold += theGold[foundGold]->getValue();
+
+        // Remove the gold from the map
+        theGold.erase(theGold.begin()+foundGold);
+
+        // Move the player over the gold
+        thePlayer->setX(newX);
+        thePlayer->setY(newY);
+        return;
+    }
+    
+    // Else, not a stairway or gold, we can use isOccupied() properly
     // Check if the new position is a tile
     // (i.e. don't move into a wall or empty space)
     if (isOccupied(newX, newY) ||
