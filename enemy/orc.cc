@@ -12,7 +12,15 @@ int Orc::attack(std::shared_ptr<Character> defender) {
     if (abs(defender->getX() - getX()) <= 1 &&
         abs(defender->getY() - getY()) <= 1)
     {
-        dmg = (int)(ceil((100.0/(100.0+defender->getDef()))*getAtk()));
+        // Orcs do 50% more damage to Goblins
+        if (defender->getName() == "Goblin")
+        {
+            dmg = (int)(ceil((100.0/(100.0+defender->getDef()))*getAtk())*1.5);
+        }
+        else
+        {
+            dmg = (int)(ceil((100.0/(100.0+defender->getDef()))*getAtk()));
+        }
     }
     // Decrement the health
     defender->setHP(defender->getHP()-dmg);

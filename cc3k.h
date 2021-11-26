@@ -67,6 +67,8 @@ class CC3K : public Subject {
     void generateGold();
     void generateEnemies();
     void moveAndAttackEnemies();
+    void moveAndAttackEnemy(std::shared_ptr<Enemy> enemy);
+
     void checkPlayerDead();
 
     public:

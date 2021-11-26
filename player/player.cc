@@ -55,6 +55,15 @@ void Player::applyPermanentPotions()
 
 int Player::attack(std::shared_ptr<Character> defender)
 {
+    // If attempting to attack a halfing, there is a 50% chance of missing
+    if (defender->getName() == "Halfling")
+    {
+        if (rand() % 2)
+        {
+            return 0;
+        }
+    }
+
     int dmg = 0;
     // Check that the defender is in range
     if (abs(defender->getX() - getX()) <= 1 &&

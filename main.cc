@@ -16,8 +16,6 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-
-
     // Set seed
     // Deterministic seed for testing
     srand(1);
@@ -100,7 +98,6 @@ int main(int argc, char *argv[])
                 // TODO: check invalid dir
                 iss >> dir;
                 game->playerAttack(dir);
-
             }
 
             // Specify starting race

@@ -41,6 +41,7 @@
 #include <iterator>
 #include <algorithm>
 #include <memory>
+#include <map>
 
 using namespace std;
 
@@ -714,12 +715,54 @@ void CC3K::moveAndAttackEnemies()
     {
         return;
     }
-    for (auto enemy : theEnemies)
+
+
+    // "starting at the leftmost enemy, move all enemies on that row and then move
+    // to the next row starting with the leftmost. Any particular enemy should only be moved once per player action (e.g. moving
+    // to a line that has not been processed does not grant an extra move)."
+
+    // This makes the implementation more complicated than simply looping through the vector of enemies
+
+    vector<shared_ptr<Enemy>> enemiesCopy = theEnemies;
+
+    // Create a hash map to mark the xy coordinates of the new enemy locations
+    std::map<std::pair<int, int>, bool>  checkXY;
+    for (int i = 0; i < theFloor->getHeight(); i++)
     {
-        // If merchant and not triggered hostile, skip (don't attack)
+        for (int j = 0; j < theFloor->getWidth(); j++)
+        {
+            // Skip non-chamber tiles since enemies cannot be there
+            if (theFloor->chamberAt(j, i) == -1)
+            {
+                continue;
+            }
+            
+            // Else search for an enemy
+            else
+            {
+                for (int k = 0; k < theEnemies.size(); k++)
+                {
+                    if (checkXY.count(make_pair(j,i)) == 0 && i == theEnemies[k]->getY() && j == theEnemies[k]->getX() )
+                    {
+                        moveAndAttackEnemy(theEnemies[k]);
+                        checkXY[make_pair(theEnemies[k]->getY(),theEnemies[k]->getX())] = true;
+                    }
+                }
+            }
+
+        }
+    }
+
+    // Check if the player has died from enemy attacks
+    checkPlayerDead();
+}
+
+void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy) 
+{
+            // If merchant and not triggered hostile, skip (don't attack)
         if (enemy->getName() == "Merchant" && !isHostileMerchants)
         {
-            continue;
+            return;
         }
         // Move the enemy
         // Discard dx and dy
@@ -738,12 +781,17 @@ void CC3K::moveAndAttackEnemies()
         {
             // Attack the pc if it is in range
             int dmg = enemy->attack(thePlayer);
-            messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
-        }
-    }
+            if (dmg == 0)
+            {
+                messages.emplace_back(enemy->getName() + " tried to attack PC but missed.", Color::RED);
 
-    // Check if the player has died from enemy attacks
-    checkPlayerDead();
+            }
+            else 
+            {
+                messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
+            }
+        }
+
 }
 
 void CC3K::playerAttack(string cmd)
@@ -764,15 +812,19 @@ void CC3K::playerAttack(string cmd)
             int dmg = thePlayer->attack(theEnemies[i]);
             haveHit = true;
 
+            if (dmg == 0)
+            {
+                    messages.emplace_back("PC attacked but missed.", Color::MAGENTA);
+            }
             // If the enemy's HP drops below 0, it is dead
-            if (theEnemies[i]->getHP() <= 0)
+            else if (theEnemies[i]->getHP() <= 0)
             {
                 if (theEnemies[i]->getName() == "Merchant")
                 {
                     // All merchants are hostile now
                     isHostileMerchants = true;
                     messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
-                    messages.emplace_back("You have drawn the ire of all merchants. They will be hostile to you from now on.", Color::MAGENTA);
+                    messages.emplace_back("You have drawn the ire of all merchants. They will be hostile to you from now on!", Color::MAGENTA);
                 }
                 else
                 {
@@ -793,7 +845,7 @@ void CC3K::playerAttack(string cmd)
     }
     if (!haveHit)
     {
-        messages.emplace_back("There is nothing to attack there.", Color::RED);
+        messages.emplace_back("There is nothing to attack there.", Color::BOLDMAGENTA);
     }
 
     moveAndAttackEnemies();
