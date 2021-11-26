@@ -7,7 +7,7 @@ class Item : public Entity {
     private:
         std::string name;
     public:
-    Item(std::string name, char symbol);
+    Item(std::string name, char symbol, std::string color);
     void activate();
     std::string getName();
 

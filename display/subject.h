@@ -2,6 +2,7 @@
 #define SUBJECT_H
 #include <vector>
 #include <memory>
+#include <string>
 
 class Observer;
 
@@ -11,7 +12,7 @@ class Subject {
   void attach(Observer *o);
   void detach(Observer *o);
   void notifyObservers();
-  virtual char getState(int x, int y) = 0;
+  virtual std::pair<char, std::string> getState(int x, int y) = 0;
   virtual ~Subject() = default;
 };
 

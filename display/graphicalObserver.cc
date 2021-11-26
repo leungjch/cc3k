@@ -42,7 +42,7 @@ void GraphicalObserver::notify()
   {
     for (int j = 0; j < width; ++j)
     {
-      char val = subject->getState(j, i);
+      char val = subject->getState(j, i).first;
       unsigned long col = Xwindow::White;
 
       if (val == Cell::WALL_HORIZONTAL || val == Cell::WALL_VERTICAL)

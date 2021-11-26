@@ -568,18 +568,18 @@ string CC3K::getGameStatus()
     return ret;
 }
 
-char CC3K::getState(int x, int y)
+pair<char,string> CC3K::getState(int x, int y)
 {
     // Check the player coordinates
     if (thePlayer->getX() == x && thePlayer->getY() == y)
     {
-        return thePlayer->getSymbol();
+        return make_pair(thePlayer->getSymbol(), thePlayer->getColor());
     }
 
     // Check the staircase coordinates
     if (theStairway->getX() == x && theStairway->getY() == y)
     {
-        return theStairway->getSymbol();
+        return make_pair(theStairway->getSymbol(),theStairway->getColor()) ;
     }
 
     // Check all potions
@@ -587,7 +587,7 @@ char CC3K::getState(int x, int y)
     {
         if (potion->getX() == x && potion->getY() == y)
         {
-            return potion->getSymbol();
+            return make_pair(potion->getSymbol(),potion->getColor()) ;
         }
     }
 
@@ -597,13 +597,13 @@ char CC3K::getState(int x, int y)
     {
         if (gold->getX() == x && gold->getY() == y)
         {
-            return gold->getSymbol();
+            return make_pair(gold->getSymbol(), gold->getColor());
         }
     }
     // TODO: Check enemies
 
     // Else, return the floor element
-    return theFloor->cellAt(x, y).getChar();
+    return make_pair(theFloor->cellAt(x, y).getChar(), Color::RESET);
 }
 
 void CC3K::setStartingRace(int newRace)

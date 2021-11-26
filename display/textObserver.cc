@@ -23,7 +23,15 @@ void TextObserver::notify()
     {
         for (int j = 0; j < width; j++)
         {
-            cout << subject->getState(j, i);
+            pair<char, string> state = subject->getState(j, i);
+            if (state.second == Color::RESET) 
+            {
+                cout << state.first;
+            }
+            else 
+            {
+                cout << state.second << state.first << Color::RESET;
+            }
         }
         cout << endl;
     }

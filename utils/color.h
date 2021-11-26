@@ -1,3 +1,5 @@
+#ifndef COLOR_H
+#define COLOR_H
 #include <string>
 
 class Color {
@@ -20,3 +22,4 @@ class Color {
     static const std::string BOLDCYAN;
     static const std::string BOLDWHITE;
 };
+#endif

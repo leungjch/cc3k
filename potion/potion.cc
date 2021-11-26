@@ -4,10 +4,10 @@
 using namespace std;
 // Create a dummy potion
 Potion::Potion() : 
-            Item{"", 'P'}, deltaHp{0}, deltaAtk{0}, deltaDef{0}, isPermanent{false}, description{""} {}
+            Item{"", 'P', Color::MAGENTA}, deltaHp{0}, deltaAtk{0}, deltaDef{0}, isPermanent{false}, description{""} {}
 
 Potion::Potion(string name, int deltaHp, int deltaAtk, int deltaDef, bool isPermanent, string description) : 
-            Item{name, 'P'}, deltaHp{deltaHp}, deltaAtk{deltaAtk}, deltaDef{deltaDef}, isPermanent{isPermanent}, description{description} {}
+            Item{name, 'P', Color::MAGENTA}, deltaHp{deltaHp}, deltaAtk{deltaAtk}, deltaDef{deltaDef}, isPermanent{isPermanent}, description{description} {}
 
 int Potion::getDeltaHp() {
     return deltaHp;

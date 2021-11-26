@@ -1,4 +1,8 @@
 #include "entity.h"
+#include "utils/color.h"
+#include <string>
+
+using namespace std; 
 
 int Entity::getX() {
     return x;
@@ -17,6 +21,12 @@ void Entity::setY(int newY) {
 char Entity::getSymbol() {
     return symbol;
 }
-Entity::Entity(int x, int y, char sym) : x{x}, y{y}, symbol{sym} {}
-Entity::Entity(char sym) : symbol{sym} {}
+string Entity::getColor() {
+    return color;
+}
+Entity::Entity(int x, int y, char sym) : x{x}, y{y}, symbol{sym}, color{Color::RESET} {}
+Entity::Entity(char sym) : symbol{sym}, color{Color::RESET} {}
+Entity::Entity(char sym, std::string color) : symbol{sym}, color{color} {}
+
+
 Entity::Entity() : symbol{' '} {}
