@@ -647,7 +647,6 @@ void CC3K::usePotion(string dir)
     // Apply any passive ability from the player
     thePlayer->abilityPassive();
 
-
     // Get the coordinates to check
     pair<pair<int, int>, string> checkPotion = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
     pair<int, int> checkPotionPos = checkPotion.first;

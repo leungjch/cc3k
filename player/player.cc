@@ -36,8 +36,7 @@ void Player::applyPotion(shared_ptr<Potion> potion, float magnifier, bool newLev
 
 void Player::applyPermanentPotions()
 {
-    // Reset the starting stats
-    setHP(startingHp);
+    // Reset the starting atk and def
     setAtk(startingAtk);
     setDef(startingDef);
     for (int i = 0; i < potionsConsumed.size(); i++)
