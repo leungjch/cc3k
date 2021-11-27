@@ -16,9 +16,8 @@ void Dragon::move(int dx, int dy)
 int Dragon::attack(std::shared_ptr<Character> defender)
 {
     int dmg = 0;
-    // Check that the defender is in range
-    if (abs(defender->getX() - getX()) <= 1 &&
-        abs(defender->getY() - getY()) <= 1)
+    // Check that the defender is in range (NOTE: this includes the gold hoard)
+    if (inRange(defender))
     {
         // 50% chance of missing
         if (rand() % 2)
@@ -48,7 +47,7 @@ bool Dragon::inRange(std::shared_ptr<Character> defender)
     bool inRangeOfItself = Enemy::inRange(defender);
     bool inRangeOfHoard = (abs(defender->getX() - theHoard->getX()) <= 1 
                         && abs(defender->getY() - theHoard->getY()) <= 1);
-                        
+
     return inRangeOfItself || inRangeOfHoard;
 
 }
