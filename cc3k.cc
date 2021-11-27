@@ -548,6 +548,9 @@ void CC3K::generateEnemies()
 
 void CC3K::movePlayer(string dir)
 {
+    // Apply any passive ability from the player
+    thePlayer->abilityPassive();
+
     pair<pair<int, int>, string> newPos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
     // Compute the new position
 
@@ -641,6 +644,10 @@ void CC3K::movePlayer(string dir)
 // Use a potion in the direction specified (from the player)
 void CC3K::usePotion(string dir)
 {
+    // Apply any passive ability from the player
+    thePlayer->abilityPassive();
+
+
     // Get the coordinates to check
     pair<pair<int, int>, string> checkPotion = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
     pair<int, int> checkPotionPos = checkPotion.first;
@@ -859,6 +866,10 @@ void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
 
 void CC3K::playerAttack(string cmd)
 {
+    // Apply any passive ability from the player
+    thePlayer->abilityPassive();
+
+
     pair<pair<int, int>, string> pos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), cmd);
     // The coordinates where the player is striking the possible enemy
     int attackX = pos.first.first;

@@ -6,5 +6,6 @@
 class Troll : public Player {
     public:
         Troll();
+        void abilityPassive() override;
 };
 #endif

@@ -11,6 +11,7 @@ class Player : public Character {
   //       startingHp is used to track the maximum hp
   //       hp is used to keep track of CURRENT hp
   //       same rule for startingDef/Atk
+  protected:
   int startingHp;
   int startingDef;
   int startingAtk;
@@ -20,6 +21,7 @@ class Player : public Character {
     void applyPermanentPotions();
     std::string getRace();
     virtual int attack(std::shared_ptr<Character> defender);
+    virtual void abilityPassive();
 
 
     enum RaceTypes {
