@@ -899,7 +899,7 @@ void CC3K::playerAttack(string cmd)
             else if (theEnemies[i]->getHP() <= 0)
             {
                 // Extra logic for merchant
-                if (theEnemies[i]->getName() == "Merchant")
+                if (theEnemies[i]->getName() == "Merchant" && !isHostileMerchants)
                 {
                     // All merchants are hostile now
                     isHostileMerchants = true;

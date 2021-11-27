@@ -36,3 +36,19 @@ std::shared_ptr<DragonHoard> Dragon::getHoard()
 {
     return theHoard;
 }
+
+
+bool Dragon::inRange(std::shared_ptr<Character> defender)
+{
+    /*
+        Dragons are considered hostile when the player is next to (read: in the 1 block radius of) its
+        dragon hoard or itself, and will use their fire breath to defend its hoard (i.e. will attack the enemy). This means that a Dragon
+        might attack even if the player is not next to the Dragon, but because it is next to a dragon hoard.
+    */
+    bool inRangeOfItself = Enemy::inRange(defender);
+    bool inRangeOfHoard = (abs(defender->getX() - theHoard->getX()) <= 1 
+                        && abs(defender->getY() - theHoard->getY()) <= 1);
+                        
+    return inRangeOfItself || inRangeOfHoard;
+
+}
