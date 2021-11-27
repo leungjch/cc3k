@@ -28,7 +28,6 @@
 #include "treasure/dragonHoard.h"
 #include "treasure/merchantHoard.h"
 
-
 #include "potion/potion.h"
 #include "stairway.h"
 #include "floor.h"
@@ -48,7 +47,6 @@ using namespace std;
 CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false},
                theFloor{make_shared<Floor>()}
 {
-
 }
 
 CC3K::~CC3K()
@@ -89,6 +87,9 @@ void CC3K::newLevel()
         ever spawn on a floor tile and never in a doorway, passage, or the stairs
         leading down to the next floor.
     */
+    thePotions.clear();
+    theGold.clear();
+    theEnemies.clear();
 
     // Get the map and read it into a floor
     theFloor->readMap("map.txt");
@@ -110,8 +111,7 @@ void CC3K::newLevel()
     generateGold();
 
     // Generate enemies
-    generateEnemies(); 
-
+    generateEnemies();
 }
 
 void CC3K::placePlayer()
@@ -316,7 +316,6 @@ void CC3K::generateStairway()
 
 void CC3K::generatePotions()
 {
-    thePotions.clear();
     for (int i = 0; i < NUM_POTIONS; i++)
     {
         bool isGenerating = true;
@@ -383,7 +382,6 @@ void CC3K::generatePotions()
 
 void CC3K::generateGold()
 {
-    theGold.clear();
 
     for (int i = 0; i < NUM_GOLD; i++)
     {
@@ -396,6 +394,9 @@ void CC3K::generateGold()
 
         auto newGold = make_shared<Gold>("", 0);
 
+        // If we are spawning a dragonhoard
+        bool isDragonHoard = false;
+
         // 5/8 probability normal
         if (goldType <= 5)
         {
@@ -404,7 +405,8 @@ void CC3K::generateGold()
         // 1/8 probability dragon
         else if (goldType <= 6)
         {
-            newGold = make_shared<DragonHoard>();
+            // Spawn a dragon later
+            isDragonHoard = true;
         }
         // 1/4 probability small
         else
@@ -421,13 +423,56 @@ void CC3K::generateGold()
             int randX = theFloor->getRandomX();
             int randY = theFloor->getRandomY();
             int chamberNum = theFloor->chamberAt(randX, randY);
-
             if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
             {
-                newGold->setX(randX);
-                newGold->setY(randY);
-                theGold.push_back(newGold);
-                isGenerating = false;
+                if (isDragonHoard)
+                {
+                    // Generate random coordinates for the dragon
+                    auto dragonGold = make_shared<DragonHoard>();
+
+                    // Generate a dragon with the associated dragon hoard
+                    auto dragon = make_shared<Dragon>(dragonGold);
+
+                    // Generate the coordinates for the dragon
+
+                    // Generate a dx and dy either -1 or 1
+                    int dY = rand() % 2 ? -1 : 1;
+                    int dX = rand() % 2 ? -1 : 1;
+
+                    int dragonX = dX + randX;
+                    int dragonY = dY + randY;
+
+
+                    // Set the coordinates for gold and dragon
+                    dragonGold->setX(randX);
+                    dragonGold->setY(randY);
+                    dragon->setX(dragonX);
+                    dragon->setY(dragonY);
+
+
+                    int dragonChamberNum = theFloor->chamberAt(dragonX, dragonY);
+
+                    if (dragonChamberNum == targetChamberNum && !isOccupied(dragonX, dragonY))
+                    {
+
+                        theGold.push_back(dragonGold);
+
+                        theEnemies.push_back(dragon);
+
+                        isGenerating = false; // exit the loop
+                        cout << "DONE DRAGON";
+                    }
+
+                }
+                else
+                {
+                    newGold->setX(randX);
+                    newGold->setY(randY);
+                    theGold.push_back(newGold);
+                    isGenerating = false; // exit the loop
+                }
+                // If generation fails, we do nothing
+
             }
         }
     }
@@ -443,8 +488,6 @@ void CC3K::checkPlayerDead()
 
 void CC3K::generateEnemies()
 {
-    theEnemies.clear();
-
     for (int i = 0; i < NUM_GOLD; i++)
     {
         bool isGenerating = true;
@@ -461,7 +504,7 @@ void CC3K::generateEnemies()
         {
             newEnemy = make_shared<Human>();
         }
-        // 
+        //
         else if (enemyType <= 7)
         {
             newEnemy = make_shared<Dwarf>();
@@ -482,7 +525,8 @@ void CC3K::generateEnemies()
         {
             newEnemy = make_shared<Merchant>(isHostileMerchants);
         }
-        else {
+        else
+        {
             cerr << "Error generating enemie" << endl;
         }
 
@@ -543,25 +587,38 @@ void CC3K::movePlayer(string dir)
     // If the player is walking on gold
     if (foundGold != -1)
     {
-        // TODO: Check dragon hoard logic
+        messages.emplace_back("PC moves " + newPos.second + ".", Color::BOLDMAGENTA);
 
-        // Add the gold to player
-        playerGold += theGold[foundGold]->getValue();
+        // Check dragon hoard
+        // The condition will be true whenever gold is not a dragon hoard
+        // Or when it is a dragon hoard AND the associated dragon is slain
 
-        // Add the message
-        messages.emplace_back("PC picks up a " +
-                                  theGold[foundGold]->getName() + " worth " +
-                                  to_string(theGold[foundGold]->getValue()) + " gold.",
-                              Color::GREEN);
+        if (!(theGold[foundGold]->getName() == "Dragon Hoard" && !theGold[foundGold]->getPickup()))
+        {
+            // If normal gold, we collect it and delete it 
 
-        // Remove the gold from the map
-        theGold.erase(theGold.begin() + foundGold);
+            // Add the gold to player
+            playerGold += theGold[foundGold]->getValue();
 
-        // Move the player over the gold
-        thePlayer->setX(newX);
-        thePlayer->setY(newY);
+            // Add the message
+            messages.emplace_back("PC picks up a " +
+                                    theGold[foundGold]->getName() + " worth " +
+                                    to_string(theGold[foundGold]->getValue()) + " gold.",
+                                Color::GREEN);
 
-        return;
+            // Remove the gold from the map
+            theGold.erase(theGold.begin() + foundGold);
+        }
+            // Move the player over the gold
+            thePlayer->setX(newX);
+            thePlayer->setY(newY);
+
+            // The enemies now move and attack the player if in range
+            moveAndAttackEnemies();
+
+            return;
+
+        
     }
 
     // Else, not a stairway or gold, we can use isOccupied() properly
@@ -573,6 +630,9 @@ void CC3K::movePlayer(string dir)
          theFloor->cellAt(newX, newY).getChar() != Cell::PASSAGE))
     {
         messages.emplace_back("You cannot move there.", Color::RED);
+        // The enemies now move and attack the player if in range
+        moveAndAttackEnemies();
+
         return;
     }
 
@@ -704,7 +764,8 @@ void CC3K::toggleStopEnemies()
     {
         messages.emplace_back("Enemies are frozen now!", Color::BLUE);
     }
-    else {
+    else
+    {
         messages.emplace_back("Enemies are unfrozen now!", Color::BLUE);
     }
 }
@@ -717,7 +778,6 @@ void CC3K::moveAndAttackEnemies()
         return;
     }
 
-
     // "starting at the leftmost enemy, move all enemies on that row and then move
     // to the next row starting with the leftmost. Any particular enemy should only be moved once per player action (e.g. moving
     // to a line that has not been processed does not grant an extra move)."
@@ -727,7 +787,7 @@ void CC3K::moveAndAttackEnemies()
     vector<shared_ptr<Enemy>> enemiesCopy = theEnemies;
 
     // Create a hash map to mark the xy coordinates of the new enemy locations
-    std::map<std::pair<int, int>, bool>  checkXY;
+    std::map<std::pair<int, int>, bool> checkXY;
     for (int i = 0; i < theFloor->getHeight(); i++)
     {
         for (int j = 0; j < theFloor->getWidth(); j++)
@@ -737,20 +797,19 @@ void CC3K::moveAndAttackEnemies()
             {
                 continue;
             }
-            
+
             // Else search for an enemy
             else
             {
                 for (int k = 0; k < theEnemies.size(); k++)
                 {
-                    if (checkXY.count(make_pair(j,i)) == 0 && i == theEnemies[k]->getY() && j == theEnemies[k]->getX() )
+                    if (checkXY.count(make_pair(j, i)) == 0 && i == theEnemies[k]->getY() && j == theEnemies[k]->getX())
                     {
                         moveAndAttackEnemy(theEnemies[k]);
-                        checkXY[make_pair(theEnemies[k]->getY(),theEnemies[k]->getX())] = true;
+                        checkXY[make_pair(theEnemies[k]->getY(), theEnemies[k]->getX())] = true;
                     }
                 }
             }
-
         }
     }
 
@@ -758,45 +817,41 @@ void CC3K::moveAndAttackEnemies()
     checkPlayerDead();
 }
 
-void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy) 
+void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
 {
 
-        // Move the enemy
-        // Discard dx and dy
-        // Generate a random -1, 0, 1
-        int deltaX = rand() % 3 - 1;
-        int deltaY = rand() % 3 - 1;
-        int newX = enemy->getX() + deltaX;
-        int newY = enemy->getY() + deltaY;
-        if (!isOccupied(newX, newY) && theFloor->cellAt(newX, newY).getChar() == Cell::TILE)
+    // Move the enemy
+    // Discard dx and dy
+    // Generate a random -1, 0, 1
+    int deltaX = rand() % 3 - 1;
+    int deltaY = rand() % 3 - 1;
+    int newX = enemy->getX() + deltaX;
+    int newY = enemy->getY() + deltaY;
+    if (!isOccupied(newX, newY) && theFloor->cellAt(newX, newY).getChar() == Cell::TILE)
+    {
+        enemy->move(deltaX, deltaY);
+    }
+
+    // Attack the player if they are in range
+
+    // If merchant and not triggered hostile, skip (don't attack)
+    if (enemy->getName() == "Merchant" && !isHostileMerchants)
+    {
+        return;
+    }
+    if (enemy->inRange(thePlayer))
+    {
+        // Attack the pc if it is in range
+        int dmg = enemy->attack(thePlayer);
+        if (dmg == 0)
         {
-            enemy->move(deltaX, deltaY);
+            messages.emplace_back(enemy->getName() + " tried to attack PC but missed.", Color::RED);
         }
-
-
-
-        // Attack the player if they are in range
-
-        // If merchant and not triggered hostile, skip (don't attack)
-        if (enemy->getName() == "Merchant" && !isHostileMerchants)
+        else
         {
-            return;
+            messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
         }
-        if (enemy->inRange(thePlayer))
-        {
-            // Attack the pc if it is in range
-            int dmg = enemy->attack(thePlayer);
-            if (dmg == 0)
-            {
-                messages.emplace_back(enemy->getName() + " tried to attack PC but missed.", Color::RED);
-
-            }
-            else 
-            {
-                messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
-            }
-        }
-
+    }
 }
 
 void CC3K::playerAttack(string cmd)
@@ -819,11 +874,12 @@ void CC3K::playerAttack(string cmd)
 
             if (dmg == 0)
             {
-                    messages.emplace_back("PC attacked but missed.", Color::MAGENTA);
+                messages.emplace_back("PC attacked but missed.", Color::MAGENTA);
             }
             // If the enemy's HP drops below 0, it is dead
             else if (theEnemies[i]->getHP() <= 0)
             {
+                // Extra logic for merchant
                 if (theEnemies[i]->getName() == "Merchant")
                 {
                     // All merchants are hostile now
@@ -831,12 +887,24 @@ void CC3K::playerAttack(string cmd)
                     messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
                     messages.emplace_back("You have drawn the ire of all merchants. They will be hostile to you from now on!", Color::MAGENTA);
                 }
+                // Extra logic for dragon: allow pickup the gold
+                else if (theEnemies[i]->getName() == "Dragon")
+                {
+                    // Get the gold
+                    Dragon& theDragon = dynamic_cast<Dragon&>(*theEnemies[i]);
+                    auto dragonGold = theDragon.getHoard();
+
+                    // Set the gold to allow pickup
+                    dragonGold->setPickup(true);
+                    messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
+                    messages.emplace_back("The dragon's hoard is now yours to take. ", Color::GREEN);
+                }
                 else
                 {
-                    theEnemies[i] = theEnemies.back();
-                    theEnemies.pop_back();
                     messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
                 }
+                theEnemies[i] = theEnemies.back();
+                theEnemies.pop_back();
 
             }
             else
@@ -865,60 +933,4 @@ void CC3K::setStartingRace(int newRace)
 vector<Message> CC3K::getMessages()
 {
     return messages;
-}
-
-void CC3K::display()
-{
-    // DEPRECATED (use TextObserver and GraphicalObserver and CC3K->render())
-    // /* Rendering algorithm:
-    //  *   Copy over the environment to the display (which will overwrite the old display)
-    //  *   Loop through all entities and overwrite the display with each entity's position
-    //  *   Print out the new display
-    //  */
-
-    // theDisplay = theFloor->getEnvironmentChar();
-
-    // // Place the player's position
-    // theDisplay[thePlayer->getY()][thePlayer->getX()] = thePlayer->getSymbol();
-
-    // // Draw the staircase
-    // theDisplay[theStairway->getY()][theStairway->getX()] = theStairway->getSymbol();
-
-    // // Draw the potions
-    // for (auto potion : thePotions)
-    // {
-    //     theDisplay[potion->getY()][potion->getX()] = potion->getSymbol();
-    // }
-
-    // // TODO: Draw the gold piles
-
-    // // TODO: Draw enemies
-
-    // // Print out the display
-    // for (int i = 0; i < theDisplay.size(); i++)
-    // {
-    //     for (int j = 0; j < theDisplay[0].size(); j++)
-    //     {
-    //         cout << theDisplay[i][j];
-    //     }
-    //     cout << endl;
-    // }
-
-    // // Print out race
-    // cout << "Race: " << thePlayer->getName();
-
-    // // Print out player gold
-    // cout << " Gold: " << playerGold << endl;
-
-    // // Print out HP
-    // cout << "HP: " << thePlayer->getHP() << endl;
-
-    // // Print out Atk
-    // cout << "Atk: " << thePlayer->getAtk() << endl;
-
-    // // Print out Def
-    // cout << "Def: " << thePlayer->getDef() << endl;
-
-    // // Print out action (for any actions) that occur
-    // cout << "Action: " << endl;
 }

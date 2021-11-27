@@ -74,7 +74,6 @@ class CC3K : public Subject {
     public:
         void newGame();
         void newLevel();
-        void display();
         void render();
         void movePlayer(std::string dir);
         void usePotion(std::string dir);

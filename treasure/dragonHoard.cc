@@ -1,2 +1,5 @@
 #include "dragonHoard.h"
-DragonHoard::DragonHoard() : Gold{"Dragon Hoard", 6} {}
+#include <memory>
+using namespace std;
+
+DragonHoard::DragonHoard() : Gold{"Dragon Hoard", 6, false} {}
