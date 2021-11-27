@@ -94,7 +94,6 @@ void GraphicalObserver::notify()
       else {
         // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
         theWindow->drawImage(theWindow->pcImg, j*SCALE, i*SCALE);
-
       }
     }
   }
