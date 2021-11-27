@@ -33,11 +33,23 @@ int main(int argc, char *argv[])
 
     // Text display
     auto textObserver = make_shared<TextObserver>(game.get(), 79, 25);
-    auto graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
 
     game->attach(textObserver.get());
-    game->attach(graphicalObserver.get());
+
+    shared_ptr<GraphicalObserver> graphicalObserver = nullptr;
+
+    // Parse command line args
+    for (auto arg : args)
+    {
+        if (arg == "dlc")
+        {
+            graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
+            game->attach(graphicalObserver.get());
+        }
+    }
     game->newGame();
+
+
 
     string cmdLine;
 
@@ -143,7 +155,6 @@ int main(int argc, char *argv[])
 
             // Render the display after every command
             game->render();
-
         }
     }
 }

@@ -13,6 +13,11 @@ sudo apt install libxpm-dev
 
 Run `make` to compile the project, then run `./cc3k` to launch the game.
 
+## Arguments
+Run `cc3k` with `dlc` to enable extra features.
+```sh
+./cc3k dlc
+```
 ## Controls
 -  **no,so,ea,we,ne,nw,se,sw**: moves the player character one block in the appropriate cardinal direction.
 -  **u direction**: uses the potion indicated by the direction (e.g. no, so, ea).
