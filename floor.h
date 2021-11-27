@@ -3,7 +3,10 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "cell.h"
+
+class Entity;
 
 class Floor {
 
@@ -19,6 +22,7 @@ class Floor {
         void readMap(std::string filename);
 
         int chamberAt(int x, int y);
+        int chamberAt(std::shared_ptr<Entity> e);
         int getRandomChamberNum();
         int getRandomX();
         int getRandomY();

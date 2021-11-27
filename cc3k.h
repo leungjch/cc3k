@@ -12,9 +12,13 @@
 #include "display/observer.h"
 #include "display/subject.h"
 #include "utils/message.h"
+
+class Level;
+
 class CC3K : public Subject {
     int levelNum;
     std::shared_ptr<Floor> theFloor;
+    std::shared_ptr<Level> theLevel;
     std::vector<Observer*> observers;
 
     std::shared_ptr<Stairway> theStairway;
@@ -58,17 +62,8 @@ class CC3K : public Subject {
     // A 2D char vector for displaying the board
     std::vector<std::vector<char>> theDisplay;
 
-    bool isOccupied(int x, int y);
-    
-    void generatePlayer();
-    void placePlayer();
-    void generateStairway();
-    void generatePotions();
-    void generateGold();
-    void generateEnemies();
     void moveAndAttackEnemies();
     void moveAndAttackEnemy(std::shared_ptr<Enemy> enemy);
-
     void checkPlayerDead();
     void spawnGoldPile(int goldType, int sourceX, int sourceY);
 
@@ -81,6 +76,7 @@ class CC3K : public Subject {
         void playerAttack(std::string dir);
         void toggleStopEnemies();
         void spawnGoldPileAt(int goldType, int sourceX, int sourceY);
+        bool isOccupied(int x, int y) const;
 
         CC3K();
         ~CC3K();

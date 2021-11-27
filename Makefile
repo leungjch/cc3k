@@ -1,6 +1,6 @@
 CXX= g++
 CXXFLAGS=-std=c++14 -g -MMD 
-OBJECTS=main.o cc3k.o floor.o stairway.o cell.o entity.o character.o \
+OBJECTS=main.o cc3k.o floor.o level.o defaultlevel.o stairway.o cell.o entity.o character.o \
 		utils/message.o utils/color.o \
 		player/player.o  player/drow.o player/goblin.o player/shade.o player/troll.o player/vampire.o \
 		treasure/gold.o treasure/smallPile.o treasure/normalPile.o treasure/merchantHoard.o treasure/dragonHoard.o \
