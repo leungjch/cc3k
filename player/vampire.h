@@ -6,5 +6,6 @@
 class Vampire : public Player {
     public:
         Vampire();
+        int attack(std::shared_ptr<Character> defender) override;
 };
 #endif

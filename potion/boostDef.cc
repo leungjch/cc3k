@@ -7,5 +7,5 @@ BoostDef::BoostDef() : Potion{
     0, 
     5, 
     false,
-    "You gain 5 Def on this level."}
+    "PC gained Def on this level."}
 {}

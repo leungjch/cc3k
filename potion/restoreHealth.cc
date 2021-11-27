@@ -7,5 +7,5 @@ RestoreHealth::RestoreHealth() : Potion{
     0, 
     0, 
     true,
-    "You permanently gain 10 HP."}
+    "PC gained HP."}
 {}

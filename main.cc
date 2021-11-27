@@ -1,3 +1,9 @@
+// TODO:
+// Drop gold piles (human / merchant)
+// Rest of player abilities
+// Enemy abilities
+
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -48,8 +54,6 @@ int main(int argc, char *argv[])
         }
     }
     game->newGame();
-
-
 
     string cmdLine;
 
@@ -143,10 +147,10 @@ int main(int argc, char *argv[])
             // r: restarts the game-> All stats, inventory, and gold are reset. A new race should be selected.
             else if (cmd == "r")
             {
-                game->newLevel();
+                game->newGame();
             }
 
-            // q: allows the player to admit defeat and exit the game->
+            // q: allows the player to admit defeat and exit the game
             else if (cmd == "q")
             {
                 cout << "Exiting." << endl;
