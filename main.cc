@@ -1,9 +1,3 @@
-// TODO:
-// Drop gold piles (human / merchant)
-// Rest of player abilities
-// Enemy abilities
-
-
 #include <iostream>
 #include <vector>
 #include <string>
