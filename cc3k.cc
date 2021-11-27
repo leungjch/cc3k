@@ -593,7 +593,7 @@ void CC3K::movePlayer(string dir)
 
         if (!(theGold[foundGold]->getName() == "Dragon Hoard" && !theGold[foundGold]->getPickup()))
         {
-            // If normal gold, we collect it and delete it
+            // If normal gold, we collect it and remove it
 
             // Add the gold to player
             playerGold += theGold[foundGold]->getValue();

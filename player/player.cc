@@ -8,11 +8,13 @@
 using namespace std;
 
 Player::Player(int hp, int atk, int def, string race) : Character{hp, atk, def, '@', race},
-                                                        startingHp{hp}, startingAtk{atk}, startingDef{def}
-{
-}
+                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{1.0} {}
 
-void Player::applyPotion(shared_ptr<Potion> potion, float magnifier, bool newLevel)
+Player::Player(int hp, int atk, int def, std::string race, float potionMagnifier) : Character{hp, atk, def, '@', race},
+                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{potionMagnifier} {}
+
+
+void Player::applyPotion(shared_ptr<Potion> potion, bool newLevel)
 {
     if (!newLevel)
     {
@@ -22,9 +24,9 @@ void Player::applyPotion(shared_ptr<Potion> potion, float magnifier, bool newLev
 
     // Apply the potion effect with magnifier (default is 1.0x, 1.5x for drow)
     // Stats cannot drop below zero
-    setHP(max(0, (int)((float)hp + (float)(magnifier*potion->getDeltaHp()))));
-    setAtk(max(0, (int)((float)atk + (float)(magnifier*potion->getDeltaAtk()))));
-    setDef(max(0, (int)((float)def + (float)(magnifier*potion->getDeltaDef()))));
+    setHP(max(0, (int)((float)hp + (float)(potionMagnifier*potion->getDeltaHp()))));
+    setAtk(max(0, (int)((float)atk + (float)(potionMagnifier*potion->getDeltaAtk()))));
+    setDef(max(0, (int)((float)def + (float)(potionMagnifier*potion->getDeltaDef()))));
 
     // Max HP for all races is the starting HP, except for vampires that have no maximum.
     // Cap the health to startingHp if it exceeds it
@@ -42,7 +44,7 @@ void Player::applyPermanentPotions()
     for (int i = 0; i < potionsConsumed.size(); i++)
     {
         // If it's a temporary potion, remove it
-        if (!potionsConsumed[i]->getPermanent())
+        if (!(potionsConsumed[i]->getPermanent()))
         {
             potionsConsumed[i] = potionsConsumed.back();
             potionsConsumed.pop_back();
