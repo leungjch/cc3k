@@ -9,6 +9,7 @@ class Dragon : public Enemy {
     Dragon(std::shared_ptr<DragonHoard> theHoard);
     int attack(std::shared_ptr<Character> defender) override;
     void move(int dx, int dy) override;
+    bool inRange(std::shared_ptr<Character> defender) override;
     std::shared_ptr<DragonHoard> getHoard();
 };
 #endif
