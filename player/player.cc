@@ -78,3 +78,10 @@ int Player::attack(std::shared_ptr<Character> defender)
     defender->setHP(defender->getHP() - dmg);
     return dmg;
 }
+
+// A passive ability is an ability that is applied at every turn
+void Player::abilityPassive()
+{
+    // By default, players have no passive ability
+    return;
+}
