@@ -91,6 +91,11 @@ void GraphicalObserver::notify()
         // col = Xwindow::Black;
         // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
       }
+      else {
+        // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
+        theWindow->drawImage(theWindow->pcImg, j*SCALE, i*SCALE);
+
+      }
     }
   }
 }
