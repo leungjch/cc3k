@@ -12,20 +12,19 @@ Player::Player(int hp, int atk, int def, string race) : Character{hp, atk, def, 
 {
 }
 
-void Player::applyPotion(shared_ptr<Potion> potion, bool newLevel)
+void Player::applyPotion(shared_ptr<Potion> potion, float magnifier, bool newLevel)
 {
     if (!newLevel)
     {
         // Store the potion
         potionsConsumed.push_back(potion);
-
     }
 
-    // Apply the potion effect
+    // Apply the potion effect with magnifier (default is 1.0x, 1.5x for drow)
     // Stats cannot drop below zero
-    setHP(max(0, hp + potion->getDeltaHp()));
-    setAtk(max(0, atk + potion->getDeltaAtk()));
-    setDef(max(0, def + potion->getDeltaDef()));
+    setHP(max(0, (int)((float)hp + (float)(magnifier*potion->getDeltaHp()))));
+    setAtk(max(0, (int)((float)atk + (float)(magnifier*potion->getDeltaAtk()))));
+    setDef(max(0, (int)((float)def + (float)(magnifier*potion->getDeltaDef()))));
 
     // Max HP for all races is the starting HP, except for vampires that have no maximum.
     // Cap the health to startingHp if it exceeds it

@@ -7,5 +7,5 @@ WoundDef::WoundDef() : Potion{
     0, 
     -5, 
     false,
-    "PC loses 5 Def on this level."}
+    "PC's Def decreased on this level."}
 {}

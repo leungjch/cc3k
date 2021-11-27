@@ -7,5 +7,5 @@ BoostAtk::BoostAtk() : Potion{
     5, 
     0, 
     false,
-    "You gain 5 Atk on this level."}
+    "PC's gained Atk on this level."}
 {}

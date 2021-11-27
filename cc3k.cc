@@ -442,13 +442,11 @@ void CC3K::generateGold()
                     int dragonX = dX + randX;
                     int dragonY = dY + randY;
 
-
                     // Set the coordinates for gold and dragon
                     dragonGold->setX(randX);
                     dragonGold->setY(randY);
                     dragon->setX(dragonX);
                     dragon->setY(dragonY);
-
 
                     int dragonChamberNum = theFloor->chamberAt(dragonX, dragonY);
 
@@ -460,9 +458,7 @@ void CC3K::generateGold()
                         theEnemies.push_back(dragon);
 
                         isGenerating = false; // exit the loop
-                        cout << "DONE DRAGON";
                     }
-
                 }
                 else
                 {
@@ -472,7 +468,6 @@ void CC3K::generateGold()
                     isGenerating = false; // exit the loop
                 }
                 // If generation fails, we do nothing
-
             }
         }
     }
@@ -595,30 +590,28 @@ void CC3K::movePlayer(string dir)
 
         if (!(theGold[foundGold]->getName() == "Dragon Hoard" && !theGold[foundGold]->getPickup()))
         {
-            // If normal gold, we collect it and delete it 
+            // If normal gold, we collect it and delete it
 
             // Add the gold to player
             playerGold += theGold[foundGold]->getValue();
 
             // Add the message
             messages.emplace_back("PC picks up a " +
-                                    theGold[foundGold]->getName() + " worth " +
-                                    to_string(theGold[foundGold]->getValue()) + " gold.",
-                                Color::GREEN);
+                                      theGold[foundGold]->getName() + " worth " +
+                                      to_string(theGold[foundGold]->getValue()) + " gold.",
+                                  Color::GREEN);
 
             // Remove the gold from the map
             theGold.erase(theGold.begin() + foundGold);
         }
-            // Move the player over the gold
-            thePlayer->setX(newX);
-            thePlayer->setY(newY);
+        // Move the player over the gold
+        thePlayer->setX(newX);
+        thePlayer->setY(newY);
 
-            // The enemies now move and attack the player if in range
-            moveAndAttackEnemies();
+        // The enemies now move and attack the player if in range
+        moveAndAttackEnemies();
 
-            return;
-
-        
+        return;
     }
 
     // Else, not a stairway or gold, we can use isOccupied() properly
@@ -788,6 +781,7 @@ void CC3K::moveAndAttackEnemies()
 
     // Create a hash map to mark the xy coordinates of the new enemy locations
     std::map<std::pair<int, int>, bool> checkXY;
+
     for (int i = 0; i < theFloor->getHeight(); i++)
     {
         for (int j = 0; j < theFloor->getWidth(); j++)
@@ -821,7 +815,6 @@ void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
 {
 
     // Move the enemy
-    // Discard dx and dy
     // Generate a random -1, 0, 1
     int deltaX = rand() % 3 - 1;
     int deltaY = rand() % 3 - 1;
@@ -841,15 +834,25 @@ void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
     }
     if (enemy->inRange(thePlayer))
     {
-        // Attack the pc if it is in range
-        int dmg = enemy->attack(thePlayer);
-        if (dmg == 0)
+        // Number of times that the enemy can attack the player
+        // Default is 1, 2 if enemy is elf
+        int numAttacks = 1;
+        if (enemy->getName() == "Elf" && thePlayer->getName() != "Drow")
         {
-            messages.emplace_back(enemy->getName() + " tried to attack PC but missed.", Color::RED);
+            numAttacks = 2;
         }
-        else
+        for (int numAttack = 0; numAttack < numAttacks; numAttack++)
         {
-            messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
+            // Attack the pc if it is in range
+            int dmg = enemy->attack(thePlayer);
+            if (dmg == 0)
+            {
+                messages.emplace_back(enemy->getName() + " tried to attack PC but missed.", Color::RED);
+            }
+            else
+            {
+                messages.emplace_back(enemy->getName() + " deals " + to_string(dmg) + " damage to PC.", Color::RED);
+            }
         }
     }
 }
@@ -872,10 +875,26 @@ void CC3K::playerAttack(string cmd)
             int dmg = thePlayer->attack(theEnemies[i]);
             haveHit = true;
 
+
+            // Extra logic for vampire: If successful attack, it gains 5hp
+            if (thePlayer->getName() == "Vampire" && dmg != 0)
+            {
+                if (theEnemies[i]->getName() == "Dwarf")
+                {
+                    messages.emplace_back("PC is allergic to Dwarf and lost 5 HP.", Color::BLUE);
+                }
+                else
+                {
+                    messages.emplace_back("PC gains 5 HP as a vampire from the successful attack.", Color::BLUE);
+                }
+            }
+
+            // If player misses (this is possible if halfling attacks player)
             if (dmg == 0)
             {
                 messages.emplace_back("PC attacked but missed.", Color::MAGENTA);
             }
+
             // If the enemy's HP drops below 0, it is dead
             else if (theEnemies[i]->getHP() <= 0)
             {
@@ -891,7 +910,7 @@ void CC3K::playerAttack(string cmd)
                 else if (theEnemies[i]->getName() == "Dragon")
                 {
                     // Get the gold
-                    Dragon& theDragon = dynamic_cast<Dragon&>(*theEnemies[i]);
+                    Dragon &theDragon = dynamic_cast<Dragon &>(*theEnemies[i]);
                     auto dragonGold = theDragon.getHoard();
 
                     // Set the gold to allow pickup
@@ -899,14 +918,16 @@ void CC3K::playerAttack(string cmd)
                     messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
                     messages.emplace_back("The dragon's hoard is now yours to take. ", Color::GREEN);
                 }
+                // Otherwise standard enemy was slain
                 else
                 {
                     messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
                 }
                 theEnemies[i] = theEnemies.back();
                 theEnemies.pop_back();
-
             }
+
+            // Player attacks enemy but enemy did not die yet
             else
             {
                 messages.emplace_back("PC deals " + to_string(dmg) + " damage to " +
@@ -914,6 +935,8 @@ void CC3K::playerAttack(string cmd)
                                           " HP)" + ".",
                                       Color::CYAN);
             }
+
+
         }
     }
     if (!haveHit)

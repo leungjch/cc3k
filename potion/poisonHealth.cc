@@ -7,5 +7,5 @@ PoisonHealth::PoisonHealth() : Potion{
     0, 
     0, 
     true,
-    "PC was poisoned and permanently lost 10 HP."}
+    "PC was poisoned and lost HP."}
 {}
