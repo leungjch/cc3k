@@ -12,10 +12,14 @@ Player::Player(int hp, int atk, int def, string race) : Character{hp, atk, def, 
 {
 }
 
-void Player::applyPotion(shared_ptr<Potion> potion)
+void Player::applyPotion(shared_ptr<Potion> potion, bool newLevel)
 {
-    // Store the potion
-    potionsConsumed.push_back(potion);
+    if (!newLevel)
+    {
+        // Store the potion
+        potionsConsumed.push_back(potion);
+
+    }
 
     // Apply the potion effect
     // Stats cannot drop below zero
@@ -48,7 +52,7 @@ void Player::applyPermanentPotions()
         // Otherwise apply the permanent potion effect
         else
         {
-            applyPotion(potionsConsumed[i]);
+            applyPotion(potionsConsumed[i], true);
         }
     }
 }

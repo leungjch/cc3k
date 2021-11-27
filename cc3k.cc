@@ -110,7 +110,8 @@ void CC3K::newLevel()
     generateGold();
 
     // Generate enemies
-    generateEnemies();
+    generateEnemies(); 
+
 }
 
 void CC3K::placePlayer()
@@ -759,11 +760,7 @@ void CC3K::moveAndAttackEnemies()
 
 void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy) 
 {
-            // If merchant and not triggered hostile, skip (don't attack)
-        if (enemy->getName() == "Merchant" && !isHostileMerchants)
-        {
-            return;
-        }
+
         // Move the enemy
         // Discard dx and dy
         // Generate a random -1, 0, 1
@@ -776,7 +773,15 @@ void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
             enemy->move(deltaX, deltaY);
         }
 
+
+
         // Attack the player if they are in range
+
+        // If merchant and not triggered hostile, skip (don't attack)
+        if (enemy->getName() == "Merchant" && !isHostileMerchants)
+        {
+            return;
+        }
         if (enemy->inRange(thePlayer))
         {
             // Attack the pc if it is in range
