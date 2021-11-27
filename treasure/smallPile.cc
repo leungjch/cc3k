@@ -1,4 +1,4 @@
 #include "smallPile.h"
 #include "gold.h"
 
-SmallPile::SmallPile() : Gold{"Small Gold Pile", 1} {}
+SmallPile::SmallPile() : Gold{"Small Gold Pile", SmallPile::value} {}

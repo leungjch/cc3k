@@ -6,5 +6,6 @@
 class SmallPile : public Gold {
     public:
     SmallPile();
+    static const int value = 1;
 };
 #endif
