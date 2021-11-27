@@ -15,9 +15,11 @@ class Player : public Character {
   int startingHp;
   int startingDef;
   int startingAtk;
+  float potionMagnifier;
   public:
     Player(int hp, int atk, int def, std::string race);
-    virtual void applyPotion(std::shared_ptr<Potion> potion, float magnifier = 1.0, bool nextLevel = false);
+    Player(int hp, int atk, int def, std::string race, float potionMagnifier);
+    virtual void applyPotion(std::shared_ptr<Potion> potion, bool nextLevel = false);
     void applyPermanentPotions();
     std::string getRace();
     virtual int attack(std::shared_ptr<Character> defender);
