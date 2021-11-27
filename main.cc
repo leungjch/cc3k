@@ -120,22 +120,27 @@ int main(int argc, char *argv[])
             else if (cmd == "s")
             {
                 game->setStartingRace(Player::RaceTypes::SHADE);
+                game->addMessage("You will play as a Shade in the next life.", Color::CYAN);
             }
             else if (cmd == "d")
             {
                 game->setStartingRace(Player::RaceTypes::DROW);
+                game->addMessage("You will play as a Drow in the next life.", Color::CYAN);
             }
             else if (cmd == "v")
             {
                 game->setStartingRace(Player::RaceTypes::VAMPIRE);
+                game->addMessage("You will play as a Vampire in the next life.", Color::CYAN);
             }
             else if (cmd == "g")
             {
                 game->setStartingRace(Player::RaceTypes::GOBLIN);
+                game->addMessage("You will play as a Goblin in the next life.", Color::CYAN);
             }
             else if (cmd == "t")
             {
                 game->setStartingRace(Player::RaceTypes::TROLL);
+                game->addMessage("You will play as a Troll in the next life.", Color::CYAN);
             }
 
             // f: stops enemies from moving until this key is pressed again.
@@ -151,6 +156,7 @@ int main(int argc, char *argv[])
             }
 
             // q: allows the player to admit defeat and exit the game
+
             else if (cmd == "q")
             {
                 cout << "Exiting." << endl;

@@ -70,6 +70,7 @@ class CC3K : public Subject {
     void moveAndAttackEnemy(std::shared_ptr<Enemy> enemy);
 
     void checkPlayerDead();
+    void spawnGoldPile(int goldType, int sourceX, int sourceY);
 
     public:
         void newGame();
@@ -79,6 +80,7 @@ class CC3K : public Subject {
         void usePotion(std::string dir);
         void playerAttack(std::string dir);
         void toggleStopEnemies();
+        void spawnGoldPileAt(int goldType, int sourceX, int sourceY);
 
         CC3K();
         ~CC3K();
@@ -86,5 +88,6 @@ class CC3K : public Subject {
         std::pair<char,std::string> getState(int x, int y) override;
         std::string getGameStatus();
         std::vector<Message> getMessages();
+        void addMessage(std::string text, std::string color);
 };
 #endif

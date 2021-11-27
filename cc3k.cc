@@ -875,7 +875,6 @@ void CC3K::playerAttack(string cmd)
             int dmg = thePlayer->attack(theEnemies[i]);
             haveHit = true;
 
-
             // Extra logic for vampire: If successful attack, it gains 5hp
             if (thePlayer->getName() == "Vampire" && dmg != 0)
             {
@@ -923,6 +922,43 @@ void CC3K::playerAttack(string cmd)
                 {
                     messages.emplace_back("PC has slain " + theEnemies[i]->getName() + " (" + to_string(dmg) + " damage).", Color::YELLOW);
                 }
+
+                // Humans drop two normal piles of gold
+                if (theEnemies[i]->getName() == "Human")
+                {
+                    spawnGoldPileAt(Gold::GoldTypes::MEDIUM, theEnemies[i]->getX(), theEnemies[i]->getY());
+                    spawnGoldPileAt(Gold::GoldTypes::MEDIUM, theEnemies[i]->getX(), theEnemies[i]->getY());
+                    messages.emplace_back("The slain Human dropped two normal piles of gold.", Color::GREEN);
+
+                }
+                if (theEnemies[i]->getName() == "Merchant")
+                {
+                    spawnGoldPileAt(Gold::GoldTypes::MERCHANT_HOARD, theEnemies[i]->getX(), theEnemies[i]->getY());
+                    messages.emplace_back("The slain Merchant dropped one Merchant Hoard.", Color::GREEN);
+                }
+
+                // Upon their demise, any enemy that is not a dragon, human, or merchant will drop either a small pile or normal pile of gold.
+                // This gold is immediately added to the player character’s total.
+                if (theEnemies[i]->getName() != "Dragon" && theEnemies[i]->getName() != "Human" && theEnemies[i]->getName() != "Merchant")
+                {
+                    int goldCollect = SmallPile::value;
+                    if (rand() % 2)
+                    {
+                        goldCollect = NormalPile::value;
+                    }
+
+                    playerGold += goldCollect;
+
+                    messages.emplace_back("PC collected " + to_string(goldCollect) + " gold from the slain " + theEnemies[i]->getName() + ".", Color::YELLOW);
+                }
+
+                // Goblin steals 5 gold from every slain enemy.
+                if (thePlayer->getName() == "Goblin")
+                {
+                    playerGold += 5;
+                    messages.emplace_back("PC's Goblin skills collect an extra 5 gold from the slain " + theEnemies[i]->getName() + ".", Color::YELLOW);
+                }
+
                 theEnemies[i] = theEnemies.back();
                 theEnemies.pop_back();
             }
@@ -935,8 +971,6 @@ void CC3K::playerAttack(string cmd)
                                           " HP)" + ".",
                                       Color::CYAN);
             }
-
-
         }
     }
     if (!haveHit)
@@ -950,10 +984,87 @@ void CC3K::playerAttack(string cmd)
 void CC3K::setStartingRace(int newRace)
 {
     startingRace = newRace;
-    messages.emplace_back("Switched race.", Color::BOLDCYAN);
 }
 
 vector<Message> CC3K::getMessages()
 {
     return messages;
+}
+
+void CC3K::addMessage(string text, string color)
+{
+    messages.emplace_back(text, color);
+}
+
+// Drop a gold pile around a source location
+void CC3K::spawnGoldPileAt(int goldType, int sourceX, int sourceY)
+{
+    // Handling a rare edge case:
+    // It is possible that the source location is too crowded and there is nowhere for the gold to spawn
+    // If, after failed 10 attempts to spawn, we will just spawn the gold somewhere
+    // else in the chamber
+    int spawnAttempts = 0;
+
+    auto newGold = make_shared<Gold>("", 0); 
+
+    switch (goldType)
+    {
+        case (Gold::GoldTypes::MERCHANT_HOARD):
+        {
+            newGold = make_shared<MerchantHoard>();
+            break;
+        }
+        case (Gold::GoldTypes::MEDIUM):
+        {
+            newGold = make_shared<NormalPile>();
+            break;
+        }
+        default:
+        {
+            cerr << "Invalid gold type spawn." << endl;
+            return;
+        }
+    }
+    bool isGenerating = true;
+    while (isGenerating)
+    {
+
+        int targetChamberNum = theFloor->chamberAt(sourceX, sourceY);
+
+        int randX;
+        int randY;
+        int deltaX;
+        int deltaY;
+
+        // The source location is too crowded, spawn it somewhere in the chamber
+        if (spawnAttempts > 100)
+        {
+            randX = theFloor->getRandomX();
+            randY = theFloor->getRandomY();
+        }
+        else 
+        {
+            // Generate a random -1, 0, 1
+            deltaX = rand() % 3 - 1;
+            deltaY = rand() % 3 - 1;
+
+            // Get random coordinates from the source
+            randX = sourceX + deltaX;
+            randY = sourceY + deltaY;
+        }
+
+        // Check the associated chamber to the random coordinates
+        int chamberNum = theFloor->chamberAt(randX, randY);
+
+        if (chamberNum == targetChamberNum && ((randX == sourceX && randY == sourceY) || (!isOccupied(randX, randY))))
+        {
+            newGold->setX(randX);
+            newGold->setY(randY);
+            theGold.push_back(newGold);
+            isGenerating = false; // exit the loop
+            // If generation fails, we do nothing
+        }
+
+        spawnAttempts += 1;
+    }
 }

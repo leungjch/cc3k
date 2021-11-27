@@ -6,5 +6,6 @@
 class NormalPile : public Gold {
     public:
     NormalPile();
+    static const int value = 2;
 };
 #endif
