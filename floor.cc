@@ -91,6 +91,10 @@ int Floor::chamberAt(int x, int y) {
     return -1;
 }
 
+int Floor::chamberAt(shared_ptr<Entity> e) {
+	return chamberAt(e->getX(), e->getY());
+}
+
 int Floor::getRandomChamberNum()
 {
     // Generate a number between range [1, NUM_CHAMBERS]

@@ -1,4 +1,7 @@
 #include "cc3k.h"
+#include "level.h"
+#include "defaultlevel.h"
+
 #include "player/player.h"
 #include "player/drow.h"
 #include "player/shade.h"
@@ -44,8 +47,10 @@
 
 using namespace std;
 
-CC3K::CC3K() : levelNum{1}, playerGold{0}, startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false},
-               theFloor{make_shared<Floor>()}
+CC3K::CC3K() : levelNum{1}, theFloor{make_shared<Floor>()},
+		theLevel{make_shared<DefaultLevel>(theFloor, *this)},
+		theStairway{nullptr}, playerGold{0},
+		startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}
 {
 }
 
@@ -62,7 +67,9 @@ void CC3K::newGame()
 {
     levelNum = 1;
     // Generate the player
-    generatePlayer();
+
+    messages.emplace_back("Player character has spawned. ", Color::GREEN);
+    thePlayer = theLevel->generatePlayer(startingRace);
 
     // Generate the level
     newLevel();
@@ -99,42 +106,37 @@ void CC3K::newLevel()
     thePlayer->applyPermanentPotions();
 
     // Place the player at a random chamber
-    placePlayer();
+    theLevel->placePlayer(thePlayer);
 
     // Generate stairway
-    generateStairway();
+    int chamberPlayer = theFloor->chamberAt(thePlayer);
+    theStairway = theLevel->generateStairway(chamberPlayer);
 
     // Generate potions
-    generatePotions();
+    for (int i = 0; i < NUM_POTIONS; i++)
+    {
+    	thePotions.push_back(theLevel->generatePotion());
+    }
 
     // Generate gold
-    generateGold();
+    for (int i = 0; i < NUM_GOLD; i++)
+    {
+    	shared_ptr<Dragon> newDragon;
+    	shared_ptr<Gold> newGold = theLevel->generateGold(newDragon);
+    	theGold.push_back(newGold);
+    	if (newDragon)
+    	{
+    		theEnemies.push_back(newDragon);
+    	}
+    }
 
     // Generate enemies
-    generateEnemies();
-}
-
-void CC3K::placePlayer()
-{
-    // Select a random chamber number
-
-    while (true)
+    for (int i = 0; i < NUM_GOLD; i++)
     {
-        int targetChamberNum = theFloor->getRandomChamberNum();
-        // Get random coordinates
-        int randX = theFloor->getRandomX();
-        int randY = theFloor->getRandomY();
-        int chamberNum = theFloor->chamberAt(randX, randY);
-
-        // Check the chamber
-        if (chamberNum == targetChamberNum)
-        {
-            thePlayer->setX(randX);
-            thePlayer->setY(randY);
-            break;
-        }
+    	theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
     }
 }
+
 
 // Helper function to compute new position after moving one unit in the specified direction
 pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
@@ -200,349 +202,22 @@ pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
 }
 
 // Returns true if an entity is occupying a cell
-bool CC3K::isOccupied(int x, int y)
+bool CC3K::isOccupied(int x, int y) const
 {
-    // Check the player coordinates
-    if (thePlayer->getX() == x && thePlayer->getY() == y)
-    {
-        return true;
-    }
-
-    // Check the staircase coordinates
-    if (theStairway->getX() == x && theStairway->getY() == y)
-    {
-        return true;
-    }
-
-    // Check all potions
-    for (auto potion : thePotions)
-    {
-        if (potion->getX() == x && potion->getY() == y)
-        {
-            return true;
-        }
-    }
-
-    // Check all gold
-    for (auto gold : theGold)
-    {
-        if (gold->getX() == x && gold->getY() == y)
-        {
-            return true;
-        }
-    }
-
-    // Check all enemy coordinates
-    for (auto enemy : theEnemies)
-    {
-        if (enemy->getX() == x && enemy->getY() == y)
-        {
-            return true;
-        }
-    }
-
-    // Else no entity occupies this space, so return false
-    return false;
+	auto occupies = [&x, &y](shared_ptr<Entity> e) { return e->occupies(x, y); };
+	return (thePlayer->occupies(x,y) ||
+			(theStairway && theStairway->occupies(x,y)) ||
+			any_of(thePotions.begin(), thePotions.end(), occupies) ||
+			any_of(theGold.begin(), theGold.end(), occupies) ||
+			any_of(theEnemies.begin(), theEnemies.end(), occupies));
 }
 
-// Generate a player in a random position in a chamber
-void CC3K::generatePlayer()
-{
-    messages.emplace_back("Player character has spawned. ", Color::GREEN);
-
-    switch (startingRace)
-    {
-    case (Player::RaceTypes::SHADE):
-    {
-        thePlayer = make_shared<Shade>();
-        break;
-    }
-    case (Player::RaceTypes::DROW):
-    {
-        thePlayer = make_shared<Drow>();
-        break;
-    }
-    case (Player::RaceTypes::VAMPIRE):
-    {
-        thePlayer = make_shared<Vampire>();
-        break;
-    }
-    case (Player::RaceTypes::GOBLIN):
-    {
-        thePlayer = make_shared<Goblin>();
-        break;
-    }
-    case (Player::RaceTypes::TROLL):
-    {
-        thePlayer = make_shared<Troll>();
-        break;
-    }
-    }
-}
-
-void CC3K::generateStairway()
-{
-    // Assumption: only the player has been generated at this point
-    // Thus we only need to check collision with player
-    theStairway = make_shared<Stairway>();
-
-    int playerChamberNum = theFloor->chamberAt(thePlayer->getX(), thePlayer->getY());
-
-    while (true)
-    {
-        // Generate a random chamber number (to ensure each chamber has equal probability)
-        // Ensure it is NOT EQUAL to player chamber
-        int targetChamberNum = theFloor->getRandomChamberNum();
-
-        while (targetChamberNum == playerChamberNum)
-        {
-            targetChamberNum = theFloor->getRandomChamberNum();
-        }
-
-        // Get random coordinates and a random chamber number
-        int randX = theFloor->getRandomX();
-        int randY = theFloor->getRandomY();
-        int chamberNum = theFloor->chamberAt(randX, randY);
-
-        // Check that chamber is not same as the chamber that player spawned in
-        if (chamberNum == targetChamberNum && chamberNum != playerChamberNum)
-        {
-            theStairway->setX(randX);
-            theStairway->setY(randY);
-            break;
-        }
-    }
-}
-
-void CC3K::generatePotions()
-{
-    for (int i = 0; i < NUM_POTIONS; i++)
-    {
-        bool isGenerating = true;
-
-        // Generate a random potion type
-        int potionType = rand() % Potion::NUM_POTION_TYPES + 1;
-
-        auto newPotion = make_shared<Potion>();
-
-        switch (potionType)
-        {
-        case Potion::PotionTypes::RESTOREHEALTH:
-        {
-            newPotion = make_shared<RestoreHealth>();
-            break;
-        }
-        case Potion::PotionTypes::POISONHEALTH:
-        {
-            newPotion = make_shared<PoisonHealth>();
-            break;
-        }
-        case Potion::PotionTypes::BOOSTATK:
-        {
-            newPotion = make_shared<BoostAtk>();
-            break;
-        }
-        case Potion::PotionTypes::WOUNDATK:
-        {
-            newPotion = make_shared<WoundAtk>();
-            break;
-        }
-        case Potion::PotionTypes::BOOSTDEF:
-        {
-            newPotion = make_shared<BoostDef>();
-            break;
-        }
-        case Potion::PotionTypes::WOUNDDEF:
-        {
-            newPotion = make_shared<WoundDef>();
-            break;
-        }
-        }
-
-        while (isGenerating)
-        {
-            // Generate a random chamber number (to ensure each chamber has equal probability)
-            int targetChamberNum = theFloor->getRandomChamberNum();
-
-            // Get random coordinates and its associated chamber
-            int randX = theFloor->getRandomX();
-            int randY = theFloor->getRandomY();
-            int chamberNum = theFloor->chamberAt(randX, randY);
-
-            if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
-            {
-                newPotion->setX(randX);
-                newPotion->setY(randY);
-                thePotions.push_back(newPotion);
-                isGenerating = false;
-            }
-        }
-    }
-}
-
-void CC3K::generateGold()
-{
-
-    for (int i = 0; i < NUM_GOLD; i++)
-    {
-        bool isGenerating = true;
-
-        // Generate a number from 1-8
-        // For the desired probability distribution
-        // 5/8 normal, 1/8 dragon, 1/4 small hoard
-        int goldType = rand() % 8 + 1;
-
-        auto newGold = make_shared<Gold>("", 0);
-
-        // If we are spawning a dragonhoard
-        bool isDragonHoard = false;
-
-        // 5/8 probability normal
-        if (goldType <= 5)
-        {
-            newGold = make_shared<NormalPile>();
-        }
-        // 1/8 probability dragon
-        else if (goldType <= 6)
-        {
-            // Spawn a dragon later
-            isDragonHoard = true;
-        }
-        // 1/4 probability small
-        else
-        {
-            newGold = make_shared<SmallPile>();
-        }
-
-        while (isGenerating)
-        {
-            // Generate a random chamber number (to ensure each chamber has equal probability)
-            int targetChamberNum = theFloor->getRandomChamberNum();
-
-            // Get random coordinates and its associated chamber
-            int randX = theFloor->getRandomX();
-            int randY = theFloor->getRandomY();
-            int chamberNum = theFloor->chamberAt(randX, randY);
-            if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
-            {
-                if (isDragonHoard)
-                {
-                    // Generate random coordinates for the dragon
-                    auto dragonGold = make_shared<DragonHoard>();
-
-                    // Generate a dragon with the associated dragon hoard
-                    auto dragon = make_shared<Dragon>(dragonGold);
-
-                    // Generate the coordinates for the dragon
-
-                    // Generate a dx and dy either -1 or 1
-                    int dY = rand() % 2 ? -1 : 1;
-                    int dX = rand() % 2 ? -1 : 1;
-
-                    int dragonX = dX + randX;
-                    int dragonY = dY + randY;
-
-                    // Set the coordinates for gold and dragon
-                    dragonGold->setX(randX);
-                    dragonGold->setY(randY);
-                    dragon->setX(dragonX);
-                    dragon->setY(dragonY);
-
-                    int dragonChamberNum = theFloor->chamberAt(dragonX, dragonY);
-
-                    if (dragonChamberNum == targetChamberNum && !isOccupied(dragonX, dragonY))
-                    {
-
-                        theGold.push_back(dragonGold);
-
-                        theEnemies.push_back(dragon);
-
-                        isGenerating = false; // exit the loop
-                    }
-                }
-                else
-                {
-                    newGold->setX(randX);
-                    newGold->setY(randY);
-                    theGold.push_back(newGold);
-                    isGenerating = false; // exit the loop
-                }
-                // If generation fails, we do nothing
-            }
-        }
-    }
-}
 
 void CC3K::checkPlayerDead()
 {
     if (thePlayer->getHP() <= 0)
     {
         messages.emplace_back("You died!", Color::RED);
-    }
-}
-
-void CC3K::generateEnemies()
-{
-    for (int i = 0; i < NUM_GOLD; i++)
-    {
-        bool isGenerating = true;
-
-        // Generate a number from 1-18
-        // For the desired probability distribution
-        int enemyType = rand() % 18 + 1;
-
-        auto newEnemy = make_shared<Enemy>(0, 0, 0, false, 'E', "");
-
-        // Cumulative probability
-        // 2/9 human
-        if (enemyType <= 4)
-        {
-            newEnemy = make_shared<Human>();
-        }
-        //
-        else if (enemyType <= 7)
-        {
-            newEnemy = make_shared<Dwarf>();
-        }
-        else if (enemyType <= 12)
-        {
-            newEnemy = make_shared<Halfling>();
-        }
-        else if (enemyType <= 14)
-        {
-            newEnemy = make_shared<Elf>();
-        }
-        else if (enemyType <= 16)
-        {
-            newEnemy = make_shared<Orc>();
-        }
-        else if (enemyType <= 18)
-        {
-            newEnemy = make_shared<Merchant>(isHostileMerchants);
-        }
-        else
-        {
-            cerr << "Error generating enemie" << endl;
-        }
-
-        while (isGenerating)
-        {
-            // Generate a random chamber number (to ensure each chamber has equal probability)
-            int targetChamberNum = theFloor->getRandomChamberNum();
-
-            // Get random coordinates and its associated chamber
-            int randX = theFloor->getRandomX();
-            int randY = theFloor->getRandomY();
-            int chamberNum = theFloor->chamberAt(randX, randY);
-
-            if (chamberNum == targetChamberNum && !isOccupied(randX, randY))
-            {
-                newEnemy->setX(randX);
-                newEnemy->setY(randY);
-                theEnemies.push_back(newEnemy);
-                isGenerating = false;
-            }
-        }
     }
 }
 
