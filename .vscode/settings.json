@@ -57,6 +57,8 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "strstream": "cpp"
+        "strstream": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp"
     }
 }

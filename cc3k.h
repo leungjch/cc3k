@@ -25,6 +25,10 @@ class CC3K : public Subject {
 
     std::shared_ptr<Player> thePlayer;
 
+    // A vector of 2D chars to store the raw levels
+    std::vector<std::vector<std::vector<char>>> rawCustomLevels;
+    bool isCustom;
+
     // Vector of all potions on the floor
     std::vector<std::shared_ptr<Potion>> thePotions;
 
@@ -67,9 +71,12 @@ class CC3K : public Subject {
     void checkPlayerDead();
     void spawnGoldPile(int goldType, int sourceX, int sourceY);
 
+
     public:
         void newGame();
         void newLevel();
+        void parseCustomLevels(std::string filename);
+        void loadCustomLevel(int customLevelNum);
         void render();
         void movePlayer(std::string dir);
         void usePotion(std::string dir);

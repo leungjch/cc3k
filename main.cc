@@ -39,12 +39,22 @@ int main(int argc, char *argv[])
     shared_ptr<GraphicalObserver> graphicalObserver = nullptr;
 
     // Parse command line args
-    for (auto arg : args)
+    for (int i = 0; i < args.size(); i++)
     {
-        if (arg == "dlc")
+        if (i == 0)
+        {
+            // Ignore the "./cc3k"
+            continue;
+        }
+        if (args[i] == "-dlc")
         {
             graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
             game->attach(graphicalObserver.get());
+        }
+        // Otherwise it is a filename to a file containing five levels
+        else
+        {
+            game->parseCustomLevels(args[i]);
         }
     }
     game->newGame();

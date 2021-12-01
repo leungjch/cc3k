@@ -26,6 +26,11 @@ public:
     std::shared_ptr<Gold> generateGold(std::shared_ptr<Dragon> dragonEnemy) override;
     std::shared_ptr<Enemy> generateEnemy(bool hostileMerchants) override;
     void placePlayer(std::shared_ptr<Player> thePlayer) override;
+
+    // Helper functions for parsing custom levels
+    std::shared_ptr<Potion> spawnPotionAt(int potionType, int x, int y);
+    std::shared_ptr<Gold> spawnGoldAt(int goldType, int x, int y, std::shared_ptr<Dragon> dragon);
+
 };
 
 #endif /* DEFAULTLEVEL_H_ */
