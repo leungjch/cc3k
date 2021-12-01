@@ -11,5 +11,6 @@ class Dragon : public Enemy {
     void move(int dx, int dy) override;
     bool inRange(std::shared_ptr<Character> defender) override;
     std::shared_ptr<DragonHoard> getHoard();
+    void setHoard(std::shared_ptr<DragonHoard> dragonHoard);
 };
 #endif

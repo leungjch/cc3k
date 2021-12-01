@@ -36,6 +36,12 @@ std::shared_ptr<DragonHoard> Dragon::getHoard()
     return theHoard;
 }
 
+void Dragon::setHoard(std::shared_ptr<DragonHoard> dragonHoard) 
+{
+    theHoard = dragonHoard;
+}
+
+
 
 bool Dragon::inRange(std::shared_ptr<Character> defender)
 {
@@ -51,3 +57,4 @@ bool Dragon::inRange(std::shared_ptr<Character> defender)
     return inRangeOfItself || inRangeOfHoard;
 
 }
+

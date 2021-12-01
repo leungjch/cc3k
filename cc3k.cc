@@ -44,13 +44,15 @@
 #include <algorithm>
 #include <memory>
 #include <map>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 
 CC3K::CC3K() : levelNum{1}, theFloor{make_shared<Floor>()},
-		theLevel{make_shared<DefaultLevel>(theFloor, *this)},
-		theStairway{nullptr}, playerGold{0},
-		startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}
+               theLevel{make_shared<DefaultLevel>(theFloor, *this)},
+               theStairway{nullptr}, playerGold{0},
+               startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false}
 {
 }
 
@@ -61,6 +63,182 @@ CC3K::~CC3K()
         detach(observers[i]);
     }
     observers.clear();
+}
+
+void CC3K::parseCustomLevels(std::string filename)
+{
+    isCustom = true;
+
+    // Reads a file containing five levels and potions and gold placed already
+
+    string fileStr;
+    std::ifstream infile(filename);
+
+    // Read five levels
+
+    int rowNum = 0;
+
+    // Read lines from a level
+    vector<vector<char>> singleRawLevel;
+    for (string line; getline(infile, line);)
+    {
+        // Read a char from the line
+        vector<char> levelLine;
+        for (int j = 0; j < line.size(); j++)
+        {
+            levelLine.push_back(line[j]);
+        }
+        singleRawLevel.push_back(levelLine);
+
+        if (theFloor->getHeight() - 1 == rowNum)
+        {
+            // Make a temporary copy of the vector
+            vector<vector<char>> tempLine;
+            for (int z = 0; z < singleRawLevel.size(); z++)
+            {
+                tempLine.push_back(singleRawLevel[z]);
+            }
+            rawCustomLevels.push_back(tempLine);
+            singleRawLevel.clear();
+            rowNum = 0;
+        }
+        else
+        {
+            rowNum += 1;
+        }
+    }
+}
+
+void CC3K::loadCustomLevel(int customLevelNum)
+{
+    // Creates a new level
+    // With the raw level data at customLevelNum
+
+    vector<vector<char>> customLevelRaw = rawCustomLevels[customLevelNum];
+
+    thePotions.clear();
+    theGold.clear();
+    theEnemies.clear();
+
+    // Get the map and read it into a floor
+    theFloor->readMap("map.txt");
+
+    // If we're not on the first level, the player may have some permanent potions
+    // So we should apply them and discard the effects of the temporary potions
+    thePlayer->applyPermanentPotions();
+
+    // Make two passes
+    // First pass to generate potions
+    // Second pass to generate gold
+    // This is necessary since we must generate potions before generating any potential dragon hoards
+    for (int passType = 0; passType < 2; passType++)
+    {
+        // Loop through and generate potions and gold
+        for (int i = 0; i < customLevelRaw.size(); i++)
+        {
+            for (int j = 0; j < customLevelRaw[0].size(); j++)
+            {
+                // Spawn potions
+                if (passType == 0)
+                {
+                    switch (customLevelRaw[i][j])
+                    {
+                    // Spawn RH
+                    case '0':
+                    {
+                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::RESTOREHEALTH, j, i));
+                        break;
+                    }
+                    // Spawn BA
+                    case '1':
+                    {
+                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::BOOSTATK, j, i));
+                        break;
+                    }
+                    // Spawn BD
+                    case '2':
+                    {
+                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::BOOSTDEF, j, i));
+                        break;
+                    }
+                    // Spawn PH
+                    case '3':
+                    {
+                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::POISONHEALTH, j, i));
+                        break;
+                    }
+                    // Spawn WA
+                    case '4':
+                    {
+                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::WOUNDATK, j, i));
+                        break;
+                    }
+                    // Spawn WD
+                    case '5':
+                    {
+                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::WOUNDDEF, j, i));
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                }
+                else
+                {
+                    switch (customLevelRaw[i][j])
+                    {
+                    // Spawn Normal gold pile
+                    case '6':
+                    {
+                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MEDIUM, j, i, nullptr));
+                        break;
+                    }
+                    // Spawn small hoard
+                    case '7':
+                    {
+                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::SMALL, j, i, nullptr));
+                        break;
+                    }
+                    // Spawn merchant hoard
+                    case '8':
+                    {
+                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MERCHANT_HOARD, j, i, nullptr));
+                        break;
+                    }
+                    // Spawn dragon hoard
+                    case '9':
+                    {
+
+                        auto dragon = make_shared<Dragon>(nullptr);
+                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::DRAGON_HOARD, j, i, dragon));
+                        if (dragon)
+                        {
+                            theEnemies.push_back(dragon);
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
+                    }
+                }
+            }
+        }
+    }
+
+    // Generate enemies
+    for (int i = 0; i < NUM_ENEMIES; i++)
+    {
+        theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
+    }
+
+    // Place the player at a random chamber
+    theLevel->placePlayer(thePlayer);
+
+    // Generate stairway
+    int chamberPlayer = theFloor->chamberAt(thePlayer);
+    theStairway = theLevel->generateStairway(chamberPlayer);
 }
 
 void CC3K::newGame()
@@ -77,6 +255,12 @@ void CC3K::newGame()
 
 void CC3K::newLevel()
 {
+    // If the game uses custom levels, load them instead
+    if (isCustom)
+    {
+        loadCustomLevel(levelNum-1);
+        return;
+    }
     /*
         20 enemies are spawned per floor (this number does not include dragons). Every
         chamber is equally likely to spawn any particular monster (similarly for floor
@@ -115,28 +299,27 @@ void CC3K::newLevel()
     // Generate potions
     for (int i = 0; i < NUM_POTIONS; i++)
     {
-    	thePotions.push_back(theLevel->generatePotion());
+        thePotions.push_back(theLevel->generatePotion());
     }
 
     // Generate gold
     for (int i = 0; i < NUM_GOLD; i++)
     {
-    	shared_ptr<Dragon> newDragon;
-    	shared_ptr<Gold> newGold = theLevel->generateGold(newDragon);
-    	theGold.push_back(newGold);
-    	if (newDragon)
-    	{
-    		theEnemies.push_back(newDragon);
-    	}
+        shared_ptr<Dragon> newDragon;
+        shared_ptr<Gold> newGold = theLevel->generateGold(newDragon);
+        theGold.push_back(newGold);
+        if (newDragon)
+        {
+            theEnemies.push_back(newDragon);
+        }
     }
 
     // Generate enemies
-    for (int i = 0; i < NUM_GOLD; i++)
+    for (int i = 0; i < NUM_ENEMIES; i++)
     {
-    	theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
+        theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
     }
 }
-
 
 // Helper function to compute new position after moving one unit in the specified direction
 pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
@@ -204,14 +387,14 @@ pair<pair<int, int>, string> getPosAtDirection(int x, int y, string dir)
 // Returns true if an entity is occupying a cell
 bool CC3K::isOccupied(int x, int y) const
 {
-	auto occupies = [&x, &y](shared_ptr<Entity> e) { return e->occupies(x, y); };
-	return (thePlayer->occupies(x,y) ||
-			(theStairway && theStairway->occupies(x,y)) ||
-			any_of(thePotions.begin(), thePotions.end(), occupies) ||
-			any_of(theGold.begin(), theGold.end(), occupies) ||
-			any_of(theEnemies.begin(), theEnemies.end(), occupies));
+    auto occupies = [&x, &y](shared_ptr<Entity> e)
+    { return e->occupies(x, y); };
+    return ((thePlayer && thePlayer->occupies(x, y)) ||
+            (theStairway && theStairway->occupies(x, y)) ||
+            any_of(thePotions.begin(), thePotions.end(), occupies) ||
+            any_of(theGold.begin(), theGold.end(), occupies) ||
+            any_of(theEnemies.begin(), theEnemies.end(), occupies));
 }
-
 
 void CC3K::checkPlayerDead()
 {
@@ -236,10 +419,11 @@ void CC3K::movePlayer(string dir)
     // In this case, go to next level
     if (newX == theStairway->getX() && newY == theStairway->getY())
     {
-        // Respawn everything
-        newLevel();
         // Increase level number
         levelNum += 1;
+
+        // Respawn everything
+        newLevel();
 
         messages.emplace_back("Now entering level " + to_string(levelNum) + "!", Color::BOLDYELLOW);
 
@@ -543,7 +727,6 @@ void CC3K::playerAttack(string cmd)
     // Apply any passive ability from the player
     thePlayer->abilityPassive();
 
-
     pair<pair<int, int>, string> pos = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), cmd);
     // The coordinates where the player is striking the possible enemy
     int attackX = pos.first.first;
@@ -614,7 +797,6 @@ void CC3K::playerAttack(string cmd)
                     spawnGoldPileAt(Gold::GoldTypes::MEDIUM, theEnemies[i]->getX(), theEnemies[i]->getY());
                     spawnGoldPileAt(Gold::GoldTypes::MEDIUM, theEnemies[i]->getX(), theEnemies[i]->getY());
                     messages.emplace_back("The slain Human dropped two normal piles of gold.", Color::GREEN);
-
                 }
                 if (theEnemies[i]->getName() == "Merchant")
                 {
@@ -690,25 +872,25 @@ void CC3K::spawnGoldPileAt(int goldType, int sourceX, int sourceY)
     // else in the chamber
     int spawnAttempts = 0;
 
-    auto newGold = make_shared<Gold>("", 0); 
+    auto newGold = make_shared<Gold>("", 0);
 
     switch (goldType)
     {
-        case (Gold::GoldTypes::MERCHANT_HOARD):
-        {
-            newGold = make_shared<MerchantHoard>();
-            break;
-        }
-        case (Gold::GoldTypes::MEDIUM):
-        {
-            newGold = make_shared<NormalPile>();
-            break;
-        }
-        default:
-        {
-            cerr << "Invalid gold type spawn." << endl;
-            return;
-        }
+    case (Gold::GoldTypes::MERCHANT_HOARD):
+    {
+        newGold = make_shared<MerchantHoard>();
+        break;
+    }
+    case (Gold::GoldTypes::MEDIUM):
+    {
+        newGold = make_shared<NormalPile>();
+        break;
+    }
+    default:
+    {
+        cerr << "Invalid gold type spawn." << endl;
+        return;
+    }
     }
     bool isGenerating = true;
     while (isGenerating)
@@ -727,7 +909,7 @@ void CC3K::spawnGoldPileAt(int goldType, int sourceX, int sourceY)
             randX = theFloor->getRandomX();
             randY = theFloor->getRandomY();
         }
-        else 
+        else
         {
             // Generate a random -1, 0, 1
             deltaX = rand() % 3 - 1;
