@@ -137,7 +137,7 @@ void CC3K::loadCustomLevel(int customLevelNum)
         {
             for (int j = 0; j < customLevelRaw[0].size(); j++)
             {
-                // Spawn potions
+                // Spawn potions last
                 if (passType == 0)
                 {
                     switch (customLevelRaw[i][j])

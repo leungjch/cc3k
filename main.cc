@@ -1,3 +1,4 @@
+// TODO: check max hp
 #include <iostream>
 #include <vector>
 #include <string>
