@@ -305,9 +305,10 @@ void CC3K::newLevel()
     // Generate gold
     for (int i = 0; i < NUM_GOLD; i++)
     {
-        shared_ptr<Dragon> newDragon;
+        auto newDragon = make_shared<Dragon>(nullptr);
         shared_ptr<Gold> newGold = theLevel->generateGold(newDragon);
         theGold.push_back(newGold);
+        cout <<" BRUH" << endl;
         if (newDragon)
         {
             theEnemies.push_back(newDragon);
@@ -555,7 +556,11 @@ string CC3K::getGameStatus()
     ret += "Race: " + thePlayer->getName() + " ";
 
     // Print out player gold
-    ret += "Gold: " + to_string(playerGold) + "\n";
+    ret += "Gold: " + to_string(playerGold);
+
+    ret += "                                                   ";
+
+    ret += "Floor: " + to_string(levelNum) + "\n";
 
     // Print out HP
     ret += "HP: " + to_string(thePlayer->getHP()) + "\n";
