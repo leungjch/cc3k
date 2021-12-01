@@ -13,11 +13,21 @@ sudo apt install libxpm-dev
 
 Run `make` to compile the project, then run `./cc3k` to launch the game.
 
-## Arguments
+## Command line Arguments
+### Read in a custom layout
+Run with a filename passed in to load a custom layout for each of the five floors. **Note:** Exactly five floors are expected. See `customMap.txt` for an example of a valid file. 
+
+E.g.
+```sh
+./cc3k customMap.txt
+```
+
+### DLC (extra credit features)
 Run `cc3k` with `dlc` to enable extra features.
 ```sh
 ./cc3k dlc
 ```
+
 ## Controls
 -  **no,so,ea,we,ne,nw,se,sw**: moves the player character one block in the appropriate cardinal direction.
 -  **u direction**: uses the potion indicated by the direction (e.g. no, so, ea).
