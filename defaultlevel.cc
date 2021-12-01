@@ -240,12 +240,15 @@ shared_ptr<Gold> DefaultLevel::generateGold(shared_ptr<Dragon> dragonEnemy)
 
 				if (dragonChamberNum == targetChamberNum && !(game.isOccupied(dragonX, dragonY)))
 				{
+
 					dragonEnemy = dragon;
-					return newGold;
+					return dragonGold;
+
 				}
 			}
 			else
 			{
+
 				newGold->setX(randX);
 				newGold->setY(randY);
 				dragonEnemy = nullptr;
@@ -404,8 +407,10 @@ shared_ptr<Gold> DefaultLevel::spawnGoldAt(int goldType, int x, int y, std::shar
 	}
 	case Gold::GoldTypes::DRAGON_HOARD:
 	{
+		int numAttempts = 0;
 		while (true)
 		{
+
 
 			auto dragonGold = make_shared<DragonHoard>();
 			auto theDragon = make_shared<Dragon>(dragonGold);
@@ -417,8 +422,19 @@ shared_ptr<Gold> DefaultLevel::spawnGoldAt(int goldType, int x, int y, std::shar
 			int dY = rand() % 2 ? -1 : 1;
 			int dX = rand() % 2 ? -1 : 1;
 
-			int dragonX = dX + x;
-			int dragonY = dY + y;
+			int dragonX;
+			int dragonY;
+			// Too many failed generation attempts, just spawn
+			if (numAttempts > 10)
+			{
+
+			}
+			else {
+			dragonX = dX + x;
+			dragonY = dY + y;
+
+			}
+
 
 
 			// Set the coordinates for gold and dragon

@@ -128,9 +128,8 @@ void CC3K::loadCustomLevel(int customLevelNum)
     thePlayer->applyPermanentPotions();
 
     // Make two passes
-    // First pass to generate potions
-    // Second pass to generate gold
-    // This is necessary since we must generate potions before generating any potential dragon hoards
+    // First pass to generate potions + non-dragon-hoard gold
+    // Second pass to generate dragon hoard
     for (int passType = 0; passType < 2; passType++)
     {
         // Loop through and generate potions and gold
@@ -179,14 +178,6 @@ void CC3K::loadCustomLevel(int customLevelNum)
                         thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::WOUNDDEF, j, i));
                         break;
                     }
-                    default:
-                        break;
-                    }
-                }
-                else
-                {
-                    switch (customLevelRaw[i][j])
-                    {
                     // Spawn Normal gold pile
                     case '6':
                     {
@@ -205,6 +196,15 @@ void CC3K::loadCustomLevel(int customLevelNum)
                         theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MERCHANT_HOARD, j, i, nullptr));
                         break;
                     }
+
+                    default:
+                        break;
+                    }
+                }
+                else
+                {
+                    switch (customLevelRaw[i][j])
+                    {
                     // Spawn dragon hoard
                     case '9':
                     {
