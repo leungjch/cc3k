@@ -308,8 +308,7 @@ void CC3K::newLevel()
         auto newDragon = make_shared<Dragon>(nullptr);
         shared_ptr<Gold> newGold = theLevel->generateGold(newDragon);
         theGold.push_back(newGold);
-        cout <<" BRUH" << endl;
-        if (newDragon)
+        if (newDragon->getHoard())
         {
             theEnemies.push_back(newDragon);
         }
