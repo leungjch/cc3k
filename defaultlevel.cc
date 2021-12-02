@@ -249,7 +249,7 @@ shared_ptr<Gold> DefaultLevel::generateGold(shared_ptr<Dragon> dragonEnemy)
 			{
 				newGold->setX(randX);
 				newGold->setY(randY);
-				dragonEnemy = nullptr;
+				dragonEnemy->setHoard(nullptr);
 				return newGold;
 			}
 			// If generation fails, we do nothing
