@@ -17,12 +17,9 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    // Set seed
-    // Deterministic seed for testing
-    srand(1);
-
-    // Set random seed (for actual demo)
-    srand(time(nullptr));
+    // Set seed to be random by default
+    int seed = time(nullptr); 
+    srand(seed);
 
     // Work with STL containers for command line arguments
     vector<string> args(argv, argv + argc);
@@ -52,12 +49,29 @@ int main(int argc, char *argv[])
             graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
             game->attach(graphicalObserver.get());
         }
+        else if (args[i] == "-seed")
+        {
+            // Read the next argument which we assume is a number
+            try {
+                seed = stoi(args[i+1]);
+                srand(seed);
+                i += 1;
+            }
+            catch (const std::invalid_argument &e)
+            {
+                cerr << "Error: Specified seed is not an integer" << endl;
+            }
+
+        }
         // Otherwise it is a filename to a file containing five levels
         else
         {
             game->parseCustomLevels(args[i]);
         }
     }
+
+
+
     game->newGame();
 
     string cmdLine;

@@ -22,11 +22,18 @@ E.g.
 ./cc3k customMap.txt
 ```
 
-### DLC (extra credit features)
-Run `cc3k` with `dlc` to enable extra features.
+### Set a custom seed
+To set a custom seed, specify `-seed` followed by a number, e.g.
 ```sh
-./cc3k dlc
+./cc3k -seed 42
 ```
+
+### DLC (extra credit features)
+Run `cc3k` with `-dlc` to enable extra features.
+```sh
+./cc3k -dlc
+```
+
 
 ## Controls
 -  **no,so,ea,we,ne,nw,se,sw**: moves the player character one block in the appropriate cardinal direction.
