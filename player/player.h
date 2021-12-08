@@ -15,6 +15,8 @@ class Player : public Character {
   int startingHp;
   int startingDef;
   int startingAtk;
+  int exp; 
+  int lvl;
   float potionMagnifier;
   public:
     Player(int hp, int atk, int def, std::string race);
@@ -23,6 +25,10 @@ class Player : public Character {
     void applyPermanentPotions();
     virtual int attack(std::shared_ptr<Character> defender);
     virtual void abilityPassive();
+    std::string addExp(int expAmt);
+    int getExp();
+    int getLvl();
+    std::string levelUp();
 
 
     enum RaceTypes {

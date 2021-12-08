@@ -60,8 +60,10 @@ int main(int argc, char *argv[])
         else if (args[i] == "-dlc")
         {
             game->setDLC(true);
-            game->addMessage("\n \n Enabled the content DLC pack! Here is a list of extra features: \n", Color::BLUE);
-            game->addMessage("- Buy from (non-hostile) Merchants with 'b [direction]' command. \n", Color::BLUE);
+            game->addMessage("\n \n Enabled the CC3K++ content DLC pack! Here is a list of extra features in CC3K++: \n", Color::BLUE);
+            game->addMessage("- Gain XP and level-up when you slay enemies! \n", Color::BLUE);
+            game->addMessage("- Buy from (non-hostile) Merchants with 'b [direction]' command! \n", Color::BLUE);
+
         }
         else if (args[i] == "-seed")
         {

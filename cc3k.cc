@@ -634,8 +634,16 @@ string CC3K::getGameStatus()
     // Print out Def
     ret += "Def: " + to_string(thePlayer->getDef()) + "\n";
 
+    // DLC Feature: Show exp
+    if (getDLC())
+    {
+        ret += "XP: " + to_string(thePlayer->getExp()) + "   Lvl: " + to_string(thePlayer->getLvl()) + "\n";
+    }
+
     // Print out action (for any actions) that occur
     ret += "Action:";
+
+
 
     return ret;
 }
@@ -892,6 +900,18 @@ void CC3K::playerAttack(string cmd)
                 {
                     playerGold += 5;
                     messages.emplace_back("PC's Goblin skills collect an extra 5 gold from the slain " + theEnemies[i]->getName() + ".", Color::YELLOW);
+                }
+
+                // DLC Feature: Add to player's exp
+                if (getDLC())
+                {
+                    std::string result = thePlayer->addExp(5);
+                    // If we levelled up, the result string is non-empty
+                    if (result != "")
+                    {
+                        messages.emplace_back("You leveled up and permanently increased your max " + result + "!", Color::YELLOW);
+                    }
+                    
                 }
 
                 theEnemies[i] = theEnemies.back();
