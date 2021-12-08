@@ -244,8 +244,8 @@ void CC3K::loadCustomLevel(int customLevelNum)
 void CC3K::newGame()
 {
     levelNum = 1;
+    playerGold = 0;
     // Generate the player
-
     messages.emplace_back("Player character has spawned. ", Color::GREEN);
     thePlayer = theLevel->generatePlayer(startingRace);
 
