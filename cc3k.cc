@@ -669,7 +669,7 @@ void CC3K::moveAndAttackEnemies()
                     if (checkXY.count(make_pair(j, i)) == 0 && i == theEnemies[k]->getY() && j == theEnemies[k]->getX())
                     {
                         moveAndAttackEnemy(theEnemies[k]);
-                        checkXY[make_pair(theEnemies[k]->getY(), theEnemies[k]->getX())] = true;
+                        checkXY[make_pair(theEnemies[k]->getX(), theEnemies[k]->getY())] = true;
                     }
                 }
             }

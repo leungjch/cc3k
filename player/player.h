@@ -21,7 +21,6 @@ class Player : public Character {
     Player(int hp, int atk, int def, std::string race, float potionMagnifier);
     virtual void applyPotion(std::shared_ptr<Potion> potion, bool nextLevel = false);
     void applyPermanentPotions();
-    std::string getRace();
     virtual int attack(std::shared_ptr<Character> defender);
     virtual void abilityPassive();
 
