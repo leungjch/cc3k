@@ -542,6 +542,71 @@ void CC3K::usePotion(string dir)
         thePotions.erase(thePotions.begin() + found);
     }
 }
+
+
+// Buy from a merchant in a direction specified (from the player)
+void CC3K::useMerchant(string dir)
+{
+    // Apply any passive ability from the player
+    thePlayer->abilityPassive();
+
+    // Get the coordinates to check
+    pair<pair<int, int>, string> checkMerchant = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<int, int> checkMerchantPos = checkMerchant.first;
+
+    // Check if there exists a potion in the specified direction
+    int found = -1;
+    for (int i = 0; i < theEnemies.size(); i++)
+    {
+        if (theEnemies[i]->getX() == checkMerchantPos.first && theEnemies[i]->getY() == checkMerchantPos.second && theEnemies[i]->getName() == "Merchant")
+        {
+            found = i;
+            break;
+        }
+    }
+
+    // If we did not find a Merchant at that location
+    if (found == -1)
+    {
+        messages.emplace_back("There is no Merchant in that direction.", Color::RED);
+        return;
+    }
+    // Merchant is found, buy 
+    else
+    {
+        // If we have insufficient funds
+        if (playerGold < 3)
+        {
+            messages.emplace_back("You need at least 3 Gold to purchase from the Merchant.",
+                            Color::RED);
+            return;
+        }
+        if (isHostileMerchants)
+        {
+            messages.emplace_back("You've already angered all merchants and they refuse to sell to you!",
+                            Color::RED);
+            return;
+        }
+        else 
+        {
+            auto boughtPotion = make_shared<RestoreHealth>();
+            // Apply the effect to the player
+            thePlayer->applyPotion(boughtPotion);
+
+            playerGold -= 3;
+
+            // Output message
+            // E.g. "You used a Potion of Restore Health"
+            messages.emplace_back("You bought a potion from the Merchant for 5 Gold.",
+                            Color::BOLDMAGENTA);
+            messages.emplace_back("PC used a " + boughtPotion->getName() + ". " + boughtPotion->getDescription(),
+                                Color::BOLDMAGENTA);
+
+        }
+
+    }
+}
+
 void CC3K::render()
 {
     notifyObservers();
@@ -938,4 +1003,10 @@ void CC3K::spawnGoldPileAt(int goldType, int sourceX, int sourceY)
 
         spawnAttempts += 1;
     }
+}
+
+
+std::shared_ptr<Player> CC3K::getPlayer()
+{
+    return thePlayer;
 }

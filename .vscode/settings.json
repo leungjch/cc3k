@@ -59,6 +59,10 @@
         "variant": "cpp",
         "strstream": "cpp",
         "chrono": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "*.ipp": "cpp",
+        "ios": "cpp",
+        "locale": "cpp",
+        "queue": "cpp"
     }
 }
