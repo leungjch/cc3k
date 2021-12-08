@@ -9,10 +9,10 @@
 using namespace std;
 
 Player::Player(int hp, int atk, int def, string race) : Character{hp, atk, def, '@', race},
-                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{1.0}, exp{0} {}
+                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{1.0}, exp{0}, lvl{0} {}
 
 Player::Player(int hp, int atk, int def, std::string race, float potionMagnifier) : Character{hp, atk, def, '@', race},
-                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{potionMagnifier}, exp{0} {}
+                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{potionMagnifier}, exp{0}, lvl{0} {}
 
 
 void Player::applyPotion(shared_ptr<Potion> potion, bool newLevel)
