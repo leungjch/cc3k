@@ -52,7 +52,8 @@ using namespace std;
 CC3K::CC3K() : levelNum{1}, theFloor{make_shared<Floor>()},
                theLevel{make_shared<DefaultLevel>(theFloor, *this)},
                theStairway{nullptr}, playerGold{0},
-               startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false}
+               startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false},
+               isFog{false}, isDLC{false}
 {
 }
 
@@ -596,12 +597,10 @@ void CC3K::useMerchant(string dir)
             playerGold -= 3;
 
             // Output message
-            // E.g. "You used a Potion of Restore Health"
-            messages.emplace_back("You bought a potion from the Merchant for 5 Gold.",
+            messages.emplace_back("You bought a potion from the Merchant for 3 Gold.",
                             Color::BOLDMAGENTA);
             messages.emplace_back("PC used a " + boughtPotion->getName() + ". " + boughtPotion->getDescription(),
                                 Color::BOLDMAGENTA);
-
         }
 
     }
@@ -1009,4 +1008,24 @@ void CC3K::spawnGoldPileAt(int goldType, int sourceX, int sourceY)
 std::shared_ptr<Player> CC3K::getPlayer()
 {
     return thePlayer;
+}
+
+bool CC3K::getFog()
+{
+    return isFog;
+}
+
+void CC3K::setFog(bool newFog)
+{
+    isFog = newFog;
+}
+
+bool CC3K::getDLC()
+{
+    return isDLC;
+}
+
+void CC3K::setDLC(bool newDLC)
+{
+    isDLC = newDLC;
 }

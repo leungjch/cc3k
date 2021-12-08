@@ -28,10 +28,22 @@ To set a custom seed, specify `-seed` followed by a number, e.g.
 ./cc3k -seed 42
 ```
 
-### DLC (extra credit features)
-Run `cc3k` with `-dlc` to enable extra features.
+### Gameplay DLC
+Run `cc3k` with `-dlc` to enable gameplay extra features.
 ```sh
 ./cc3k -dlc
+```
+
+### Graphics DLC
+Run `cc3k` with `-graphics` to enable XWindow graphics.
+```sh
+./cc3k -graphics
+```
+
+### Fog DLC
+Run `cc3k` with `-fog` to enable fog.
+```sh
+./cc3k -fog
 ```
 
 

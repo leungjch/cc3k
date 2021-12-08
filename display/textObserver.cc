@@ -30,7 +30,7 @@ void TextObserver::notify()
         {
             // Bonus: Add fog
             // If the position is outside of the circle centered at the player, output fog
-            if ((playerX-j)*(playerX-j)+5*(playerY-i)*(playerY-i) > 48)
+            if (subject->getFog() && (playerX-j)*(playerX-j)+5*(playerY-i)*(playerY-i) > 48)
             {
                 cout << "~";
             }
