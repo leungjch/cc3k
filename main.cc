@@ -201,8 +201,15 @@ int main(int argc, char *argv[])
                 string dir;
                 // Read the direction
                 iss >> dir;
-                game->useMerchant(dir);
 
+                if (game->getDLC())
+                {
+                    game->useMerchant(dir);
+                }
+                else 
+                {
+                    game->addMessage("This is a DLC feature. Please set -dlc as a flag first.", Color::MAGENTA);
+                }
             }
 
             // Render the display after every command
