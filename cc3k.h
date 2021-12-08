@@ -92,5 +92,12 @@ class CC3K : public Subject {
         std::string getGameStatus();
         std::vector<Message> getMessages();
         void addMessage(std::string text, std::string color);
+
+        // BONUS FEATURES
+        // Used for bonus credit only (fog of war)
+        std::shared_ptr<Player> getPlayer();
+        void useMerchant(std::string dir);
+        
+        
 };
 #endif

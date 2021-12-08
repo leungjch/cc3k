@@ -182,6 +182,15 @@ int main(int argc, char *argv[])
                 return 0;
             }
 
+            else if (cmd == "b")
+            {
+                string dir;
+                // Read the direction
+                iss >> dir;
+                game->useMerchant(dir);
+
+            }
+
             // Render the display after every command
             game->render();
         }
