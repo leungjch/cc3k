@@ -13,12 +13,14 @@
 #include "display/subject.h"
 #include "utils/message.h"
 
-class Level;
+class GeneralCreator;
+class LocalizedCreator;
 
 class CC3K : public Subject {
     int levelNum;
     std::shared_ptr<Floor> theFloor;
-    std::shared_ptr<Level> theLevel;
+    std::shared_ptr<GeneralCreator> levelCreator;
+    std::shared_ptr<LocalizedCreator> spawnCreator;
     std::vector<Observer*> observers;
 
     std::shared_ptr<Stairway> theStairway;

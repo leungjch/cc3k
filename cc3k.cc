@@ -1,6 +1,7 @@
 #include "cc3k.h"
-#include "level.h"
-#include "defaultlevel.h"
+#include "creator.h"
+#include "levelcreator.h"
+#include "spawncreator.h"
 
 #include "player/player.h"
 #include "player/drow.h"
@@ -50,7 +51,8 @@
 using namespace std;
 
 CC3K::CC3K() : levelNum{1}, theFloor{make_shared<Floor>()},
-               theLevel{make_shared<DefaultLevel>(theFloor, *this)},
+               levelCreator{make_shared<LevelCreator>(theFloor, *this)},
+			   spawnCreator{make_shared<SpawnCreator>(theFloor, *this)},
                theStairway{nullptr}, playerGold{0},
                startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false}
 {
@@ -142,58 +144,58 @@ void CC3K::loadCustomLevel(int customLevelNum)
                 {
                     switch (customLevelRaw[i][j])
                     {
-                    // Spawn RH
+                    // Spawn RH:
                     case '0':
                     {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::RESTOREHEALTH, j, i));
+                        thePotions.push_back(spawnCreator->createPotionAt(Potion::PotionTypes::RESTOREHEALTH, j, i));
                         break;
                     }
                     // Spawn BA
                     case '1':
                     {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::BOOSTATK, j, i));
+                        thePotions.push_back(spawnCreator->createPotionAt(Potion::PotionTypes::BOOSTATK, j, i));
                         break;
                     }
                     // Spawn BD
                     case '2':
                     {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::BOOSTDEF, j, i));
+                        thePotions.push_back(spawnCreator->createPotionAt(Potion::PotionTypes::BOOSTDEF, j, i));
                         break;
                     }
                     // Spawn PH
                     case '3':
                     {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::POISONHEALTH, j, i));
+                        thePotions.push_back(spawnCreator->createPotionAt(Potion::PotionTypes::POISONHEALTH, j, i));
                         break;
                     }
                     // Spawn WA
                     case '4':
                     {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::WOUNDATK, j, i));
+                        thePotions.push_back(spawnCreator->createPotionAt(Potion::PotionTypes::WOUNDATK, j, i));
                         break;
                     }
                     // Spawn WD
                     case '5':
                     {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::WOUNDDEF, j, i));
+                        thePotions.push_back(spawnCreator->createPotionAt(Potion::PotionTypes::WOUNDDEF, j, i));
                         break;
                     }
                     // Spawn Normal gold pile
                     case '6':
                     {
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MEDIUM, j, i, nullptr));
+                        theGold.push_back(spawnCreator->createGoldAt(Gold::GoldTypes::MEDIUM, j, i, nullptr));
                         break;
                     }
                     // Spawn small hoard
                     case '7':
                     {
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::SMALL, j, i, nullptr));
+                        theGold.push_back(spawnCreator->createGoldAt(Gold::GoldTypes::SMALL, j, i, nullptr));
                         break;
                     }
                     // Spawn merchant hoard
                     case '8':
                     {
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MERCHANT_HOARD, j, i, nullptr));
+                        theGold.push_back(spawnCreator->createGoldAt(Gold::GoldTypes::MERCHANT_HOARD, j, i, nullptr));
                         break;
                     }
 
@@ -210,7 +212,7 @@ void CC3K::loadCustomLevel(int customLevelNum)
                     {
 
                         auto dragon = make_shared<Dragon>(nullptr);
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::DRAGON_HOARD, j, i, dragon));
+                        theGold.push_back(spawnCreator->createGoldAt(Gold::GoldTypes::DRAGON_HOARD, j, i, dragon));
                         if (dragon)
                         {
                             theEnemies.push_back(dragon);
@@ -230,15 +232,15 @@ void CC3K::loadCustomLevel(int customLevelNum)
     // Generate enemies
     for (int i = 0; i < NUM_ENEMIES; i++)
     {
-        theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
+        theEnemies.push_back(levelCreator->generateEnemy(isHostileMerchants));
     }
 
     // Place the player at a random chamber
-    theLevel->placePlayer(thePlayer);
+    levelCreator->placePlayer(thePlayer);
 
     // Generate stairway
     int chamberPlayer = theFloor->chamberAt(thePlayer);
-    theStairway = theLevel->generateStairway(chamberPlayer);
+    theStairway = levelCreator->generateStairway(chamberPlayer);
 }
 
 void CC3K::newGame()
@@ -247,7 +249,7 @@ void CC3K::newGame()
     // Generate the player
 
     messages.emplace_back("Player character has spawned. ", Color::GREEN);
-    thePlayer = theLevel->generatePlayer(startingRace);
+    thePlayer = levelCreator->generatePlayer(startingRace);
 
     // Generate the level
     newLevel();
@@ -290,23 +292,23 @@ void CC3K::newLevel()
     thePlayer->applyPermanentPotions();
 
     // Place the player at a random chamber
-    theLevel->placePlayer(thePlayer);
+    levelCreator->placePlayer(thePlayer);
 
     // Generate stairway
     int chamberPlayer = theFloor->chamberAt(thePlayer);
-    theStairway = theLevel->generateStairway(chamberPlayer);
+    theStairway = levelCreator->generateStairway(chamberPlayer);
 
     // Generate potions
     for (int i = 0; i < NUM_POTIONS; i++)
     {
-        thePotions.push_back(theLevel->generatePotion());
+        thePotions.push_back(levelCreator->generatePotion());
     }
 
     // Generate gold
     for (int i = 0; i < NUM_GOLD; i++)
     {
         auto newDragon = make_shared<Dragon>(nullptr);
-        shared_ptr<Gold> newGold = theLevel->generateGold(newDragon);
+        shared_ptr<Gold> newGold = levelCreator->generateGold(newDragon);
         theGold.push_back(newGold);
         if (newDragon->getHoard())
         {
@@ -317,7 +319,7 @@ void CC3K::newLevel()
     // Generate enemies
     for (int i = 0; i < NUM_ENEMIES; i++)
     {
-        theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
+        theEnemies.push_back(levelCreator->generateEnemy(isHostileMerchants));
     }
 }
 
