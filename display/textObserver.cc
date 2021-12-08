@@ -61,5 +61,4 @@ void TextObserver::notify()
         cout << " " << theMessages[i].color <<  theMessages[i].text  << Color::RESET;
     }
     cout << endl;
-
 }

@@ -3,15 +3,16 @@
 #include <string>
 #include <cmath>
 #include <vector>
+#include <iostream>
 #include "../potion/potion.h"
 #include <memory>
 using namespace std;
 
 Player::Player(int hp, int atk, int def, string race) : Character{hp, atk, def, '@', race},
-                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{1.0} {}
+                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{1.0}, exp{0} {}
 
 Player::Player(int hp, int atk, int def, std::string race, float potionMagnifier) : Character{hp, atk, def, '@', race},
-                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{potionMagnifier} {}
+                startingHp{hp}, startingAtk{atk}, startingDef{def}, potionMagnifier{potionMagnifier}, exp{0} {}
 
 
 void Player::applyPotion(shared_ptr<Potion> potion, bool newLevel)
@@ -85,4 +86,61 @@ void Player::abilityPassive()
 {
     // By default, players have no passive ability
     return;
+}
+
+
+std::string Player::addExp(int expAmt)
+{
+    std::string result = "";
+    exp += expAmt;
+    // Check if we have enough exp to level up
+    if (exp + 10*lvl >= 10*(lvl+1))
+    {
+        result = levelUp();
+        lvl += 1;
+    }
+    return result;
+}
+int Player::getExp()
+{
+    return exp;
+}
+
+int Player::getLvl()
+{
+    return lvl;
+}
+
+// Upgrade a player's attributes after levelling up
+std::string Player::levelUp()
+{
+    // Randomly select an attribute to upgrade
+    int roll = (rand() % 3);
+
+    switch (roll)
+    {
+        // Upgrade hp
+        case 0:
+        {
+            startingHp += 5;
+            hp += 5;
+            return "HP";
+        }
+        case 1:
+        {
+            startingAtk += 5;
+            atk += 5;
+            return "Atk";
+        }
+        case 2:
+        {
+            startingDef += 5;
+            def += 5;
+            return "Def";
+        }
+        default:
+        {
+            cerr << "Error generating attribute to upgrade";
+        }
+    }
 }
