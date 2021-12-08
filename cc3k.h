@@ -73,6 +73,14 @@ class CC3K : public Subject {
     void checkPlayerDead();
     void spawnGoldPile(int goldType, int sourceX, int sourceY);
 
+    // Bonus: enable fog view
+    // Default false
+    bool isFog;
+    // Bonus: enable gameplay-related dlc
+    // E.g. merchant, extra items, etc.
+    bool isDLC;
+
+
 
     public:
         void newGame();
@@ -94,5 +102,22 @@ class CC3K : public Subject {
         std::string getGameStatus();
         std::vector<Message> getMessages();
         void addMessage(std::string text, std::string color);
+
+        // BONUS FEATURES
+
+        // Used for bonus credit only (fog)
+        bool getFog();
+        void setFog(bool newFog);
+        std::shared_ptr<Player> getPlayer();
+        // Buy from a merchant
+        void useMerchant(std::string dir);
+
+        
+        bool getDLC();
+        void setDLC(bool newDLC);
+
+
+
+        
 };
 #endif

@@ -44,10 +44,24 @@ int main(int argc, char *argv[])
             // Ignore the "./cc3k"
             continue;
         }
-        if (args[i] == "-dlc")
+        if (args[i] == "-graphics")
         {
             graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
             game->attach(graphicalObserver.get());
+            game->addMessage("Enabled graphics. If it's not working, sure you have libxpm-dev installed in your Linux environment.\n", Color::BLUE);
+
+        }
+        else if (args[i] == "-fog")
+        {
+            game->setFog(true);
+            game->addMessage("Enabled fog.\n", Color::BLUE);
+
+        }
+        else if (args[i] == "-dlc")
+        {
+            game->setDLC(true);
+            game->addMessage("\n \n Enabled the content DLC pack! Here is a list of extra features: \n", Color::BLUE);
+            game->addMessage("- Buy from (non-hostile) Merchants with 'b [direction]' command. \n", Color::BLUE);
         }
         else if (args[i] == "-seed")
         {
@@ -180,6 +194,22 @@ int main(int argc, char *argv[])
             {
                 cout << "Exiting." << endl;
                 return 0;
+            }
+
+            else if (cmd == "b")
+            {
+                string dir;
+                // Read the direction
+                iss >> dir;
+
+                if (game->getDLC())
+                {
+                    game->useMerchant(dir);
+                }
+                else 
+                {
+                    game->addMessage("This is a DLC feature. Please set -dlc as a flag first.", Color::MAGENTA);
+                }
             }
 
             // Render the display after every command

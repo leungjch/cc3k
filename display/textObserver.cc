@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <cstdlib>
 
 #include "textObserver.h"
 #include "../utils/message.h"
@@ -19,19 +20,34 @@ TextObserver::~TextObserver()
 
 void TextObserver::notify()
 {
+
+    int playerX = subject->getPlayer()->getX();
+    int playerY = subject->getPlayer()->getY();
+
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
-            pair<char, string> state = subject->getState(j, i);
-            if (state.second == Color::RESET) 
+            // Bonus: Add fog
+            // If the position is outside of the circle centered at the player, output fog
+            // x^2 + 5y^2 > 48
+            if (subject->getFog() && (playerX-j)*(playerX-j)+5*(playerY-i)*(playerY-i) > 48)
             {
-                cout << state.first;
+                cout << "~";
             }
-            else 
+            else
             {
-                cout << state.second << state.first << Color::RESET;
+                pair<char, string> state = subject->getState(j, i);
+                if (state.second == Color::RESET) 
+                {
+                    cout << state.first;
+                }
+                else 
+                {
+                    cout << state.second << state.first << Color::RESET;
+                }
             }
+
         }
         cout << endl;
     }

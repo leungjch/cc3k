@@ -6,7 +6,7 @@
 
 using namespace std;
 
-GraphicalObserver::GraphicalObserver(CC3K* subject, int width, int height)
+GraphicalObserver::GraphicalObserver(CC3K *subject, int width, int height)
     : subject{subject}, width{width}, height{height}
 {
   // Launch a new XWindow
@@ -15,7 +15,6 @@ GraphicalObserver::GraphicalObserver(CC3K* subject, int width, int height)
 
 GraphicalObserver::~GraphicalObserver()
 {
-
 }
 
 // Returns true if the char ch is an upper case char
@@ -38,6 +37,10 @@ bool isDigit(char ch)
 
 void GraphicalObserver::notify()
 {
+
+  int playerX = subject->getPlayer()->getX();
+  int playerY = subject->getPlayer()->getY();
+
   for (int i = 0; i < height; ++i)
   {
     for (int j = 0; j < width; ++j)
@@ -45,55 +48,64 @@ void GraphicalObserver::notify()
       char val = subject->getState(j, i).first;
       unsigned long col = Xwindow::White;
 
-      if (val == Cell::WALL_HORIZONTAL || val == Cell::WALL_VERTICAL)
+      // Bonus: Add fog
+      // If the position is outside of the circle centered at the player, output fog
+      // x^2 + 5y^2 > 48
+      if (subject->getFog() && (playerX - j) * (playerX - j) + 5 * (playerY - i) * (playerY - i) > 48)
       {
-        theWindow->drawImage(theWindow->wallImg, j*SCALE, i*SCALE);
+        theWindow->drawImage(theWindow->wallImg, j * SCALE, i * SCALE);
+      }
+      else
+      {
+        if (val == Cell::WALL_HORIZONTAL || val == Cell::WALL_VERTICAL)
+        {
+          theWindow->drawImage(theWindow->wallImg, j * SCALE, i * SCALE);
+        }
+        else if (val == '@')
+        {
+          // Draw the floor
 
-      }
-      else if (val == '@')
-      {
-        // Draw the floor
+          theWindow->drawImage(theWindow->pcImg, j * SCALE, i * SCALE);
+        }
+        else if (val == Cell::PASSAGE)
+        {
+          col = Xwindow::Green;
+          theWindow->drawImage(theWindow->passageImg, j * SCALE, i * SCALE);
+        }
+        else if (val == Cell::TILE)
+        {
+          theWindow->drawImage(theWindow->floorImg, j * SCALE, i * SCALE);
+        }
+        else if (val == Cell::DOOR)
+        {
+          col = Xwindow::Green;
+          theWindow->drawImage(theWindow->doorImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'P')
+        {
+          theWindow->drawImage(theWindow->potionImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'G')
+        {
+          theWindow->drawImage(theWindow->goldImg, j * SCALE, i * SCALE);
+        }
+        else if (val == '\\')
+        {
+          theWindow->drawImage(theWindow->stairwayImg, j * SCALE, i * SCALE);
+        }
 
-        theWindow->drawImage(theWindow->pcImg, j*SCALE, i*SCALE);
+        else if (val == ' ')
+        {
+          theWindow->drawImage(theWindow->spaceImg, j * SCALE, i * SCALE);
 
-      }
-      else if (val == Cell::PASSAGE) 
-      {
-        col = Xwindow::Green;
-        theWindow->drawImage(theWindow->passageImg, j*SCALE, i*SCALE);
-      }
-      else if (val == Cell::TILE)
-      {
-        theWindow->drawImage(theWindow->floorImg, j*SCALE, i*SCALE);
-      }
-      else if (val == Cell::DOOR) 
-      {
-        col = Xwindow::Green;
-        theWindow->drawImage(theWindow->doorImg, j*SCALE, i*SCALE);
-      }
-      else if (val == 'P') 
-      {
-        theWindow->drawImage(theWindow->potionImg, j*SCALE, i*SCALE);
-      }
-      else if (val == 'G') 
-      {
-        theWindow->drawImage(theWindow->goldImg, j*SCALE, i*SCALE);
-      }
-      else if (val == '\\')
-      {
-        theWindow->drawImage(theWindow->stairwayImg, j*SCALE, i*SCALE);
-      }
-
-      else if (val == ' ')
-      {
-        theWindow->drawImage(theWindow->spaceImg, j*SCALE, i*SCALE);
-
-        // col = Xwindow::Black;
-        // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
-      }
-      else {
-        // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
-        theWindow->drawImage(theWindow->pcImg, j*SCALE, i*SCALE);
+          // col = Xwindow::Black;
+          // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
+        }
+        else
+        {
+          // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
+          theWindow->drawImage(theWindow->pcImg, j * SCALE, i * SCALE);
+        }
       }
     }
   }

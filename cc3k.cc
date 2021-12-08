@@ -54,7 +54,8 @@ CC3K::CC3K() : levelNum{1}, theFloor{make_shared<Floor>()},
                levelCreator{make_shared<LevelCreator>(theFloor, *this)},
 			   spawnCreator{make_shared<SpawnCreator>(theFloor, *this)},
                theStairway{nullptr}, playerGold{0},
-               startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false}
+               startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false},
+               isFog{false}, isDLC{false}
 {
 }
 
@@ -246,8 +247,8 @@ void CC3K::loadCustomLevel(int customLevelNum)
 void CC3K::newGame()
 {
     levelNum = 1;
+    playerGold = 0;
     // Generate the player
-
     messages.emplace_back("Player character has spawned. ", Color::GREEN);
     thePlayer = levelCreator->generatePlayer(startingRace);
 
@@ -544,6 +545,69 @@ void CC3K::usePotion(string dir)
         thePotions.erase(thePotions.begin() + found);
     }
 }
+
+
+// Buy from a merchant in a direction specified (from the player)
+void CC3K::useMerchant(string dir)
+{
+    // Apply any passive ability from the player
+    thePlayer->abilityPassive();
+
+    // Get the coordinates to check
+    pair<pair<int, int>, string> checkMerchant = getPosAtDirection(thePlayer->getX(), thePlayer->getY(), dir);
+    pair<int, int> checkMerchantPos = checkMerchant.first;
+
+    // Check if there exists a potion in the specified direction
+    int found = -1;
+    for (int i = 0; i < theEnemies.size(); i++)
+    {
+        if (theEnemies[i]->getX() == checkMerchantPos.first && theEnemies[i]->getY() == checkMerchantPos.second && theEnemies[i]->getName() == "Merchant")
+        {
+            found = i;
+            break;
+        }
+    }
+
+    // If we did not find a Merchant at that location
+    if (found == -1)
+    {
+        messages.emplace_back("There is no Merchant in that direction.", Color::RED);
+        return;
+    }
+    // Merchant is found, buy 
+    else
+    {
+        // If we have insufficient funds
+        if (playerGold < 3)
+        {
+            messages.emplace_back("You need at least 3 Gold to purchase from the Merchant.",
+                            Color::RED);
+            return;
+        }
+        if (isHostileMerchants)
+        {
+            messages.emplace_back("You've already angered all merchants and they refuse to sell to you!",
+                            Color::RED);
+            return;
+        }
+        else 
+        {
+            auto boughtPotion = make_shared<RestoreHealth>();
+            // Apply the effect to the player
+            thePlayer->applyPotion(boughtPotion);
+
+            playerGold -= 3;
+
+            // Output message
+            messages.emplace_back("You bought a potion from the Merchant for 3 Gold.",
+                            Color::BOLDMAGENTA);
+            messages.emplace_back("PC used a " + boughtPotion->getName() + ". " + boughtPotion->getDescription(),
+                                Color::BOLDMAGENTA);
+        }
+
+    }
+}
+
 void CC3K::render()
 {
     notifyObservers();
@@ -671,7 +735,7 @@ void CC3K::moveAndAttackEnemies()
                     if (checkXY.count(make_pair(j, i)) == 0 && i == theEnemies[k]->getY() && j == theEnemies[k]->getX())
                     {
                         moveAndAttackEnemy(theEnemies[k]);
-                        checkXY[make_pair(theEnemies[k]->getY(), theEnemies[k]->getX())] = true;
+                        checkXY[make_pair(theEnemies[k]->getX(), theEnemies[k]->getY())] = true;
                     }
                 }
             }
@@ -940,4 +1004,30 @@ void CC3K::spawnGoldPileAt(int goldType, int sourceX, int sourceY)
 
         spawnAttempts += 1;
     }
+}
+
+
+std::shared_ptr<Player> CC3K::getPlayer()
+{
+    return thePlayer;
+}
+
+bool CC3K::getFog()
+{
+    return isFog;
+}
+
+void CC3K::setFog(bool newFog)
+{
+    isFog = newFog;
+}
+
+bool CC3K::getDLC()
+{
+    return isDLC;
+}
+
+void CC3K::setDLC(bool newDLC)
+{
+    isDLC = newDLC;
 }
