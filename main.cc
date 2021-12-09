@@ -78,7 +78,22 @@ int main(int argc, char *argv[])
             {
                 if (iss.eof())
                 {
-                    game->movePlayer(cmd);
+                    if (game->movePlayer(cmd) == -1) {
+                        cout << "You died!\nTo play again, press r, to quit, press q."<< endl;
+                        string choice;
+                        if (cin >> choice) {
+                            if (cmd == "r")
+                            {
+                                game->newGame();
+                            }
+
+                            else if (cmd == "q")
+                            {
+                                cout << "Exiting." << endl;
+                                return 0;
+                            }
+                        }
+                    }
                 }
                 // BONUS FEATURE: specify a number to repeatedly move
                 else
@@ -89,7 +104,23 @@ int main(int argc, char *argv[])
                     {
                         for (int i = 0; i < stoi(numRepeat); i++)
                         {
-                            game->movePlayer(cmd);
+                            if (game->movePlayer(cmd) == -1) {
+                            cout << "You died!\nTo play again, press r, to quit, press q."<< endl;
+                            string choice;
+                            if (cin >> choice) {
+                                if (cmd == "r")
+                                {
+                                    game->newGame();
+                                    break;
+                                }
+
+                                else if (cmd == "q")
+                                {
+                                    cout << "Exiting." << endl;
+                                    return 0;
+                                }
+                            }
+                            }
                         }
                     }
                     // Exception handling (if numRepeat cannot cast to an int)

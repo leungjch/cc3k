@@ -68,7 +68,7 @@ class CC3K : public Subject {
 
     void moveAndAttackEnemies();
     void moveAndAttackEnemy(std::shared_ptr<Enemy> enemy);
-    void checkPlayerDead();
+    bool checkPlayerDead();
     void spawnGoldPile(int goldType, int sourceX, int sourceY);
 
 
@@ -78,7 +78,7 @@ class CC3K : public Subject {
         void parseCustomLevels(std::string filename);
         void loadCustomLevel(int customLevelNum);
         void render();
-        void movePlayer(std::string dir);
+        int movePlayer(std::string dir);
         void usePotion(std::string dir);
         void playerAttack(std::string dir);
         void toggleStopEnemies();

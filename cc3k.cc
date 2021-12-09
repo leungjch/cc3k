@@ -245,7 +245,6 @@ void CC3K::newGame()
 {
     levelNum = 1;
     // Generate the player
-
     messages.emplace_back("Player character has spawned. ", Color::GREEN);
     thePlayer = theLevel->generatePlayer(startingRace);
 
@@ -396,15 +395,17 @@ bool CC3K::isOccupied(int x, int y) const
             any_of(theEnemies.begin(), theEnemies.end(), occupies));
 }
 
-void CC3K::checkPlayerDead()
+bool CC3K::checkPlayerDead()
 {
     if (thePlayer->getHP() <= 0)
     {
-        messages.emplace_back("You died!", Color::RED);
+        //messages.emplace_back("You died!", Color::RED);
+        return true;
     }
+    return false;
 }
 
-void CC3K::movePlayer(string dir)
+int CC3K::movePlayer(string dir)
 {
     // Apply any passive ability from the player
     thePlayer->abilityPassive();
@@ -427,7 +428,7 @@ void CC3K::movePlayer(string dir)
 
         messages.emplace_back("Now entering level " + to_string(levelNum) + "!", Color::BOLDYELLOW);
 
-        return;
+        return 0;
     }
 
     // Next, check if player moved onto gold
@@ -472,8 +473,11 @@ void CC3K::movePlayer(string dir)
 
         // The enemies now move and attack the player if in range
         moveAndAttackEnemies();
+        if (checkPlayerDead()) {
+            return -1;
+        }
 
-        return;
+        return 0;
     }
 
     // Else, not a stairway or gold, we can use isOccupied() properly
@@ -487,8 +491,11 @@ void CC3K::movePlayer(string dir)
         messages.emplace_back("You cannot move there.", Color::RED);
         // The enemies now move and attack the player if in range
         moveAndAttackEnemies();
+        if (checkPlayerDead()) {
+            return -1;
+        }
 
-        return;
+        return 0;
     }
 
     // Else the new position is valid, move player there
@@ -498,6 +505,10 @@ void CC3K::movePlayer(string dir)
 
     // The enemies now move and attack the player if in range
     moveAndAttackEnemies();
+    if (checkPlayerDead()) {
+            return -1;
+    }
+    return 0;
 }
 
 // Use a potion in the direction specified (from the player)
@@ -673,7 +684,7 @@ void CC3K::moveAndAttackEnemies()
     }
 
     // Check if the player has died from enemy attacks
-    checkPlayerDead();
+    //checkPlayerDead();
 }
 
 void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
