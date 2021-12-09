@@ -92,6 +92,7 @@ class CC3K : public Subject {
         void toggleStopEnemies();
         void spawnGoldPileAt(int goldType, int sourceX, int sourceY);
         bool isOccupied(int x, int y) const;
+        bool isOccupiedOrNotChamber(int x, int y) const;
 
         CC3K();
         ~CC3K();
@@ -109,10 +110,11 @@ class CC3K : public Subject {
         std::shared_ptr<Player> getPlayer();
         // Buy from a merchant
         void useMerchant(std::string dir);
+        
+        bool getDLC() const;
+        void setDLC(bool newDLC);
 
         
-        bool getDLC();
-        void setDLC(bool newDLC);
 
 
 

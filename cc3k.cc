@@ -17,6 +17,7 @@
 #include "enemy/halfling.h"
 #include "enemy/elf.h"
 #include "enemy/merchant.h"
+#include "enemy/pathfinder.h"
 
 #include "potion/restoreHealth.h"
 #include "potion/poisonHealth.h"
@@ -397,6 +398,11 @@ bool CC3K::isOccupied(int x, int y) const
             any_of(theEnemies.begin(), theEnemies.end(), occupies));
 }
 
+bool CC3K::isOccupiedOrNotChamber(int x, int y) const
+{
+    return isOccupied(x, y) || theFloor->chamberAt(x,y) == -1;
+}
+
 void CC3K::checkPlayerDead()
 {
     if (thePlayer->getHP() <= 0)
@@ -755,16 +761,34 @@ void CC3K::moveAndAttackEnemies()
 void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
 {
 
-    // Move the enemy
-    // Generate a random -1, 0, 1
-    int deltaX = rand() % 3 - 1;
-    int deltaY = rand() % 3 - 1;
-    int newX = enemy->getX() + deltaX;
-    int newY = enemy->getY() + deltaY;
-    if (!isOccupied(newX, newY) && theFloor->cellAt(newX, newY).getChar() == Cell::TILE)
+    // Pathfinder logic
+    if (enemy->getName() == "Pathfinder" && 
+    theFloor->chamberAt(enemy->getX(), enemy->getY()) == theFloor->chamberAt(thePlayer->getX(), thePlayer->getY()))
     {
-        enemy->move(deltaX, deltaY);
+        pair<int, int> newPos = Pathfinder::bfs(*this, enemy->getX(), enemy->getY());
+        int pathfinderDx = newPos.first - enemy->getX();
+        int pathfinderDy = newPos.second - enemy->getY();
+        if (!isOccupied(newPos.first, newPos.second))
+        {
+            enemy->move(pathfinderDx, pathfinderDy );
+        }
+
     }
+    else 
+    {
+
+        // Move the enemy
+        // Generate a random -1, 0, 1
+        int deltaX = rand() % 3 - 1;
+        int deltaY = rand() % 3 - 1;
+        int newX = enemy->getX() + deltaX;
+        int newY = enemy->getY() + deltaY;
+        if (!isOccupied(newX, newY) && theFloor->cellAt(newX, newY).getChar() == Cell::TILE)
+        {
+            enemy->move(deltaX, deltaY);
+        }
+    }
+
 
     // Attack the player if they are in range
 
@@ -1040,7 +1064,7 @@ void CC3K::setFog(bool newFog)
     isFog = newFog;
 }
 
-bool CC3K::getDLC()
+bool CC3K::getDLC() const
 {
     return isDLC;
 }

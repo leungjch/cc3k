@@ -14,11 +14,8 @@ bool Enemy::inRange(shared_ptr<Character> defender) {
         abs(defender->getY() - getY()) <= 1);
 }
 
-// void Enemy::move(int dx, int dy) {
-//     // Discard dx and dy
-//     // Generate a random -1, 0, 1
-//     int newX = getX() + rand() % 3 - 1;
-//     int newY = getY() + rand() % 3 - 1;
-//     setX(newX);
-//     setY(newY);
-// }
+void Enemy::move(int dx, int dy) {
+    // Discard dx and dy
+    // Generate a random -1, 0, 1
+    Character::move(dx,dy);
+}
