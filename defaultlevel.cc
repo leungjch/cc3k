@@ -19,6 +19,7 @@
 #include "enemy/halfling.h"
 #include "enemy/elf.h"
 #include "enemy/merchant.h"
+#include "enemy/pathfinder.h"
 
 #include "potion/restoreHealth.h"
 #include "potion/poisonHealth.h"
@@ -266,36 +267,80 @@ shared_ptr<Enemy> DefaultLevel::generateEnemy(bool hostileMerchants)
 
 	auto newEnemy = make_shared<Enemy>(0, 0, 0, false, 'E', "");
 
-	// Cumulative probability
-	// 2/9 human
-	if (enemyType <= 4)
+	if (game.getDLC())
 	{
-		newEnemy = make_shared<Human>();
-	}
-	//
-	else if (enemyType <= 7)
-	{
-		newEnemy = make_shared<Dwarf>();
-	}
-	else if (enemyType <= 12)
-	{
-		newEnemy = make_shared<Halfling>();
-	}
-	else if (enemyType <= 14)
-	{
-		newEnemy = make_shared<Elf>();
-	}
-	else if (enemyType <= 16)
-	{
-		newEnemy = make_shared<Orc>();
-	}
-	else if (enemyType <= 18)
-	{
-		newEnemy = make_shared<Merchant>(hostileMerchants);
+		// DLC spawning probabilities (to accomodate extra enemies)
+		// Cumulative probability
+		if (enemyType <= 4)
+		{
+			newEnemy = make_shared<Pathfinder>();
+		}
+		else if (enemyType <= 6)
+		{
+			newEnemy = make_shared<Human>();
+		}
+		//
+		else if (enemyType <= 8)
+		{
+			newEnemy = make_shared<Dwarf>();
+		}
+		else if (enemyType <= 10)
+		{
+			newEnemy = make_shared<Halfling>();
+		}
+		else if (enemyType <= 12)
+		{
+			newEnemy = make_shared<Elf>();
+		}
+		else if (enemyType <= 14)
+		{
+			newEnemy = make_shared<Orc>();
+		}
+		else if (enemyType <= 18)
+		{
+			newEnemy = make_shared<Merchant>(hostileMerchants);
+		}
+		else
+		{
+			cerr << "Error generating enemy" << endl;
+		}
+
 	}
 	else
 	{
-		cerr << "Error generating enemy" << endl;
+		// Regular spawning probabilities
+
+		// Cumulative probability
+		// 2/9 human
+		if (enemyType <= 4)
+		{
+			newEnemy = make_shared<Human>();
+		}
+		//
+		else if (enemyType <= 7)
+		{
+			newEnemy = make_shared<Dwarf>();
+		}
+		else if (enemyType <= 12)
+		{
+			newEnemy = make_shared<Halfling>();
+		}
+		else if (enemyType <= 14)
+		{
+			newEnemy = make_shared<Elf>();
+		}
+		else if (enemyType <= 16)
+		{
+			newEnemy = make_shared<Orc>();
+		}
+		else if (enemyType <= 18)
+		{
+			newEnemy = make_shared<Merchant>(hostileMerchants);
+		}
+		else
+		{
+			cerr << "Error generating enemy" << endl;
+		}
 	}
 
 	while (true)
@@ -409,7 +454,6 @@ shared_ptr<Gold> DefaultLevel::spawnGoldAt(int goldType, int x, int y, std::shar
 		while (true)
 		{
 
-
 			auto dragonGold = make_shared<DragonHoard>();
 			auto theDragon = make_shared<Dragon>(dragonGold);
 
@@ -428,13 +472,11 @@ shared_ptr<Gold> DefaultLevel::spawnGoldAt(int goldType, int x, int y, std::shar
 				dragonX = theFloor->getRandomX();
 				dragonY = theFloor->getRandomY();
 			}
-			else {
-			dragonX = dX + x;
-			dragonY = dY + y;
-
+			else
+			{
+				dragonX = dX + x;
+				dragonY = dY + y;
 			}
-
-
 
 			// Set the coordinates for gold and dragon
 			if (!(game.isOccupied(dragonX, dragonY)) && theFloor->chamberAt(dragonX, dragonY) == theFloor->chamberAt(x, y) && dragon != nullptr)
@@ -443,7 +485,6 @@ shared_ptr<Gold> DefaultLevel::spawnGoldAt(int goldType, int x, int y, std::shar
 				dragon->setX(dragonX);
 				dragon->setY(dragonY);
 				return dragonGold;
-
 			}
 
 			// Requirement: to call spawnGoldAt with dragon hoard requires with an associated dragon
@@ -451,7 +492,6 @@ shared_ptr<Gold> DefaultLevel::spawnGoldAt(int goldType, int x, int y, std::shar
 			{
 				return nullptr;
 			}
-
 		}
 	}
 	}
