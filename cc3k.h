@@ -78,6 +78,9 @@ class CC3K : public Subject {
     // E.g. merchant, extra items, etc.
     bool isDLC;
 
+    int computeFinalScore();
+
+
 
 
     public:
@@ -93,6 +96,8 @@ class CC3K : public Subject {
         void spawnGoldPileAt(int goldType, int sourceX, int sourceY);
         bool isOccupied(int x, int y) const;
         bool isOccupiedOrNotChamber(int x, int y) const;
+        bool isGameOver;
+        bool isGameComplete;
 
         CC3K();
         ~CC3K();

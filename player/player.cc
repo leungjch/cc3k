@@ -143,4 +143,5 @@ std::string Player::levelUp()
             cerr << "Error generating attribute to upgrade";
         }
     }
+    return "";
 }

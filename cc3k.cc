@@ -54,7 +54,7 @@ CC3K::CC3K() : levelNum{1}, theFloor{make_shared<Floor>()},
                theLevel{make_shared<DefaultLevel>(theFloor, *this)},
                theStairway{nullptr}, playerGold{0},
                startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false},
-               isFog{false}, isDLC{false}
+               isFog{false}, isDLC{false}, isGameOver{false}, isGameComplete{false}
 {
 }
 
@@ -247,6 +247,8 @@ void CC3K::newGame()
 {
     levelNum = 1;
     playerGold = 0;
+    isGameOver = false;
+    isGameComplete = false;
     // Generate the player
     messages.emplace_back("Player character has spawned. ", Color::GREEN);
     thePlayer = theLevel->generatePlayer(startingRace);
@@ -407,7 +409,8 @@ void CC3K::checkPlayerDead()
 {
     if (thePlayer->getHP() <= 0)
     {
-        messages.emplace_back("You died!", Color::RED);
+        isGameOver = true;
+        messages.emplace_back("You died! Press 'r' to play again or any other key to quit.", Color::RED);
     }
 }
 
@@ -428,6 +431,16 @@ void CC3K::movePlayer(string dir)
     {
         // Increase level number
         levelNum += 1;
+
+
+        // Check if we are past 5 levels 
+        if (levelNum > 5)
+        {
+            isGameComplete = true;
+            messages.emplace_back("Congratulations, you've beaten the game! Press 'r' to play again or any other key to quit. \n", Color::GREEN);
+            messages.emplace_back("Your final score is: " + to_string(computeFinalScore()), Color::YELLOW);
+            return;
+        }
 
         // Respawn everything
         newLevel();
@@ -617,6 +630,18 @@ void CC3K::render()
     notifyObservers();
     // Clear the messages
     messages.clear();
+}
+
+int CC3K::computeFinalScore()
+{
+    if (startingRace == Player::RaceTypes::SHADE)
+    {
+        return playerGold * 1.5;
+    }
+    else
+    {
+        return playerGold;
+    }
 }
 
 string CC3K::getGameStatus()
