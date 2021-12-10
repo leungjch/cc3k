@@ -49,7 +49,6 @@ int main(int argc, char *argv[])
             graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
             game->attach(graphicalObserver.get());
             game->addMessage("Enabled graphics. If it's not working, sure you have libxpm-dev installed in your Linux environment.\n", Color::BLUE);
-
         }
         else if (args[i] == "-fog")
         {
@@ -99,10 +98,29 @@ int main(int argc, char *argv[])
 
     while (getline(cin, cmdLine))
     {
+
+
         istringstream iss(cmdLine);
         string cmd;
+
+
+
         while (iss >> cmd)
         {
+
+        if (game->isGameOver || game->isGameComplete)
+        {
+            if (cmd == "r")
+            {
+                game->newGame();
+            }
+            else
+            {
+                return 0;
+            }
+
+        }
+
 
             // Player movement
             if (cmd == "no" || cmd == "so" || cmd == "ea" || cmd == "we" || cmd == "ne" || cmd == "nw" || cmd == "se" || cmd == "sw")
