@@ -41,16 +41,16 @@ void TextObserver::notify()
             {
                 pair<char, string> state = subject->getState(j, i);
                 // Disable colour for testing
-                cout << state.first;
+                // cout << state.first;
 
-                // if (state.second == Color::RESET) 
-                // {
-                //     cout << state.first;
-                // }
-                // else 
-                // {
-                //     cout << state.second << state.first << Color::RESET;
-                // }
+                if (state.second == Color::RESET) 
+                {
+                    cout << state.first;
+                }
+                else 
+                {
+                    cout << state.second << state.first << Color::RESET;
+                }
             }
 
         }
@@ -63,8 +63,8 @@ void TextObserver::notify()
 
     for (int i = 0; i < theMessages.size(); i++)
     {
-            // cout << " " << theMessages[i].color <<  theMessages[i].text  << Color::RESET;
-            cout << " " <<  theMessages[i].text;
+            cout << " " << theMessages[i].color <<  theMessages[i].text  << Color::RESET;
+            // cout << " " <<  theMessages[i].text;
     }
     cout << endl;
 }
