@@ -29,6 +29,57 @@ int main(int argc, char *argv[])
     // Game logic
     auto game = make_shared<CC3K>();
 
+
+
+    // Ask the user to set a starting race
+    cout << "Please select a starting race:" << endl;
+    cout << Color::RED << "s: Shade" << Color::RESET << endl;
+    cout << Color::BLUE << "d: Drow" << Color::RESET << endl;
+    cout << Color::MAGENTA << "v: Vampire" << Color::RESET << endl;
+    cout << Color::YELLOW << "g: Goblin" << Color::RESET << endl;
+    cout << Color::BOLDCYAN << "t: Troll" << Color::RESET<< endl;
+    cout << "q: Exit game"  << Color::RESET << endl;
+
+    while (true)
+    {
+        string cmd;
+        cin >> cmd;
+        if (cmd == "s")
+        {
+            game->setStartingRace(Player::RaceTypes::SHADE);
+            break;
+        }
+        else if (cmd == "d")
+        {
+            game->setStartingRace(Player::RaceTypes::DROW);
+            break;
+        }
+        else if (cmd == "v")
+        {
+            game->setStartingRace(Player::RaceTypes::VAMPIRE);
+            break;
+
+        }
+        else if (cmd == "g")
+        {
+            game->setStartingRace(Player::RaceTypes::GOBLIN);
+            break;
+
+        }
+        else if (cmd == "t")
+        {
+            game->setStartingRace(Player::RaceTypes::TROLL);
+            break;
+        }
+        // Quit
+        else if (cmd == "q")
+        {
+            return 0;
+        }
+
+    }
+
+
     // Text display
     auto textObserver = make_shared<TextObserver>(game.get(), 79, 25);
 
@@ -86,54 +137,6 @@ int main(int argc, char *argv[])
         }
     }
 
-
-    // Ask the user to set a starting race
-    cout << "Please select a starting race:" << endl;
-    cout << Color::RED << "s: Shade" << Color::RESET << endl;
-    cout << Color::BLUE << "d: Drow" << Color::RESET << endl;
-    cout << Color::MAGENTA << "v: Vampire" << Color::RESET << endl;
-    cout << Color::YELLOW << "g: Goblin" << Color::RESET << endl;
-    cout << Color::BOLDCYAN << "t: Troll" << Color::RESET<< endl;
-    cout << "q: Exit game"  << Color::RESET << endl;
-
-    while (true)
-    {
-        string cmd;
-        cin >> cmd;
-        if (cmd == "s")
-        {
-            game->setStartingRace(Player::RaceTypes::SHADE);
-            break;
-        }
-        else if (cmd == "d")
-        {
-            game->setStartingRace(Player::RaceTypes::DROW);
-            break;
-        }
-        else if (cmd == "v")
-        {
-            game->setStartingRace(Player::RaceTypes::VAMPIRE);
-            break;
-
-        }
-        else if (cmd == "g")
-        {
-            game->setStartingRace(Player::RaceTypes::GOBLIN);
-            break;
-
-        }
-        else if (cmd == "t")
-        {
-            game->setStartingRace(Player::RaceTypes::TROLL);
-            break;
-        }
-        // Quit
-        else if (cmd == "q")
-        {
-            return 0;
-        }
-
-    }
 
 
     game->newGame();
