@@ -9,28 +9,6 @@ using namespace std;
 
 Pathfinder::Pathfinder() : Enemy{15, 5, 5, true, '!', "Pathfinder"} {}
 
-int Pathfinder::attack(std::shared_ptr<Character> defender)
-{
-    int dmg = 0;
-    // Check that the defender is in range
-    if (abs(defender->getX() - getX()) <= 1 &&
-        abs(defender->getY() - getY()) <= 1)
-    {
-        // Pathfinders do 50% more damage to Goblins
-        if (defender->getName() == "Goblin")
-        {
-            dmg = (int)(ceil((100.0 / (100.0 + defender->getDef())) * getAtk()) * 1.5);
-        }
-        else
-        {
-            dmg = (int)(ceil((100.0 / (100.0 + defender->getDef())) * getAtk()));
-        }
-    }
-    // Decrement the health
-    defender->setHP(defender->getHP() - dmg);
-    return dmg;
-}
-
 void Pathfinder::move(int dx, int dy)
 {
     Enemy::move(dx,dy);

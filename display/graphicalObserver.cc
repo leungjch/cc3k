@@ -101,11 +101,43 @@ void GraphicalObserver::notify()
           // col = Xwindow::Black;
           // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
         }
-        else
+        else if (val == '@')
         {
           // theWindow->fillRectangle(j * SCALE, i * SCALE, SCALE, SCALE, col);
           theWindow->drawImage(theWindow->pcImg, j * SCALE, i * SCALE);
         }
+        else if (val == 'M')
+        {
+          theWindow->drawImage(theWindow->merchantImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'O')
+        {
+          theWindow->drawImage(theWindow->orcImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'H')
+        {
+          theWindow->drawImage(theWindow->humanImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'L')
+        {
+          theWindow->drawImage(theWindow->halflingImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'D')
+        {
+          theWindow->drawImage(theWindow->dragonImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'E')
+        {
+          theWindow->drawImage(theWindow->elfImg, j * SCALE, i * SCALE);
+        }
+        else if (val == 'W')
+        {
+          theWindow->drawImage(theWindow->dwarfImg, j * SCALE, i * SCALE);
+        }      
+        else if (val == '!')
+        {
+          theWindow->drawImage(theWindow->pathfinderImg, j * SCALE, i * SCALE);
+        }   
       }
     }
   }

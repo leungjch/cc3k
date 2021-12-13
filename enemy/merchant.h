@@ -6,6 +6,5 @@ class Merchant : public Enemy {
     public:
     Merchant(bool isHostile);
     
-    int attack(std::shared_ptr<Character> defender) override;
 };
 #endif

@@ -24,6 +24,17 @@ class Xwindow {
   XImage* goldImg;
   XImage* spaceImg;
 
+  // Enemies
+  XImage* dragonImg;
+  XImage* orcImg;
+  XImage* merchantImg;
+  XImage* halflingImg;
+  XImage* humanImg;
+  XImage* dwarfImg;
+  XImage* elfImg;
+  XImage* pathfinderImg;
+
+
 
   Xwindow(int width=500, int height=500);  // Constructor; displays the window.
   ~Xwindow();                              // Destructor; destroys the window.
