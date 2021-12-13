@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     // Work with STL containers for command line arguments
     vector<string> args(argv, argv + argc);
 
-    cout << "Welcome to CC3K!" << endl;
+    cout << "Welcome to CC3K! Collect as much gold as possible and navigate all 5 floors." << endl;
 
     // Game logic
     auto game = make_shared<CC3K>();

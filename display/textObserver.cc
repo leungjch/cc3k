@@ -24,6 +24,8 @@ void TextObserver::notify()
     int playerX = subject->getPlayer()->getX();
     int playerY = subject->getPlayer()->getY();
 
+    bool isDLC = subject->getDLC();
+
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
@@ -38,14 +40,17 @@ void TextObserver::notify()
             else
             {
                 pair<char, string> state = subject->getState(j, i);
-                if (state.second == Color::RESET) 
-                {
-                    cout << state.first;
-                }
-                else 
-                {
-                    cout << state.second << state.first << Color::RESET;
-                }
+                // Disable colour for testing
+                cout << state.first;
+
+                // if (state.second == Color::RESET) 
+                // {
+                //     cout << state.first;
+                // }
+                // else 
+                // {
+                //     cout << state.second << state.first << Color::RESET;
+                // }
             }
 
         }
@@ -58,7 +63,8 @@ void TextObserver::notify()
 
     for (int i = 0; i < theMessages.size(); i++)
     {
-        cout << " " << theMessages[i].color <<  theMessages[i].text  << Color::RESET;
+            // cout << " " << theMessages[i].color <<  theMessages[i].text  << Color::RESET;
+            cout << " " <<  theMessages[i].text;
     }
     cout << endl;
 }
