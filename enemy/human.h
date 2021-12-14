@@ -5,6 +5,5 @@
 class Human : public Enemy {
     public:
     Human();
-    int attack(std::shared_ptr<Character> defender) override;
 };
 #endif

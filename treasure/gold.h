@@ -21,5 +21,6 @@ class Gold : public Item {
         DRAGON_HOARD,
     };
 
+    virtual ~Gold();
 };
 #endif

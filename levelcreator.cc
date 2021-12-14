@@ -161,7 +161,12 @@ shared_ptr<Gold> LevelCreator::generateGold(shared_ptr<Dragon> dragonEnemy)
 shared_ptr<Enemy> LevelCreator::generateEnemy(bool hostileMerchants)
 {
 	shared_ptr<Enemy> newEnemy = nullptr;
-	int enemyType = getRandomType({4, 3, 5, 2, 2, 2}, 18);
+	int enemyType;
+	if (game.getDLC()) {
+		enemyType = getRandomType({2, 2, 2, 2, 2, 4, 4}, 18);
+	} else {
+		enemyType = getRandomType({4, 3, 5, 2, 2, 2}, 18);
+	}
 	newEnemy = createEnemy(enemyType, hostileMerchants);
 
 	while (true)

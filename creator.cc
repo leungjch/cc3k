@@ -16,6 +16,7 @@
 #include "enemy/halfling.h"
 #include "enemy/elf.h"
 #include "enemy/merchant.h"
+#include "enemy/pathfinder.h"
 
 #include "potion/potion.h"
 #include "potion/restoreHealth.h"
@@ -161,6 +162,10 @@ std::shared_ptr<Enemy> Creator::createEnemy(int enemyType, bool hostileMerchants
 	case Enemy::EnemyTypes::MERCHANT:
 	{
 		return make_shared<Merchant>(hostileMerchants);
+	}
+	case Enemy::EnemyTypes::PATHFINDER:
+	{
+		return make_shared<Pathfinder>();
 	}
 	}
 
