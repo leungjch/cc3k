@@ -5,6 +5,5 @@
 class Halfling : public Enemy {
     public:
     Halfling();
-    int attack(std::shared_ptr<Character> defender) override;
 };
 #endif

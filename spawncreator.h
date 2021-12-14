@@ -15,8 +15,9 @@ class SpawnCreator: public LocalizedCreator {
 public:
 	SpawnCreator(std::shared_ptr<Floor> floorMap, const CC3K &game);
 
-    std::shared_ptr<Potion> createPotionAt(int potionType, int x, int y) override;
-    std::shared_ptr<Gold> createGoldAt(int goldType, int x, int y, std::shared_ptr<Dragon> dragon) override;
+    std::shared_ptr<Potion> createPotionAt(std::shared_ptr<Potion> newPotion, int x, int y) override;
+    std::shared_ptr<Gold> createGoldAt(std::shared_ptr<Gold> newGold, int x, int y,
+    		std::shared_ptr<Dragon> dragon) override;
 
     ~SpawnCreator();
 };

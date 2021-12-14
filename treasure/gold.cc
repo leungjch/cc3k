@@ -4,6 +4,8 @@
 Gold::Gold(std::string name, int value) : Item{name, 'G', Color::YELLOW}, value{value}, pickup{true} {}
 Gold::Gold(std::string name, int value, bool pickup) : Item{name, 'G', Color::YELLOW}, value{value}, pickup{pickup} {}
 
+Gold::~Gold() {}
+
 int Gold::getValue() {
     return value;
 }

@@ -1,14 +1,17 @@
 #ifndef CC3K_H
 #define CC3K_H
+
 #include "floor.h"
 #include "player/player.h"
 #include "enemy/enemy.h"
 #include "potion/potion.h"
 #include "stairway.h"
 #include "treasure/gold.h"
+
 #include <vector>
 #include <string>
 #include <memory>
+
 #include "display/observer.h"
 #include "display/subject.h"
 #include "utils/message.h"
@@ -20,7 +23,7 @@ class CC3K : public Subject {
     int levelNum;
     std::shared_ptr<Floor> theFloor;
     std::shared_ptr<GeneralCreator> levelCreator;
-    std::shared_ptr<LocalizedCreator> spawnCreator;
+    std::shared_ptr<LocalizedCreator> localizedCreator;
     std::vector<Observer*> observers;
 
     std::shared_ptr<Stairway> theStairway;
@@ -80,7 +83,7 @@ class CC3K : public Subject {
     // E.g. merchant, extra items, etc.
     bool isDLC;
 
-
+    int computeFinalScore();
 
     public:
         void newGame();
@@ -92,8 +95,10 @@ class CC3K : public Subject {
         void usePotion(std::string dir);
         void playerAttack(std::string dir);
         void toggleStopEnemies();
-        void spawnGoldPileAt(int goldType, int sourceX, int sourceY);
         bool isOccupied(int x, int y) const;
+        bool isOccupiedOrNotChamber(int x, int y) const;
+        bool isGameOver;
+        bool isGameComplete;
 
         CC3K();
         ~CC3K();
@@ -112,12 +117,7 @@ class CC3K : public Subject {
         // Buy from a merchant
         void useMerchant(std::string dir);
 
-        
-        bool getDLC();
+        bool getDLC() const;
         void setDLC(bool newDLC);
-
-
-
-        
 };
 #endif

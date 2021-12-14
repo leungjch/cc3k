@@ -93,6 +93,40 @@ Xwindow::Xwindow(int width, int height) {
       exit (1);
   }
 
+  if (XpmReadFileToImage (d, "art/dragon.xpm", &dragonImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/dwarf.xpm", &dwarfImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/elf.xpm", &elfImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/orc.xpm", &orcImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  
+  }
+  if (XpmReadFileToImage (d, "art/human.xpm", &humanImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  
+  }
+  if (XpmReadFileToImage (d, "art/halfling.xpm", &halflingImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/merchant.xpm", &merchantImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
+  if (XpmReadFileToImage (d, "art/pathfinder.xpm", &pathfinderImg, NULL, NULL)) {
+      printf ("Error reading file\n");
+      exit (1);
+  }
   usleep(100);
 }
 

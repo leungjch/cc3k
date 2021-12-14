@@ -24,10 +24,61 @@ int main(int argc, char *argv[])
     // Work with STL containers for command line arguments
     vector<string> args(argv, argv + argc);
 
-    cout << "Welcome to CC3K!" << endl;
+    cout << "Welcome to CC3K! Collect as much gold as possible and navigate all 5 floors." << endl;
 
     // Game logic
     auto game = make_shared<CC3K>();
+
+
+
+    // Ask the user to set a starting race
+    cout << "Please select a starting race:" << endl;
+    cout << Color::RED << "s: Shade" << Color::RESET << endl;
+    cout << Color::BLUE << "d: Drow" << Color::RESET << endl;
+    cout << Color::MAGENTA << "v: Vampire" << Color::RESET << endl;
+    cout << Color::YELLOW << "g: Goblin" << Color::RESET << endl;
+    cout << Color::BOLDCYAN << "t: Troll" << Color::RESET<< endl;
+    cout << "q: Exit game"  << Color::RESET << endl;
+
+    while (true)
+    {
+        string cmd;
+        cin >> cmd;
+        if (cmd == "s")
+        {
+            game->setStartingRace(Player::RaceTypes::SHADE);
+            break;
+        }
+        else if (cmd == "d")
+        {
+            game->setStartingRace(Player::RaceTypes::DROW);
+            break;
+        }
+        else if (cmd == "v")
+        {
+            game->setStartingRace(Player::RaceTypes::VAMPIRE);
+            break;
+
+        }
+        else if (cmd == "g")
+        {
+            game->setStartingRace(Player::RaceTypes::GOBLIN);
+            break;
+
+        }
+        else if (cmd == "t")
+        {
+            game->setStartingRace(Player::RaceTypes::TROLL);
+            break;
+        }
+        // Quit
+        else if (cmd == "q")
+        {
+            return 0;
+        }
+
+    }
+
 
     // Text display
     auto textObserver = make_shared<TextObserver>(game.get(), 79, 25);
@@ -49,7 +100,6 @@ int main(int argc, char *argv[])
             graphicalObserver = make_shared<GraphicalObserver>(game.get(), 79, 25);
             game->attach(graphicalObserver.get());
             game->addMessage("Enabled graphics. If it's not working, sure you have libxpm-dev installed in your Linux environment.\n", Color::BLUE);
-
         }
         else if (args[i] == "-fog")
         {
@@ -60,8 +110,11 @@ int main(int argc, char *argv[])
         else if (args[i] == "-dlc")
         {
             game->setDLC(true);
-            game->addMessage("\n \n Enabled the content DLC pack! Here is a list of extra features: \n", Color::BLUE);
-            game->addMessage("- Buy from (non-hostile) Merchants with 'b [direction]' command. \n", Color::BLUE);
+            game->addMessage("\n \n Enabled the CC3K++ content DLC pack! Here's some extra features in CC3K++: \n", Color::BLUE);
+            game->addMessage("- Gain XP and level-up when you slay enemies! \n", Color::BLUE);
+            game->addMessage("- Buy from (non-hostile) Merchants with 'b [direction]' command! \n", Color::BLUE);
+            game->addMessage("- New enemy Pathfinder: Avoids obstacles and approaches you! \n", Color::BLUE);
+
         }
         else if (args[i] == "-seed")
         {
@@ -92,14 +145,37 @@ int main(int argc, char *argv[])
 
     // Create the display
 
+
+
+
     game->render();
 
+    // Main game loop
     while (getline(cin, cmdLine))
     {
+
+
         istringstream iss(cmdLine);
         string cmd;
+
+
+
         while (iss >> cmd)
         {
+
+        if (game->isGameOver || game->isGameComplete)
+        {
+            if (cmd == "r")
+            {
+                game->newGame();
+            }
+            else
+            {
+                return 0;
+            }
+
+        }
+
 
             // Player movement
             if (cmd == "no" || cmd == "so" || cmd == "ea" || cmd == "we" || cmd == "ne" || cmd == "nw" || cmd == "se" || cmd == "sw")

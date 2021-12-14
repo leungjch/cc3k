@@ -14,34 +14,27 @@ SpawnCreator::SpawnCreator(shared_ptr<Floor> floorMap, const CC3K &game)
 	: LocalizedCreator{floorMap}, game{game} {}
 SpawnCreator::~SpawnCreator() {};
 
-shared_ptr<Potion> SpawnCreator::createPotionAt(int potionType, int x, int y) {
-	shared_ptr<Potion> newPotion = createPotion(potionType);
-
+shared_ptr<Potion> SpawnCreator::createPotionAt(shared_ptr<Potion> newPotion, int x, int y) {
 	newPotion->setX(x);
 	newPotion->setY(y);
 	return newPotion;
 }
 
-shared_ptr<Gold> SpawnCreator::createGoldAt(int goldType, int x, int y, std::shared_ptr<Dragon> dragon) {
-
-	shared_ptr<Gold> newGold = nullptr;
-	if (goldType == Gold::GoldTypes::DRAGON_HOARD)
+// requires: newGold is a DragonHoard if dragon is not nullptr
+shared_ptr<Gold> SpawnCreator::createGoldAt(shared_ptr<Gold> newGold, int x, int y, std::shared_ptr<Dragon> dragon) {
+	newGold->setX(x);
+	newGold->setY(y);
+	if (dragon != nullptr)
 	{
-		if (dragon == nullptr) {
-			throw invalid_argument("argument DragonHoard for gold_type requires an associated dragon");
+		shared_ptr<DragonHoard> dragonHoard = dynamic_pointer_cast<DragonHoard>(newGold);
+		if (dragonHoard == nullptr) {
+			throw invalid_argument("a non-null dragon requires requires an associated DragonHoard");
 		}
+
 		int numAttempts = 0; // may fail due to associated dragon
 		while (true)
 		{
-			auto dragonGold = make_shared<DragonHoard>();
-			auto theDragon = make_shared<Dragon>(dragonGold);
-
-			dragonGold->setX(x);
-			dragonGold->setY(y);
-
-			// Generate a dx and dy either -1 or 1
-			int dY = rand() % 2 ? -1 : 1;
-			int dX = rand() % 2 ? -1 : 1;
+			auto theDragon = make_shared<Dragon>(dragonHoard);
 
 			int dragonX;
 			int dragonY;
@@ -51,25 +44,28 @@ shared_ptr<Gold> SpawnCreator::createGoldAt(int goldType, int x, int y, std::sha
 				dragonX = theFloor->getRandomX();
 				dragonY = theFloor->getRandomY();
 			}
-			else {
-			dragonX = dX + x;
-			dragonY = dY + y;
+			else
+			{
+				// Generate a dx and dy either -1 or 1
+				int dY = rand() % 2 ? -1 : 1;
+				int dX = rand() % 2 ? -1 : 1;
 
+				dragonX = dX + x;
+				dragonY = dY + y;
 			}
 
+			int chamberNum = theFloor->chamberAt(dragonX, dragonY);
+			int targetChamberNum = theFloor->chamberAt(x, y);
 			// Set the coordinates for gold and dragon
-			if (!(game.isOccupied(dragonX, dragonY)) && theFloor->chamberAt(dragonX, dragonY) == theFloor->chamberAt(x, y) && dragon != nullptr)
+			if (!game.isOccupied(dragonX, dragonY) && (chamberNum == targetChamberNum) && (dragon != nullptr))
 			{
-				dragon->setHoard(dragonGold);
+				dragon->setHoard(dragonHoard);
 				dragon->setX(dragonX);
 				dragon->setY(dragonY);
-				return dragonGold;
+				return dragonHoard;
 			}
 		}
 	}
-	createGold(goldType);
 
-	newGold->setX(x);
-	newGold->setY(y);
 	return newGold;
 }

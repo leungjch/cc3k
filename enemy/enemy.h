@@ -11,8 +11,6 @@ class Enemy : public Character {
         Enemy(int startingHp, int startingAtk, int startingDef, bool hostile, char symbol, std::string name);
         virtual int attack(std::shared_ptr<Character> defender);
         virtual bool inRange(std::shared_ptr<Character> defender);
-        // virtual void move(int dx, int dy);
-
 		enum EnemyTypes {
 		  HUMAN = 1,
 		  DWARF,
@@ -20,7 +18,9 @@ class Enemy : public Character {
 		  ELF,
 		  ORC,
 		  MERCHANT,
-		  DRAGON
+		  DRAGON,
+		  PATHFINDER
 		};
+        virtual void move(int dx, int dy);
 };
 #endif
