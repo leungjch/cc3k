@@ -1,24 +1,29 @@
 #ifndef CC3K_H
 #define CC3K_H
+
 #include "floor.h"
 #include "player/player.h"
 #include "enemy/enemy.h"
 #include "potion/potion.h"
 #include "stairway.h"
 #include "treasure/gold.h"
+
 #include <vector>
 #include <string>
 #include <memory>
+
 #include "display/observer.h"
 #include "display/subject.h"
 #include "utils/message.h"
 
-class Level;
+class GeneralCreator;
+class LocalizedCreator;
 
 class CC3K : public Subject {
     int levelNum;
     std::shared_ptr<Floor> theFloor;
-    std::shared_ptr<Level> theLevel;
+    std::shared_ptr<GeneralCreator> levelCreator;
+    std::shared_ptr<LocalizedCreator> localizedCreator;
     std::vector<Observer*> observers;
 
     std::shared_ptr<Stairway> theStairway;
@@ -69,7 +74,6 @@ class CC3K : public Subject {
     void moveAndAttackEnemies();
     void moveAndAttackEnemy(std::shared_ptr<Enemy> enemy);
     void checkPlayerDead();
-    void spawnGoldPile(int goldType, int sourceX, int sourceY);
 
     // Bonus: enable fog view
     // Default false
@@ -79,9 +83,6 @@ class CC3K : public Subject {
     bool isDLC;
 
     int computeFinalScore();
-
-
-
 
     public:
         void newGame();
@@ -93,7 +94,6 @@ class CC3K : public Subject {
         void usePotion(std::string dir);
         void playerAttack(std::string dir);
         void toggleStopEnemies();
-        void spawnGoldPileAt(int goldType, int sourceX, int sourceY);
         bool isOccupied(int x, int y) const;
         bool isOccupiedOrNotChamber(int x, int y) const;
         bool isGameOver;
@@ -115,14 +115,8 @@ class CC3K : public Subject {
         std::shared_ptr<Player> getPlayer();
         // Buy from a merchant
         void useMerchant(std::string dir);
-        
+
         bool getDLC() const;
         void setDLC(bool newDLC);
-
-        
-
-
-
-        
 };
 #endif

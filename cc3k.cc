@@ -1,6 +1,9 @@
 #include "cc3k.h"
 #include "level.h"
-#include "defaultlevel.h"
+#include "creator.h"
+#include "levelcreator.h"
+#include "spawncreator.h"
+#include "dropcreator.h"
 
 #include "player/player.h"
 #include "player/drow.h"
@@ -51,10 +54,11 @@
 using namespace std;
 
 CC3K::CC3K() : levelNum{1}, theFloor{make_shared<Floor>()},
-               theLevel{make_shared<DefaultLevel>(theFloor, *this)},
-               theStairway{nullptr}, playerGold{0},
-               startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false},
-               isFog{false}, isDLC{false}, isGameOver{false}, isGameComplete{false}
+	levelCreator{make_shared<LevelCreator>(theFloor, *this)},
+	localizedCreator{make_shared<SpawnCreator>(theFloor, *this)},
+	theStairway{nullptr}, playerGold{0},
+	startingRace{Player::RaceTypes::SHADE}, stopEnemies{false}, isHostileMerchants{false}, isCustom{false},
+	isFog{false}, isDLC{false}, isGameOver{false}, isGameComplete{false}
 {
 }
 
@@ -129,6 +133,7 @@ void CC3K::loadCustomLevel(int customLevelNum)
     // So we should apply them and discard the effects of the temporary potions
     thePlayer->applyPermanentPotions();
 
+    localizedCreator = make_shared<SpawnCreator>(theFloor, *this);
     // Make two passes
     // First pass to generate potions + non-dragon-hoard gold
     // Second pass to generate dragon hoard
@@ -142,65 +147,75 @@ void CC3K::loadCustomLevel(int customLevelNum)
                 // Spawn potions last
                 if (passType == 0)
                 {
-                    switch (customLevelRaw[i][j])
+                    if ((customLevelRaw[i][j] >= '0') && (customLevelRaw[i][j] < '5'))
                     {
-                    // Spawn RH
-                    case '0':
-                    {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::RESTOREHEALTH, j, i));
-                        break;
+                    	shared_ptr<Potion> newPotion = nullptr;
+                    	switch (customLevelRaw[i][j])
+                    	{
+						// Spawn RH:
+						case '0':
+						{
+							newPotion = make_shared<RestoreHealth>();
+							break;
+						}
+						// Spawn BA
+						case '1':
+						{
+							newPotion = make_shared<BoostAtk>();
+							break;
+						}
+						// Spawn BD
+						case '2':
+						{
+							newPotion = make_shared<BoostDef>();
+							break;
+						}
+						// Spawn PH
+						case '3':
+						{
+							newPotion = make_shared<PoisonHealth>();
+							break;
+						}
+						// Spawn WA
+						case '4':
+						{
+							newPotion = make_shared<WoundAtk>();
+							break;
+						}
+						// Spawn WD
+						case '5':
+						{
+							newPotion = make_shared<WoundDef>();
+							break;
+						}
+						}
+						thePotions.push_back(localizedCreator->createPotionAt(newPotion, j, i));
                     }
-                    // Spawn BA
-                    case '1':
+                    else
                     {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::BOOSTATK, j, i));
-                        break;
-                    }
-                    // Spawn BD
-                    case '2':
-                    {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::BOOSTDEF, j, i));
-                        break;
-                    }
-                    // Spawn PH
-                    case '3':
-                    {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::POISONHEALTH, j, i));
-                        break;
-                    }
-                    // Spawn WA
-                    case '4':
-                    {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::WOUNDATK, j, i));
-                        break;
-                    }
-                    // Spawn WD
-                    case '5':
-                    {
-                        thePotions.push_back(theLevel->spawnPotionAt(Potion::PotionTypes::WOUNDDEF, j, i));
-                        break;
-                    }
-                    // Spawn Normal gold pile
-                    case '6':
-                    {
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MEDIUM, j, i, nullptr));
-                        break;
-                    }
-                    // Spawn small hoard
-                    case '7':
-                    {
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::SMALL, j, i, nullptr));
-                        break;
-                    }
-                    // Spawn merchant hoard
-                    case '8':
-                    {
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MERCHANT_HOARD, j, i, nullptr));
-                        break;
-                    }
-
-                    default:
-                        break;
+                    	shared_ptr<Gold> newGold = nullptr;
+						switch (customLevelRaw[i][j])
+						{
+						// Spawn Normal gold pile
+						case '6':
+						{
+							newGold = make_shared<NormalPile>();
+							break;
+						}
+						// Spawn small hoard
+						case '7':
+						{
+							newGold = make_shared<SmallPile>();
+							break;
+						}
+						// Spawn merchant hoard
+						case '8':
+						{
+							newGold = make_shared<MerchantHoard>();
+							break;
+						}
+						}
+						theGold.push_back(localizedCreator->createGoldAt(newGold, j, i, nullptr));
                     }
                 }
                 else
@@ -212,7 +227,7 @@ void CC3K::loadCustomLevel(int customLevelNum)
                     {
 
                         auto dragon = make_shared<Dragon>(nullptr);
-                        theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::DRAGON_HOARD, j, i, dragon));
+                        theGold.push_back(localizedCreator->createGoldAt(make_shared<DragonHoard>(), j, i, dragon));
                         if (dragon)
                         {
                             theEnemies.push_back(dragon);
@@ -232,15 +247,15 @@ void CC3K::loadCustomLevel(int customLevelNum)
     // Generate enemies
     for (int i = 0; i < NUM_ENEMIES; i++)
     {
-        theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
+        theEnemies.push_back(levelCreator->generateEnemy(isHostileMerchants));
     }
 
     // Place the player at a random chamber
-    theLevel->placePlayer(thePlayer);
+    levelCreator->placePlayer(thePlayer);
 
     // Generate stairway
     int chamberPlayer = theFloor->chamberAt(thePlayer);
-    theStairway = theLevel->generateStairway(chamberPlayer);
+    theStairway = levelCreator->generateStairway(chamberPlayer);
 }
 
 void CC3K::newGame()
@@ -251,7 +266,7 @@ void CC3K::newGame()
     isGameComplete = false;
     // Generate the player
     messages.emplace_back("Player character has spawned. ", Color::GREEN);
-    thePlayer = theLevel->generatePlayer(startingRace);
+    thePlayer = levelCreator->generatePlayer(startingRace);
 
     // Generate the level
     newLevel();
@@ -294,23 +309,23 @@ void CC3K::newLevel()
     thePlayer->applyPermanentPotions();
 
     // Place the player at a random chamber
-    theLevel->placePlayer(thePlayer);
+    levelCreator->placePlayer(thePlayer);
 
     // Generate stairway
     int chamberPlayer = theFloor->chamberAt(thePlayer);
-    theStairway = theLevel->generateStairway(chamberPlayer);
+    theStairway = levelCreator->generateStairway(chamberPlayer);
 
     // Generate potions
     for (int i = 0; i < NUM_POTIONS; i++)
     {
-        thePotions.push_back(theLevel->generatePotion());
+        thePotions.push_back(levelCreator->generatePotion());
     }
 
     // Generate gold
     for (int i = 0; i < NUM_GOLD; i++)
     {
         auto newDragon = make_shared<Dragon>(nullptr);
-        shared_ptr<Gold> newGold = theLevel->generateGold(newDragon);
+        shared_ptr<Gold> newGold = levelCreator->generateGold(newDragon);
         theGold.push_back(newGold);
         if (newDragon->getHoard())
         {
@@ -321,7 +336,7 @@ void CC3K::newLevel()
     // Generate enemies
     for (int i = 0; i < NUM_ENEMIES; i++)
     {
-        theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
+        theEnemies.push_back(levelCreator->generateEnemy(isHostileMerchants));
     }
 }
 
@@ -433,7 +448,7 @@ void CC3K::movePlayer(string dir)
         levelNum += 1;
 
 
-        // Check if we are past 5 levels 
+        // Check if we are past 5 levels
         if (levelNum > 5)
         {
             isGameComplete = true;
@@ -787,7 +802,7 @@ void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
 {
 
     // Pathfinder logic
-    if (enemy->getName() == "Pathfinder" && 
+    if (enemy->getName() == "Pathfinder" &&
     theFloor->chamberAt(enemy->getX(), enemy->getY()) == theFloor->chamberAt(thePlayer->getX(), thePlayer->getY()))
     {
         pair<int, int> newPos = Pathfinder::bfs(*this, enemy->getX(), enemy->getY());
@@ -799,7 +814,7 @@ void CC3K::moveAndAttackEnemy(shared_ptr<Enemy> enemy)
         }
 
     }
-    else 
+    else
     {
 
         // Move the enemy
@@ -860,6 +875,7 @@ void CC3K::playerAttack(string cmd)
     // To keep track of if player hit an enemy
     int haveHit = false;
 
+    localizedCreator = make_shared<DropCreator>(theFloor, *this);
     for (int i = 0; i < theEnemies.size(); i++)
     {
         // Check if the player is in range of attacking the enemy
@@ -919,13 +935,13 @@ void CC3K::playerAttack(string cmd)
                 // Humans drop two normal piles of gold
                 if (theEnemies[i]->getName() == "Human")
                 {
-                    spawnGoldPileAt(Gold::GoldTypes::MEDIUM, theEnemies[i]->getX(), theEnemies[i]->getY());
-                    spawnGoldPileAt(Gold::GoldTypes::MEDIUM, theEnemies[i]->getX(), theEnemies[i]->getY());
+                    localizedCreator->createGoldAt(make_shared<NormalPile>(), theEnemies[i]->getX(), theEnemies[i]->getY(), nullptr);
+                    localizedCreator->createGoldAt(make_shared<NormalPile>(), theEnemies[i]->getX(), theEnemies[i]->getY(), nullptr);
                     messages.emplace_back("The slain Human dropped two normal piles of gold.", Color::GREEN);
                 }
                 if (theEnemies[i]->getName() == "Merchant")
                 {
-                    spawnGoldPileAt(Gold::GoldTypes::MERCHANT_HOARD, theEnemies[i]->getX(), theEnemies[i]->getY());
+                	localizedCreator->createGoldAt(make_shared<MerchantHoard>(), theEnemies[i]->getX(), theEnemies[i]->getY(), nullptr);
                     messages.emplace_back("The slain Merchant dropped one Merchant Hoard.", Color::GREEN);
                 }
 
@@ -960,7 +976,7 @@ void CC3K::playerAttack(string cmd)
                     {
                         messages.emplace_back("You leveled up and permanently increased your max " + result + "!", Color::YELLOW);
                     }
-                    
+
                 }
 
                 theEnemies[i] = theEnemies.back();
@@ -998,79 +1014,6 @@ vector<Message> CC3K::getMessages()
 void CC3K::addMessage(string text, string color)
 {
     messages.emplace_back(text, color);
-}
-
-// Drop a gold pile around a source location
-void CC3K::spawnGoldPileAt(int goldType, int sourceX, int sourceY)
-{
-    // Handling a rare edge case:
-    // It is possible that the source location is too crowded and there is nowhere for the gold to spawn
-    // If, after failed 10 attempts to spawn, we will just spawn the gold somewhere
-    // else in the chamber
-    int spawnAttempts = 0;
-
-    auto newGold = make_shared<Gold>("", 0);
-
-    switch (goldType)
-    {
-    case (Gold::GoldTypes::MERCHANT_HOARD):
-    {
-        newGold = make_shared<MerchantHoard>();
-        break;
-    }
-    case (Gold::GoldTypes::MEDIUM):
-    {
-        newGold = make_shared<NormalPile>();
-        break;
-    }
-    default:
-    {
-        cerr << "Invalid gold type spawn." << endl;
-        return;
-    }
-    }
-    bool isGenerating = true;
-    while (isGenerating)
-    {
-
-        int targetChamberNum = theFloor->chamberAt(sourceX, sourceY);
-
-        int randX;
-        int randY;
-        int deltaX;
-        int deltaY;
-
-        // The source location is too crowded, spawn it somewhere in the chamber
-        if (spawnAttempts > 100)
-        {
-            randX = theFloor->getRandomX();
-            randY = theFloor->getRandomY();
-        }
-        else
-        {
-            // Generate a random -1, 0, 1
-            deltaX = rand() % 3 - 1;
-            deltaY = rand() % 3 - 1;
-
-            // Get random coordinates from the source
-            randX = sourceX + deltaX;
-            randY = sourceY + deltaY;
-        }
-
-        // Check the associated chamber to the random coordinates
-        int chamberNum = theFloor->chamberAt(randX, randY);
-
-        if (chamberNum == targetChamberNum && ((randX == sourceX && randY == sourceY) || (!isOccupied(randX, randY))))
-        {
-            newGold->setX(randX);
-            newGold->setY(randY);
-            theGold.push_back(newGold);
-            isGenerating = false; // exit the loop
-            // If generation fails, we do nothing
-        }
-
-        spawnAttempts += 1;
-    }
 }
 
 
