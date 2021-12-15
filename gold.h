@@ -1,6 +1,6 @@
 #ifndef GOLD_H
 #define GOLD_H
-#include "../item.h"
+#include "item.h"
 #include <string>
 class Gold : public Item {
     int value;

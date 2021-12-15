@@ -6,7 +6,7 @@
 
 #include "floor.h"
 #include "cell.h"
-#include "utils/color.h"
+#include "color.h"
 
 
 using namespace std; 

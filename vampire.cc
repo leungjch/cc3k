@@ -1,5 +1,5 @@
 #include "vampire.h"
-#include "../character.h"
+#include "character.h"
 #include "player.h"
 #include <memory>
 

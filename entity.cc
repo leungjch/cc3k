@@ -1,5 +1,5 @@
 #include "entity.h"
-#include "utils/color.h"
+#include "color.h"
 #include <string>
 
 using namespace std; 

@@ -1,17 +1,17 @@
 #ifndef CC3K_H
 #define CC3K_H
 #include "floor.h"
-#include "player/player.h"
-#include "enemy/enemy.h"
-#include "potion/potion.h"
+#include "player.h"
+#include "enemy.h"
+#include "potion.h"
 #include "stairway.h"
-#include "treasure/gold.h"
+#include "gold.h"
 #include <vector>
 #include <string>
 #include <memory>
-#include "display/observer.h"
-#include "display/subject.h"
-#include "utils/message.h"
+#include "observer.h"
+#include "subject.h"
+#include "message.h"
 
 class Level;
 

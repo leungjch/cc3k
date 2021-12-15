@@ -1,10 +1,10 @@
 #include "player.h"
-#include "../character.h"
+#include "character.h"
 #include <string>
 #include <cmath>
 #include <vector>
 #include <iostream>
-#include "../potion/potion.h"
+#include "potion.h"
 #include <memory>
 using namespace std;
 

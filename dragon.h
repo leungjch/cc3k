@@ -1,7 +1,7 @@
 #ifndef DRAGON_H
 #define DRAGON_H
 #include "enemy.h"
-#include "../treasure/dragonHoard.h"
+#include "dragonHoard.h"
 #include <memory>
 class Dragon : public Enemy {
     std::shared_ptr<DragonHoard> theHoard;

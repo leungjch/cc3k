@@ -1,7 +1,7 @@
 #include <iostream>
 #include "graphicalObserver.h"
 #include "window.h"
-#include "../cc3k.h"
+#include "cc3k.h"
 #include <memory>
 
 using namespace std;

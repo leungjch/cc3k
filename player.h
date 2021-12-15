@@ -1,5 +1,5 @@
-#include "../character.h"
-#include "../potion/potion.h"
+#include "character.h"
+#include "potion.h"
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <string>

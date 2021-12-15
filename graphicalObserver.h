@@ -2,7 +2,7 @@
 #define GRAPHICALOBSERVER
 
 #include "observer.h"
-#include "../cc3k.h"
+#include "cc3k.h"
 #include "window.h"
 #include <iostream>
 #include <memory>

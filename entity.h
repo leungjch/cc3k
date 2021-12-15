@@ -1,6 +1,6 @@
 #ifndef ENTITY_H
 #define ENTITY_H
-#include "utils/color.h"
+#include "color.h"
 class Entity {
     int x;
     int y;

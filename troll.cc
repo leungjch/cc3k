@@ -1,5 +1,5 @@
 #include "troll.h"
-#include "../character.h"
+#include "character.h"
 #include "player.h"
 #include <algorithm>
 

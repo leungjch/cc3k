@@ -4,8 +4,8 @@
 #include <cstdlib>
 
 #include "textObserver.h"
-#include "../utils/message.h"
-#include "../utils/color.h"
+#include "message.h"
+#include "color.h"
 
 using namespace std;
 

@@ -1,5 +1,5 @@
 #include "enemy.h"
-#include "../character.h"
+#include "character.h"
 #include <string>
 #include <memory>
 #include <cmath>

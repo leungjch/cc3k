@@ -1,5 +1,5 @@
 #include "potion.h"
-#include "../item.h"
+#include "item.h"
 #include <string>
 using namespace std;
 // Create a dummy potion

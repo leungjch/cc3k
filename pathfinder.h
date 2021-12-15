@@ -2,7 +2,7 @@
 #define PATHFINDER_H
 #include "enemy.h"
 #include <memory>
-#include "../cc3k.h"
+#include "cc3k.h"
 class Pathfinder : public Enemy {
     public:
     Pathfinder();

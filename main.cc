@@ -6,10 +6,10 @@
 #include <memory>
 #include <cstdlib>
 #include <sstream>
-#include "utils/color.h"
-#include "player/player.h"
-#include "display/textObserver.h"
-#include "display/graphicalObserver.h"
+#include "color.h"
+#include "player.h"
+#include "textObserver.h"
+#include "graphicalObserver.h"
 
 #include "cc3k.h"
 

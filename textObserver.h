@@ -2,7 +2,7 @@
 #define TEXTOBSERVER_H
 
 #include "observer.h"
-#include "../cc3k.h"
+#include "cc3k.h"
 #include <iostream>
 #include <memory>
 
