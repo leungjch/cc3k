@@ -130,8 +130,8 @@ void CC3K::loadCustomLevel(int customLevelNum)
     thePlayer->applyPermanentPotions();
 
     // Make two passes
-    // First pass to generate potions + non-dragon-hoard gold
-    // Second pass to generate dragon hoard
+    // First pass to generate dragon hoard + dragon
+    // Second pass to generate everything else
     for (int passType = 0; passType < 2; passType++)
     {
         // Loop through and generate potions and gold
@@ -139,8 +139,8 @@ void CC3K::loadCustomLevel(int customLevelNum)
         {
             for (int j = 0; j < customLevelRaw[0].size(); j++)
             {
-                // Spawn potions last
-                if (passType == 0)
+                // Spawn dragonhoard first
+                if (passType == 1)
                 {
                     switch (customLevelRaw[i][j])
                     {
@@ -198,7 +198,67 @@ void CC3K::loadCustomLevel(int customLevelNum)
                         theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::MERCHANT_HOARD, j, i, nullptr));
                         break;
                     }
-
+                    case '@':
+                    {
+                        thePlayer->setX(j);
+                        thePlayer->setY(i);
+                        break;
+                    }
+                    case '\\':
+                    {
+                        theStairway = make_shared<Stairway>();
+                        theStairway->setX(j);
+                        theStairway->setY(i);
+                    }
+                    // Spawn enemies
+                    case 'W':
+                    {
+                        auto dwarf = make_shared<Dwarf>();
+                        dwarf->setX(j);
+                        dwarf->setY(i);
+                        theEnemies.push_back(dwarf);
+                        break;
+                    }
+                    case 'H':
+                    {
+                        auto human = make_shared<Human>();
+                        human->setX(j);
+                        human->setY(i);
+                        theEnemies.push_back(human);
+                        break;
+                    }
+                    case 'O':
+                    {
+                        auto orc = make_shared<Orc>();
+                        orc->setX(j);
+                        orc->setY(i);
+                        theEnemies.push_back(orc);
+                        break;
+                    }
+                    case 'L':
+                    {
+                        auto halfling = make_shared<Halfling>();
+                        halfling->setX(j);
+                        halfling->setY(i);
+                        theEnemies.push_back(halfling);
+                        break;
+                    }
+                    case 'M':
+                    {
+                        auto merchant = make_shared<Merchant>(false);
+                        merchant->setX(j);
+                        merchant->setY(i);
+                        theEnemies.push_back(merchant);
+                        break;
+                    }
+                    case 'E':
+                    {
+                        auto elf = make_shared<Elf>();
+                        elf->setX(j);
+                        elf->setY(i);
+                        theEnemies.push_back(elf);
+                        break;
+                    }
                     default:
                         break;
                     }
@@ -212,7 +272,70 @@ void CC3K::loadCustomLevel(int customLevelNum)
                     {
 
                         auto dragon = make_shared<Dragon>(nullptr);
+                        // Make the dragon hoard
+                        auto dragonHoard = make_shared<DragonHoard>();
+                        dragon->setHoard(dragonHoard);
+
                         theGold.push_back(theLevel->spawnGoldAt(Gold::GoldTypes::DRAGON_HOARD, j, i, dragon));
+
+                        int dragonX;
+                        int dragonY;
+                        // search all 8 cells for the dragon
+                        // east
+                        if (customLevelRaw[i][j-1] == 'D')
+                        {
+                            dragonX = j-1;
+                            dragonY = i;
+                        }
+                        // west
+                        else if (customLevelRaw[i][j+1] == 'D')
+                        {
+                            dragonX = j+1;
+                            dragonY = i;
+                        }
+                        // south
+                        else if (customLevelRaw[i+1][j] == 'D')
+                        {
+                            dragonX = j;
+                            dragonY = i+1;
+                        }
+                        // north
+                        else if (customLevelRaw[i-1][j] == 'D')
+                        {
+                            dragonX = j;
+                            dragonY = i-1;
+                        }
+                        // northeast
+                        else if (customLevelRaw[i-1][j-1] == 'D')
+                        {
+                            dragonX = j-1;
+                            dragonY = i-1;
+                        }
+                        // northwest
+                        else if (customLevelRaw[i-1][j+1] == 'D')
+                        {
+                            dragonX = j+1;
+                            dragonY = i-1;
+                        }
+                        // southeast
+                        else if (customLevelRaw[i+1][j-1] == 'D')
+                        {
+                            dragonX = j-1;
+                            dragonY = i+1;
+                        }
+                        // southwest
+                        else if (customLevelRaw[i][j+1] == 'D')
+                        {
+                            dragonX = j+1;
+                            dragonY = i;
+                        }
+                        else
+                        {
+                            cerr << "Invalid input: No dragon found adjacent to the dragon hoard!" << endl;
+                        }
+
+                        dragon->setX(dragonX);
+                        dragon->setY(dragonY);
                         if (dragon)
                         {
                             theEnemies.push_back(dragon);
@@ -229,18 +352,7 @@ void CC3K::loadCustomLevel(int customLevelNum)
         }
     }
 
-    // Generate enemies
-    for (int i = 0; i < NUM_ENEMIES; i++)
-    {
-        theEnemies.push_back(theLevel->generateEnemy(isHostileMerchants));
-    }
 
-    // Place the player at a random chamber
-    theLevel->placePlayer(thePlayer);
-
-    // Generate stairway
-    int chamberPlayer = theFloor->chamberAt(thePlayer);
-    theStairway = theLevel->generateStairway(chamberPlayer);
 }
 
 void CC3K::newGame()
