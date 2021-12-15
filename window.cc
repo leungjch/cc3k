@@ -57,74 +57,74 @@ Xwindow::Xwindow(int width, int height) {
   XSynchronize(d,True);
 
   if (XpmReadFileToImage (d, "art/wall.xpm", &wallImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/passageway.xpm", &passageImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/pc.xpm", &pcImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/potion.xpm", &potionImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/stairway.xpm", &stairwayImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/floor.xpm", &floorImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/door.xpm", &doorImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/gold.xpm", &goldImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/space.xpm", &spaceImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
 
   if (XpmReadFileToImage (d, "art/dragon.xpm", &dragonImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/dwarf.xpm", &dwarfImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/elf.xpm", &elfImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/orc.xpm", &orcImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   
   }
   if (XpmReadFileToImage (d, "art/human.xpm", &humanImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   
   }
   if (XpmReadFileToImage (d, "art/halfling.xpm", &halflingImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/merchant.xpm", &merchantImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   if (XpmReadFileToImage (d, "art/pathfinder.xpm", &pathfinderImg, NULL, NULL)) {
-      printf ("Error reading file\n");
+      cerr << "Error reading file" << endl;
       exit (1);
   }
   usleep(100);

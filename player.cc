@@ -50,10 +50,10 @@ void Player::applyPermanentPotions()
             potionsConsumed[i] = potionsConsumed.back();
             potionsConsumed.pop_back();
         }
-        // Otherwise apply the permanent potion effect
+        // Otherwise keep the permanent potion effect
         else
         {
-            applyPotion(potionsConsumed[i], true);
+            // applyPotion(potionsConsumed[i], true);
         }
     }
 }

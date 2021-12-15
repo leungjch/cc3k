@@ -1,6 +1,7 @@
 #include "cc3k.h"
 #include "level.h"
 #include "defaultlevel.h"
+#include <math.h>
 
 #include "player.h"
 #include "drow.h"
@@ -748,7 +749,7 @@ int CC3K::computeFinalScore()
 {
     if (startingRace == Player::RaceTypes::SHADE)
     {
-        return playerGold * 1.5;
+        return ceil((float)playerGold * 1.5);
     }
     else
     {
