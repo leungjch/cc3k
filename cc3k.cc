@@ -722,7 +722,21 @@ void CC3K::useMerchant(string dir)
         }
         else 
         {
-            auto boughtPotion = make_shared<RestoreHealth>();
+            shared_ptr<Potion> boughtPotion;
+            int gen = rand() % 3;
+
+            if (gen == 0)
+            {
+                boughtPotion = make_shared<RestoreHealth>();
+            }
+            else if (gen == 1)
+            {
+                boughtPotion = make_shared<BoostAtk>();
+            }
+            else if (gen == 2)
+            {
+                boughtPotion = make_shared<BoostDef>();
+            }
             // Apply the effect to the player
             thePlayer->applyPotion(boughtPotion);
 

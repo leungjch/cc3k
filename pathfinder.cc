@@ -23,6 +23,7 @@ std::pair<int, int> Pathfinder::bfs(CC3K &game, int enemyX, int enemyY)
     pair<int,int> start = make_pair(enemyX,enemyY);
     pair<int,int> destination = make_pair(playerX, playerY);
 
+    // Queue of positions to visit
     queue<map<std::string,pair<int,int>>> q;
     q.push({{"current", start}, {"last", make_pair(-1,-1)}});
 
@@ -47,8 +48,6 @@ std::pair<int, int> Pathfinder::bfs(CC3K &game, int enemyX, int enemyY)
         {
             continue;
         }
-        // cout << "SEARCH " << cur["current"].first << " " << cur["current"].second << endl;
-        // cout << "PLAYER X IS " << playerX << " " << playerY << endl;
 
 
         // Mark as visited

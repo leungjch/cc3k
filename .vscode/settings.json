@@ -64,5 +64,8 @@
         "ios": "cpp",
         "locale": "cpp",
         "queue": "cpp"
+    },
+    "files.watcherExclude": {
+        "**/target": true
     }
 }
