@@ -74,7 +74,7 @@ int Player::attack(std::shared_ptr<Character> defender)
     if (abs(defender->getX() - getX()) <= 1 &&
         abs(defender->getY() - getY()) <= 1)
     {
-        dmg = (int)(ceil((100.0 / (100.0 + defender->getDef())) * getAtk()));
+        dmg = (int)(ceil((100.0 / (100.0 + (float)defender->getDef())) * (float)getAtk()));
     }
     // Decrement the health
     defender->setHP(defender->getHP() - dmg);

@@ -36,7 +36,8 @@ class Player : public Character {
       DROW, 
       VAMPIRE,
       TROLL,
-      GOBLIN
+      GOBLIN,
+      DRAGONSLAYER,
     };
 
 };

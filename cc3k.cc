@@ -583,7 +583,7 @@ void CC3K::movePlayer(string dir)
         // The condition will be true whenever gold is not a dragon hoard
         // Or when it is a dragon hoard AND the associated dragon is slain
 
-        if (!(theGold[foundGold]->getName() == "Dragon Hoard" && !theGold[foundGold]->getPickup()))
+        if (thePlayer->getName() == "Dragonslayer" || (!(theGold[foundGold]->getName() == "Dragon Hoard" && !theGold[foundGold]->getPickup())))
         {
             // If normal gold, we collect it and remove it
 

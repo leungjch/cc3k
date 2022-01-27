@@ -10,6 +10,7 @@
 #include "goblin.h"
 #include "troll.h"
 #include "vampire.h"
+#include "dragonslayer.h"
 
 #include "enemy.h"
 #include "orc.h"
@@ -73,6 +74,11 @@ shared_ptr<Player> DefaultLevel::generatePlayer(int startingRace)
 	case (Player::RaceTypes::TROLL):
 	{
 		newPlayer = make_shared<Troll>();
+		break;
+	}
+	case (Player::RaceTypes::DRAGONSLAYER):
+	{
+		newPlayer = make_shared<Dragonslayer>();
 		break;
 	}
 	}

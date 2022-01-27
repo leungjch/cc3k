@@ -7,7 +7,7 @@ OBJECTS=main.o cc3k.o floor.o level.o defaultlevel.o stairway.o cell.o entity.o 
 		item.o potion.o restoreHealth.o poisonHealth.o woundAtk.o boostAtk.o boostDef.o woundDef.o \
 		subject.o textObserver.o graphicalObserver.o window.o \
 		enemy.o orc.o dragon.o merchant.o elf.o halfling.o dwarf.o human.o \
-		pathfinder.o
+		pathfinder.o dragonslayer.o
 
 DEPENDS=${OBJECTS:.o=.d}
 EXEC=cc3k

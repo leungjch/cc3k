@@ -38,6 +38,8 @@ int main(int argc, char *argv[])
     cout << Color::MAGENTA << "v: Vampire" << Color::RESET << endl;
     cout << Color::YELLOW << "g: Goblin" << Color::RESET << endl;
     cout << Color::BOLDCYAN << "t: Troll" << Color::RESET<< endl;
+    cout << Color::BOLDBLUE << "(Bonus) n: Dragonslayer" << Color::RESET<< endl;
+
     cout << "q: Exit game"  << Color::RESET << endl;
 
     while (true)
@@ -75,6 +77,11 @@ int main(int argc, char *argv[])
         else if (cmd == "q")
         {
             return 0;
+        }
+        else if (cmd == "n")
+        {
+            game->setStartingRace(Player::RaceTypes::DRAGONSLAYER);
+            break;
         }
 
     }
@@ -114,7 +121,7 @@ int main(int argc, char *argv[])
             game->addMessage("- Gain XP and level-up when you slay enemies! \n", Color::BLUE);
             game->addMessage("- Buy from (non-hostile) Merchants with 'b [direction]' command! \n", Color::BLUE);
             game->addMessage("- New enemy Pathfinder: Avoids obstacles and approaches you! \n", Color::BLUE);
-
+            game->addMessage("- New player Dragonslayer: Deals immense damage to Dragons and can steal their hoards without slaying them! \n", Color::BLUE);
         }
         else if (args[i] == "-seed")
         {
@@ -250,6 +257,11 @@ int main(int argc, char *argv[])
             {
                 game->setStartingRace(Player::RaceTypes::TROLL);
                 game->addMessage("You will play as a Troll in the next life.", Color::CYAN);
+            }
+            else if (cmd == "n")
+            {
+                game->setStartingRace(Player::RaceTypes::DRAGONSLAYER);
+                game->addMessage("You will play as a Dragonslayer in the next life.", Color::CYAN);
             }
 
             // f: stops enemies from moving until this key is pressed again.
